@@ -78,7 +78,7 @@ public class Main {
 	public static void main(String[] args) {
 		
 		DynamicProgramming dp = new DynamicProgramming();
-		
+		dp.stoneTable();
 		
 	}
 	

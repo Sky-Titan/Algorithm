@@ -22,26 +22,70 @@ public class DynamicProgramming {
 				{11,12,7,4,8,-2,9,4}
 		};
 		
-		int max[] = {0,0,0,0};
+		int max[] = {3,5,4,7};
 		int[] pattern = new int[8];
 		
 		for(int i=0;i<4;i++)
 		{
-			pattern[7] = i; 
+			pattern[7] = i;
 			for(int j=6;j>=0;j--)
 			{
-				if(j+1 == 0) //첫번째자리에 돌
+				if(pattern[j+1] == 0) //첫번째자리에 돌
 				{
 					if(map[1][j] + map[0][j+1] > map[2][j] + map[0][j+1])
+					{	
 						pattern[j] = 1;
+						max[i] += map[1][j];
+					}
 					else
+					{
 						pattern[j] = 2;
+						max[i] += map[2][j];
+					}
+					
 				}
-				else if(j+1 == 1)//두번째자리에 돌
+				else if(pattern[j+1] == 1)//두번째자리에 돌
 				{
-					if(map[0][j] + map[1][j+1] > map)
+					int temp[] = {map[0][j] + map[1][j+1], 0,map[2][j] + map[1][j+1], map[0][j] + map[2][j] + map[1][j+1]};
+					int result=0;
+					for(int k=0;k<4;k++)
+					{
+						if(result < temp[k])
+						{
+							result = temp[k];
+							pattern[j] = k;
+						}
+					}
+					if(pattern[j] == 0)
+						max[i] += map[0][j];
+					else if(pattern[j] == 2)
+						max[i] += map[2][j];
+					else
+						max[i] += map[0][j] + map[2][j];
+				}
+				else if(pattern[j+1] == 2)//세번째 자리에 돌
+				{
+					if(map[0][j] + map[0][j+1] > map[1][j] + map[0][j+1])
+					{
+						pattern[j] = 0;
+						max[i] += map[0][j];
+					}
+					else
+					{
+						pattern[j] = 1;
+						max[i] += map[1][j];
+					}
+				}
+				else//첫번째,세번째자리에 돌
+				{
+					pattern[j] = 1;
+					max[i] += map[1][j];
 				}
 			}
+		}
+		for(int i=0;i<4;i++)
+		{
+			System.out.println(max[i]);
 		}
 		
 	}
