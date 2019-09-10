@@ -1,10 +1,129 @@
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.util.Scanner;
+
+import javax.swing.plaf.synth.SynthSpinnerUI;
 
 public class DynamicProgramming {
 
+	static int count = 0;
+	
 	public DynamicProgramming() {
 		// TODO Auto-generated constructor stub
 	}
 	
+	static void bj1463() throws Exception//1로 만들기
+	{
+		InputStreamReader k = new InputStreamReader(System.in);
+		BufferedReader b = new BufferedReader(k);
+		
+		int n = Integer.parseInt(b.readLine());
+		
+		
+	}
+	
+	static int making(int count)
+	{
+		
+	}
+	
+	static void bj2579() throws Exception//계단오르기 - bottom-up
+	{
+		
+		InputStreamReader k = new InputStreamReader(System.in);
+	    BufferedReader scan = new BufferedReader(k);
+		
+		int n = Integer.parseInt(scan.readLine());
+		int[] t = new int[n];
+		int[][] sum = new int[n][2];
+		
+		for(int i=0;i<n;i++)
+		{
+			t[i] = Integer.parseInt(scan.readLine());
+			for(int j =0;j < 2; j++)
+				sum[i][j] = 0;
+		}
+	//	System.out.println(stairs(t,n - 1, 0, 0));
+		
+		//sum[i][0] 은 비연속(sum[i-2]의 값 둘 중에 가장 큰 값), sum[i][1] 은 연속(sum[i-1][0]만!! sum[i-1][1]을  집어넣게되면 3계단 연속 밟는것이라서 오류)
+		for(int i = 0 ;i<n; i++)
+		{
+			if(i==0)
+			{
+				sum[i][0] = 0;
+				sum[i][1] = t[i];
+			}
+			else if(i==1)
+			{
+				sum[i][0] = sum[i-1][0] + t[i];
+				sum[i][1] = sum[i-1][1] + t[i];
+			}
+			else
+			{
+				if(sum[i-2][0] > sum[i-2][1])
+				{
+					sum[i][0] = sum[i-2][0] + t[i];
+				}
+				else
+				{
+					sum[i][0] = sum[i-2][1] + t[i];
+				}
+				
+				sum[i][1] = sum[i-1][0] + t[i];
+			}
+				 
+		}
+		System.out.println(sum[n-1][0] > sum[n-1][1] ? sum[n-1][0] : sum[n-1][1]);
+	}
+	
+	static int stairs(int[] t,int i,int continuous,int sum)//bj2579 - 계단오르기 재귀(시간초과)
+	{
+		
+		if(i>=0)
+		{
+			int sum1=0,sum2=0;
+			
+			sum2 = stairs(t,i - 2, 0, sum + t[i]);
+			if(continuous != 1)
+				sum1 = stairs(t,i - 1, continuous + 1, sum + t[i]);
+			
+			return sum1 > sum2  ? sum1 : sum2;
+		}
+		return sum;
+	}
+	
+	static void bj9095()
+	{
+		Scanner scan = new Scanner(System.in);
+		
+		
+		int n = scan.nextInt();
+		int[] t = new int[n];
+		
+		for(int i=0;i<n;i++)
+		{
+			t[i] = scan.nextInt();
+		}
+		
+		for(int i=0;i<n;i++)
+		{
+			count = 0;
+			calculate(t[i],0);
+			System.out.println(count);
+		}
+	}
+	
+	static void calculate(int n,int sum)
+	{
+	
+		for(int i=1;i<=3;i++)
+		{
+			if(sum + i == n)
+				count++;
+			else if(sum + i < n)
+				calculate(n, sum + i);
+		}
+	}
 	
 	static void cuttingStick ()//동적 프로그래밍 - 막대기 자르기 문제
 	{
