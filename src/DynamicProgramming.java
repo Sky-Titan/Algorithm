@@ -18,14 +18,71 @@ public class DynamicProgramming {
 		BufferedReader b = new BufferedReader(k);
 		
 		int n = Integer.parseInt(b.readLine());
+		int[][] min = new int[n + 1][3];
 		
 		
+		for(int i=1;i<=n;i++)
+		{
+			for(int j=0;j<3;j++)
+				min[i][j] = 10000;
+		}
+		
+		for(int i=1;i<=n;i++)
+		{
+			if(i == 1) //i 가 1이면 0
+			{
+				for(int j=0;j<3;j++)
+				{
+					min[i][j] = 0;
+				}
+			}
+			else if(i == 2)//i 가 2일때
+			{
+				for(int j=1;j<3;j++)//2개만 (2로나누는 경우, 1 뺴는 경우
+				{
+					min[i][j] = 1;
+				}
+			}
+			else
+			{
+				if(i % 3 == 0)//3으로 나눠지면 3으로 나누기
+				{
+					int num = i/3;
+					for(int j=0;j<3;j++)
+					{
+						if(min[i][0] > min[num][j])//3개중 가장 작은 값
+							min[i][0] = min[num][j] + 1;
+					}
+				}
+				if(i % 2 == 0) //2로 나눠지면 2로 나누기
+				{
+					int num = i/2;
+					for(int j=0;j<3;j++)
+					{
+						if(min[i][1] > min[num][j])//3개중 가장 작은 값
+							min[i][1] = min[num][j] + 1;
+					}
+				}
+				
+				int num = i - 1;
+				for(int j=0;j<3;j++)
+				{
+					if(min[i][2] > min[num][j])//3개중 가장 작은 값
+						min[i][2] = min[num][j] + 1;
+				}
+			}	
+		}
+		int result = 10000;
+		
+		for(int i=0;i<3;i++)
+		{
+			if(result > min[n][i])
+				result = min[n][i];
+		}
+		System.out.println(result);
 	}
 	
-	static int making(int count)
-	{
-		
-	}
+	
 	
 	static void bj2579() throws Exception//계단오르기 - bottom-up
 	{
