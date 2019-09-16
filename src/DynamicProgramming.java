@@ -1,8 +1,7 @@
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
+import java.util.StringTokenizer;
 import java.util.Scanner;
-
-import javax.swing.plaf.synth.SynthSpinnerUI;
 
 public class DynamicProgramming {
 
@@ -10,6 +9,234 @@ public class DynamicProgramming {
 	
 	public DynamicProgramming() {
 		// TODO Auto-generated constructor stub
+	}
+	
+	static void bj2618() throws Exception//경찰차
+	{
+		InputStreamReader k = new InputStreamReader(System.in);
+		BufferedReader b = new BufferedReader(k);
+		
+		int n = Integer.parseInt(b.readLine());
+		int r = Integer.parseInt(b.readLine());
+		
+		int[][] event = new int[r][2];
+		
+		for(int i=0;i<r;i++)
+		{
+			StringTokenizer strtok = new StringTokenizer(b.readLine()," ");
+			event[i][0] = Integer.parseInt(strtok.nextToken());
+			event[i][1] = Integer.parseInt(strtok.nextToken());
+		}
+		
+		int[][] min1 = new int[n+1][n+1];//경찰차 1의 최소거리
+		int[][] min2 = new int[n+1][n+1];//경찰차 2의 최소거리
+		
+		for(int i=1;i<=n;i++)
+		{
+			for(int j=1;j<=n;j++)
+			{
+				min1[i][j] = i-1 + j-1;
+				min2[i][j] = n-i + n-j;
+			}
+		}
+		int sum=0;
+		int[] police = new int[r];
+		for(int i=0;i<r;i++)
+		{
+			sum += min1[event[i][0]][event[i][1]] > min2[event[i][0]][event[i][1]] ? min2[event[i][0]][event[i][1]] : min1[event[i][0]][event[i][1]];
+			police[i] = min1[event[i][0]][event[i][1]] > min2[event[i][0]][event[i][1]] ? 2 : 1;
+		}
+		System.out.println(sum);
+		for(int i=0;i<r;i++)
+		{
+			System.out.println(police[i]);
+		}
+	}
+	
+	static void bj1932() throws Exception//정수 삼각형
+	{
+		InputStreamReader k = new InputStreamReader(System.in);
+		BufferedReader b = new BufferedReader(k);
+		
+		int n = Integer.parseInt(b.readLine());
+		
+		int[][] t = new int[n][n];
+		
+		for(int i=0;i<n;i++)
+		{
+			StringTokenizer strtok = new StringTokenizer(b.readLine()," ");
+			for(int j=0;j<i+1;j++)
+			{
+				t[i][j] = Integer.parseInt(strtok.nextToken());
+			}
+		}
+		
+		int[][] max = new int[n][n];
+		max[0][0] = t[0][0];
+		for(int i=1;i<n;i++)
+		{
+			
+			for(int j=0;j<i+1;j++)
+			{
+				if(j==0)
+					max[i][j] = max[i-1][j] + t[i][j];
+				else if(j == i)
+				{
+					max[i][j] = max[i-1][j-1] + t[i][j];
+				}
+				else
+				{
+					max[i][j] = max[i-1][j-1] > max[i-1][j] ? max[i-1][j-1] + t[i][j] : max[i-1][j] + t[i][j];
+				}
+				
+			}
+		}
+		int maximum = -1;
+		
+		for(int i=0;i<n;i++)
+		{
+			if(maximum < max[n-1][i])
+				maximum = max[n-1][i];
+		}
+		System.out.println(maximum);
+	}
+	
+	static void bj2193() throws Exception
+	{
+		InputStreamReader k = new InputStreamReader(System.in);
+		BufferedReader b = new BufferedReader(k);
+		
+		int n = Integer.parseInt(b.readLine());
+		
+		long[][] t = new long[n+1][2];//수가 커지면 오버플로우 발생
+		
+		for(int i=1;i<=n;i++)
+		{
+			if(i == 1)//1자리수
+			{
+				t[i][0] = 0;
+				t[i][1] = 1;
+			}
+			else
+			{
+				t[i][0] = t[i-1][1] + t[i-1][0];//결론은 피보나치
+				t[i][1] = t[i-1][0];
+			}
+		}
+		System.out.println(t[n][0] + t[n][1]);
+		
+	}
+	
+	static void bj1149() throws Exception//rgb 거리
+	{
+		InputStreamReader k = new InputStreamReader(System.in);
+		BufferedReader b = new BufferedReader(k);
+		
+		int n = Integer.parseInt(b.readLine());
+		int[][] cost = new int[n][3];
+		
+		for(int i=0;i<n;i++)
+		{
+			StringTokenizer strtok = new StringTokenizer(b.readLine(), " ");
+			cost[i][0] = Integer.parseInt(strtok.nextToken());
+			cost[i][1] = Integer.parseInt(strtok.nextToken());
+			cost[i][2] = Integer.parseInt(strtok.nextToken());
+		}
+		
+		int[][] min = new int[n][3];
+		
+		for(int i=0;i<n;i++)
+		{
+			if(i==0)
+			{
+				min[i][0] = cost[i][0];
+				min[i][1] = cost[i][1];
+				min[i][2] = cost[i][2];
+			}
+			else
+			{
+				min[i][0] = min[i-1][1] > min[i-1][2] ? cost[i][0] + min[i-1][2] : cost[i][0] + min[i-1][1];
+				min[i][1] = min[i-1][0] > min[i-1][2] ? cost[i][1] + min[i-1][2] : cost[i][1] + min[i-1][0];
+				min[i][2] = min[i-1][1] > min[i-1][0] ? cost[i][2] + min[i-1][0] : cost[i][2] + min[i-1][1];
+			}
+		}
+		
+		int minimum = 1000000;//이 값이 충분히 커야함!!
+		
+		for(int i=0;i<3;i++)
+		{
+			if(minimum > min[n-1][i])
+				minimum = min[n-1][i];
+		}
+		
+		System.out.println(minimum);
+	}
+	
+	static void bj11726() throws Exception//2 * n 타일링
+	{
+		InputStreamReader k = new InputStreamReader(System.in);
+		BufferedReader b = new BufferedReader(k);
+		
+		int n = Integer.parseInt(b.readLine());
+	
+		int[] t = new int[n+1];
+		
+		for(int i=1;i<=n;i++)
+		{
+			if(i==1)
+			{
+				t[i] = 1;
+			}
+			else if(i==2)
+			{
+				t[i] = 2;
+			}
+			else
+			{
+				t[i] = (t[i-1] + t[i-2])%10007;//중요!
+			}
+		}
+		System.out.println(t[n]); 
+	}
+	
+	static void bj1003() throws Exception//피보나치
+	{
+		InputStreamReader k = new InputStreamReader(System.in);
+		BufferedReader b = new BufferedReader(k);
+		
+		int n = Integer.parseInt(b.readLine());
+		int[] t= new int[n];
+		
+		for(int i=0;i<n;i++)
+		{
+			t[i] = Integer.parseInt(b.readLine());
+		}
+		
+		for(int i=0;i<=n;i++)
+		{
+			int[][] count = new int[t[i] + 1][2];
+			
+			for(int j=0;j<=t[i];j++)
+			{
+				if(j==0)
+				{
+					count[j][0] = 1;
+					count[j][1] = 0;
+				}
+				else if(j==1)
+				{
+					count[j][0] = 0;
+					count[j][1] = 1;
+				}
+				else
+				{
+					count[j][0] = count[j-1][0] + count[j-2][0];
+					count[j][1] = count[j-1][1] + count[j-2][1];
+				}
+			}
+			System.out.println(count[t[i]][0] + " "+count[t[i]][1]);
+		}
+		
 	}
 	
 	static void bj1463() throws Exception//1로 만들기
