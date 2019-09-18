@@ -28,29 +28,173 @@ public class DynamicProgramming {
 			event[i][1] = Integer.parseInt(strtok.nextToken());
 		}
 		
-		int[][] min1 = new int[n+1][n+1];//경찰차 1의 최소거리
-		int[][] min2 = new int[n+1][n+1];//경찰차 2의 최소거리
+		int[][] pos = new int[r][2];//경찰차 1의 위치 - 1
+		int[][] pos2 = new int[r][2];//경찰차 2의 위치 - 1
 		
-		for(int i=1;i<=n;i++)
+		int[][] pos3 = new int[r][2];//경찰차 1의 위치 - 2
+		int[][] pos4 = new int[r][2];//경찰차 2의 위치 - 2
+		
+		int sum=0;
+		int[][] min = new int[r][2];
+		boolean[][] police = new boolean[r][2];
+		boolean[][] police2 = new boolean[r][2];
+		
+		for(int i=0;i<r;i++)
 		{
-			for(int j=1;j<=n;j++)
+			if(i==0)
 			{
-				min1[i][j] = i-1 + j-1;
-				min2[i][j] = n-i + n-j;
+				min[i][0] = Math.abs(event[i][0] - 1) + Math.abs(event[i][1] - 1);//경찰차1 해결
+				min[i][1] = Math.abs(event[i][0] - n) + Math.abs(event[i][1] - n);//경찰차2 해결
+				
+				pos[i][0] = 1;//1의 x좌표
+				pos[i][1] = 1;//1의 y좌표
+				pos2[i][0] = n;//2의 x좌표
+				pos2[i][1] = n;//2의 y좌표
+				
+				pos3[i][0] = 1;//1의 x좌표
+				pos3[i][1] = 1;//1의 y좌표
+				pos4[i][0] = n;//2의 x좌표
+				pos4[i][1] = n;//2의 y좌표
+			}
+			else
+			{
+				//i 를 1이 해결 할 때
+				if(min[i-1][0] + Math.abs(event[i][0] - event[i-1][0]) + Math.abs(event[i][1] - event[i-1][1]) 
+				< min[i-1][1] + Math.abs(event[i][0] - pos[i-1][0]) + Math.abs(event[i][1] - pos[i-1][1]))//i - 1 을 1이 해결했을때 더 적으면 
+				{
+					min[i][0] = min[i-1][0] + Math.abs(event[i][0] - event[i-1][0]) + Math.abs(event[i][1] - event[i-1][1]);
+					pos[i-1][0] = event[i-1][0];
+					pos[i-1][1] = event[i-1][1];
+					
+					
+					
+					police[i-1][0] = true;
+					police[i-1][1] = false;
+					if(i!=1)
+					{
+						pos2[i-1][0] = pos2[i-2][0];
+						pos2[i-1][1] = pos2[i-2][1];
+						
+					}
+					else 
+					{
+						pos2[i-1][0] = n;
+						pos2[i-1][1] = n;
+					}
+				}
+				else//i-1을 2가 해결한게 더 나을때
+				{
+					min[i][0] = min[i-1][1] + Math.abs(event[i][0] - pos[i-1][0]) + Math.abs(event[i][1] - pos[i-1][1]);
+					pos2[i-1][0] = event[i-1][0];
+					pos2[i-1][1] = event[i-1][1];
+					
+					police[i-1][0] = false;
+					police[i-1][1] = true;
+					if(i!=1)
+					{
+						pos[i-1][0] = pos[i-2][0];
+						pos[i-1][1] = pos[i-2][1];
+						
+						
+					}
+					else 
+					{
+						pos[i-1][0] = 1;
+						pos[i-1][1] = 1;
+					}
+					
+					
+				}
+				
+				pos[i][0] = event[i][0];
+				pos[i][1] = event[i][1];
+				pos2[i][0] = pos2[i-1][0];
+				pos2[i][1] = pos2[i-1][1];
+				
+				//i 를 2이 해결 할 때
+				if(min[i-1][0] + Math.abs(event[i][0] - pos4[i-1][0]) + Math.abs(event[i][1] - pos4[i-1][1]) 
+				< min[i-1][1] + Math.abs(event[i][0] - event[i-1][0]) + Math.abs(event[i][1] - event[i-1][1]))//i - 1 을 1이 해결했을때 더 적으면 
+				{
+					min[i][1] = min[i-1][0] + Math.abs(event[i][0] - pos4[i-1][0]) + Math.abs(event[i][1] - pos4[i-1][1]);
+					pos3[i-1][0] = event[i-1][0];
+					pos3[i-1][1] = event[i-1][1];
+					
+					police2[i-1][0] = true;
+					police2[i-1][1] = false;
+					if(i!=1)
+					{
+						pos4[i-1][0] = pos4[i-2][0];
+						pos4[i-1][1] = pos4[i-2][1];
+					}
+					else
+					{
+						pos4[i-1][0] = n;
+						pos4[i-1][1] = n;
+					}
+				}
+				else//i-1을 2가 해결한게 더 나을때
+				{
+					min[i][1] = min[i-1][1] + Math.abs(event[i][0] - event[i-1][0]) + Math.abs(event[i][1] - event[i-1][1]);
+					pos4[i-1][0] = event[i-1][0];
+					pos4[i-1][1] = event[i-1][1];
+					
+					police2[i-1][0] = false;
+					police2[i-1][1] = true;
+					if(i!=1)
+					{
+						pos3[i-1][0] = pos3[i-2][0];
+						pos3[i-1][1] = pos3[i-2][1];
+					}
+					else
+					{
+						pos3[i-1][0] = 1;
+						pos3[i-1][1] = 1;
+					}
+				}
+				pos3[i][0] = pos3[i-1][0];
+				pos3[i][1] = pos3[i-1][1];
+				pos4[i][0] = event[i][0];
+				pos4[i][1] = event[i][1];
+				
 			}
 		}
-		int sum=0;
-		int[] police = new int[r];
-		for(int i=0;i<r;i++)
+		
+		if(min[r-1][0] < min[r-1][1])//1이 해결한게 나을때
 		{
-			sum += min1[event[i][0]][event[i][1]] > min2[event[i][0]][event[i][1]] ? min2[event[i][0]][event[i][1]] : min1[event[i][0]][event[i][1]];
-			police[i] = min1[event[i][0]][event[i][1]] > min2[event[i][0]][event[i][1]] ? 2 : 1;
+			System.out.println(min[r-1][0]);
+			police[r-1][0] = true;
+			police[r-1][1] = false;
+
+			for(int i=0;i<r;i++)
+			{
+				if(police[i][0] == true)
+				{
+					System.out.println(1);
+				}
+				else
+					System.out.println(2);
+			}
 		}
-		System.out.println(sum);
-		for(int i=0;i<r;i++)
+		else//2가 해결한게 나을때
 		{
-			System.out.println(police[i]);
+			System.out.println(min[r-1][1]);
+			police2[r-1][0] = false;
+			police2[r-1][1] = true;
+		
+			for(int i=0;i<r;i++)
+			{
+				if(police2[i][0] == true)
+				{
+					System.out.println(1);
+				}
+				else
+					System.out.println(2);
+			}
 		}
+		
+		
+		
+		
 	}
 	
 	static void bj1932() throws Exception//정수 삼각형
