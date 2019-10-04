@@ -18,13 +18,14 @@ public class Main {
 		DynamicProgramming dp = new DynamicProgramming();
 		try
 		{
-			dp.bj2618();
+	//		dp.bj2618();
 		}
 		catch(Exception e)
 		{
 			
 		}
-		
+		Graph graph = new Graph();
+		graph.DFS();
 	}
 	
 }
