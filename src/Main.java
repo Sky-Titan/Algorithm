@@ -15,7 +15,7 @@ public class Main {
 	
 	public static void main(String[] args) {
 		
-		DynamicProgramming dp = new DynamicProgramming();
+		//DynamicProgramming dp = new DynamicProgramming();
 		try
 		{
 	//		dp.bj2618();
@@ -25,7 +25,16 @@ public class Main {
 			
 		}
 		Graph graph = new Graph();
-		graph.DFS();
+		try {
+			
+			graph.bj1260();
+		}
+		catch(Exception e)
+		{
+			
+		}
+		
+		
 	}
 	
 }
