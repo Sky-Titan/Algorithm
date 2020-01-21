@@ -4,6 +4,9 @@ import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.util.ArrayList;
 import java.util.Scanner;
+import java.util.Arrays;
+import java.util.LinkedList;
+import java.util.Queue;
 import java.util.StringTokenizer;
 
 import javax.swing.plaf.synth.SynthSpinnerUI;
@@ -27,14 +30,13 @@ public class Main {
 		Graph graph = new Graph();
 		try {
 			
-			graph.bj1260();
+			graph.bj7576();
 		}
 		catch(Exception e)
 		{
 			
 		}
-		
-		
+	
 	}
 	
 }

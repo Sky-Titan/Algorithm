@@ -1,6 +1,7 @@
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.Queue;
 import java.util.StringTokenizer;
@@ -45,6 +46,316 @@ public class Graph {
 			visited[i] = false;
 
 	}
+
+	static void bj7576() throws Exception//토마토
+	{
+		InputStreamReader k = new InputStreamReader(System.in);
+		BufferedReader b = new BufferedReader(k);
+		
+		StringTokenizer strtok = new StringTokenizer(b.readLine()," ");//지도 크기 N
+		int M = Integer.parseInt(strtok.nextToken());
+		int N = Integer.parseInt(strtok.nextToken());
+		
+		int[][] graph = new int[N+1][M+1];
+		boolean[][] visited = new boolean[N+1][M+1];
+		int zeroCount=0;
+		
+		Queue<Position> q=new LinkedList<>();
+
+		ArrayList<Integer> days = new ArrayList<>();//익는 날짜들
+		
+		for(int i=1;i<=N;i++)//데이터 입력
+		{
+			strtok = new StringTokenizer(b.readLine()," ");
+			for(int j=1;j<=M;j++)
+			{
+				graph[i][j]=Integer.parseInt(strtok.nextToken());
+				if(graph[i][j]==0)
+					zeroCount++;
+				
+				if(graph[i][j]==1)
+				{
+					q.offer(new Position(i, j, 0));
+					visited[i][j] = true;
+					
+					days.add(0);
+				}
+				
+				if(graph[i][j]==-1)//빈칸일땐 방문했다고 가정
+					visited[i][j]=true;
+				else if(graph[i][j]==0)
+					visited[i][j]=false;
+			}
+		}
+		
+		if(zeroCount==0)//토마토가 전부 익은 상황
+		{
+			System.out.println(0);
+			return;
+		}
+		
+		
+		
+		
+		while(!q.isEmpty())
+		{
+			Position pos = q.poll();
+			
+			
+			if(pos.getX()!=N)
+			{
+				if(graph[pos.getX()+1][pos.getY()]==0 && !visited[pos.getX()+1][pos.getY()])
+				{	
+					q.offer(new Position(pos.getX()+1,pos.getY(), pos.getPath()+1));
+					visited[pos.getX()+1][pos.getY()] = true;
+					days.add(pos.getPath()+1);
+				}
+			}
+			if(pos.getY()!=M)
+			{
+				if(graph[pos.getX()][pos.getY()+1]==0 && !visited[pos.getX()][pos.getY()+1])
+				{
+					q.offer(new Position(pos.getX(), pos.getY()+1, pos.getPath()+1));
+					visited[pos.getX()][pos.getY()+1] = true;
+					days.add(pos.getPath()+1);
+				}
+			}
+			
+			if(pos.getX()!=1)
+			{
+				if(graph[pos.getX()-1][pos.getY()]==0 && !visited[pos.getX()-1][pos.getY()])
+				{	
+					q.offer(new Position(pos.getX()-1, pos.getY(), pos.getPath()+1));
+					visited[pos.getX()-1][pos.getY()] = true;
+					days.add(pos.getPath()+1);
+				}
+			}
+			if(pos.getY()!=1)
+			{
+				if(graph[pos.getX()][pos.getY()-1]==0 && !visited[pos.getX()][pos.getY()-1])
+				{
+					q.offer(new Position(pos.getX(), pos.getY()-1, pos.getPath()+1));
+					visited[pos.getX()][pos.getY()-1] = true;
+					days.add(pos.getPath()+1);
+				}
+			}
+		}
+		
+		for(int i=1;i<=N;i++)
+		{
+			for(int j=1;j<=M;j++)
+			{
+				if(!visited[i][j])
+				{
+					System.out.println(-1);
+					return;	
+				}
+			}
+		}
+		
+		int max = days.get(0);
+		
+		for(int i=0;i<days.size();i++)
+		{
+			if(max < days.get(i))
+			{
+				max=days.get(i);
+			}
+		}
+		System.out.println(max);
+	}
+	
+	static void bj2667() throws Exception
+	{
+		InputStreamReader k = new InputStreamReader(System.in);
+		BufferedReader b = new BufferedReader(k);
+		
+		int N = Integer.parseInt(b.readLine());//지도 크기 N
+		int[][] graph = new int[N+1][N+1];
+		boolean visited[][] = new boolean[N+1][N+1];
+		
+		for(int i=0;i<N;i++)//지도 데이터 입력
+		{
+			String str = b.readLine();
+			for(int j=0;j<N;j++)
+			{
+				graph[i+1][j+1] = Integer.parseInt(str.charAt(j)+"");
+				visited[i+1][j+1] = false;
+			}
+		}
+		
+		int hometownCount=0;//단지수
+		ArrayList<Integer> homeCounts = new ArrayList<>();//단지마다의 집 개수. 후에 오름차순 정렬 필요
+		int totalSearchCount=0;//총 탐색수가 N*N이되면 종료
+		
+		int pivot;//0 혹은 1, 한개 단지 탐색 완료할때마다 바뀜
+		
+		if(graph[1][1]==1)//시작 위치 숫자에 따라서 탐색 pivot값 설정
+			pivot=1;
+
+		else
+			pivot=0;
+		
+		Queue<Position> q = new LinkedList<>();
+		
+		int startX=1,startY=1;
+		
+		while(totalSearchCount!=N*N)
+		{
+			totalSearchCount=0;
+			if(pivot==1)//바로 bfs 돌려서 집개수 카운트
+			{
+				q = new LinkedList<>();
+				q.offer(new Position(startX, startY));
+				
+				Position pos;
+				
+				visited[startX][startY]=true;
+				int count=0;//해당단지 집개수
+				while(!q.isEmpty())
+				{
+					//totalSearchCount++;//탐색수 증가
+					count++;
+					pos = q.poll();
+					graph[pos.getX()][pos.getY()]=0;//탐색완료한곳은 0으로 전환
+					
+					if(pos.getX()!=N)
+					{
+						if(graph[pos.getX()+1][pos.getY()]==pivot && !visited[pos.getX()+1][pos.getY()])
+						{	
+							q.offer(new Position(pos.getX()+1,pos.getY()));
+							visited[pos.getX()+1][pos.getY()] = true;
+						}
+					}
+					if(pos.getY()!=N)
+					{
+						if(graph[pos.getX()][pos.getY()+1]==pivot && !visited[pos.getX()][pos.getY()+1])
+						{
+							q.offer(new Position(pos.getX(), pos.getY()+1));
+							visited[pos.getX()][pos.getY()+1] = true;
+						}
+					}
+					
+					if(pos.getX()!=1)
+					{
+						if(graph[pos.getX()-1][pos.getY()]==pivot && !visited[pos.getX()-1][pos.getY()])
+						{	
+							q.offer(new Position(pos.getX()-1, pos.getY()));
+							visited[pos.getX()-1][pos.getY()] = true;
+						}
+					}
+					if(pos.getY()!=1)
+					{
+						if(graph[pos.getX()][pos.getY()-1]==pivot && !visited[pos.getX()][pos.getY()-1])
+						{
+							q.offer(new Position(pos.getX(), pos.getY()-1));
+							visited[pos.getX()][pos.getY()-1] = true;
+						}
+					}
+					
+					
+				}
+				hometownCount++;
+				homeCounts.add(count);
+				startX=1;
+				startY=1;
+				pivot=0;//pivot전환
+			}
+			else//pivot 0일때, bfs 돌려서 1나오는곳 찾기
+			{
+				q = new LinkedList<>();
+				q.offer(new Position(startX, startY));
+				
+				Position pos;
+				
+				visited[startX][startY]=true;
+				while(!q.isEmpty())
+				{
+					
+					pos = q.poll();
+					
+					if(pos.getX()!=N)
+					{
+						if(graph[pos.getX()+1][pos.getY()]==pivot && !visited[pos.getX()+1][pos.getY()])
+						{	
+							q.offer(new Position(pos.getX()+1,pos.getY()));
+							visited[pos.getX()+1][pos.getY()] = true;
+						}
+						else if(graph[pos.getX()+1][pos.getY()]==1 && !visited[pos.getX()+1][pos.getY()])
+						{
+							startX=pos.getX()+1;
+							startY=pos.getY();
+							break;
+						}
+					}
+					if(pos.getY()!=N)
+					{
+						if(graph[pos.getX()][pos.getY()+1]==pivot && !visited[pos.getX()][pos.getY()+1])
+						{
+							q.offer(new Position(pos.getX(), pos.getY()+1));
+							visited[pos.getX()][pos.getY()+1] = true;
+						}
+						else if(graph[pos.getX()][pos.getY()+1]==1 && !visited[pos.getX()][pos.getY()+1])
+						{
+							startX=pos.getX();
+							startY=pos.getY()+1;
+							break;
+						}
+					}
+					
+					if(pos.getX()!=1)
+					{
+						if(graph[pos.getX()-1][pos.getY()]==pivot && !visited[pos.getX()-1][pos.getY()])
+						{	
+							q.offer(new Position(pos.getX()-1, pos.getY()));
+							visited[pos.getX()-1][pos.getY()] = true;
+						}
+						else if(graph[pos.getX()-1][pos.getY()]==1 && !visited[pos.getX()-1][pos.getY()])
+						{
+							startX=pos.getX()-1;
+							startY=pos.getY();
+							break;
+						}
+					}
+					if(pos.getY()!=1)
+					{
+						if(graph[pos.getX()][pos.getY()-1]==pivot && !visited[pos.getX()][pos.getY()-1])
+						{
+							q.offer(new Position(pos.getX(), pos.getY()-1));
+							visited[pos.getX()][pos.getY()-1] = true;
+						}
+						else if(graph[pos.getX()][pos.getY()-1]==1 && !visited[pos.getX()][pos.getY()-1])
+						{
+							startX=pos.getX();
+							startY=pos.getY()-1;
+							break;
+						}
+					}
+				}
+				pivot=1;
+			}
+			
+			for(int i=1;i<=N;i++)
+			{
+				for(int j=1;j<=N;j++)
+				{
+					if(visited[i][j])
+					{
+						totalSearchCount++;
+						visited[i][j]=false;
+					}
+				}
+			}
+				
+		}		
+		System.out.println(hometownCount);
+		Object[] results=homeCounts.toArray();
+		Arrays.sort(results);
+		for(int i=0;i<results.length;i++)
+		{
+			System.out.println((Integer)results[i]);
+		}
+	}
 	
 	static void bj2178() throws Exception
 	{
@@ -54,22 +365,77 @@ public class Graph {
 		String str = b.readLine();
 
 		StringTokenizer strtok = new StringTokenizer(str," ");
-		int N = Integer.parseInt(strtok.nextToken());
-		int M = Integer.parseInt(strtok.nextToken());
+		int N = Integer.parseInt(strtok.nextToken());//줄수(row)
+		int M = Integer.parseInt(strtok.nextToken());//줄마다 정수개수(column)
 		
-		graph = new int[N+1][M+1];
+		int[][] graph = new int[N+1][M+1];
+		boolean visited[][] = new boolean[N+1][M+1];
 		
 		for(int i=0;i<N;i++)
 		{
 			str = b.readLine();
-			for(int j=0;j<str.length();j++)
+			for(int j=0;j<M;j++)
 			{
 				graph[i+1][j+1] = Integer.parseInt(str.charAt(j)+"");
-				
+				visited[i+1][j+1] = false;
 			}
 		}
 		
+		Queue<Position> q = new LinkedList<>();
 		
+		q.offer(new Position(1, 1, 1));
+		
+		
+		
+		while(!q.isEmpty())
+		{
+			Position pos = q.poll();
+			//System.out.println(pos.getX()+""+pos.getY());
+			
+			visited[pos.getX()][pos.getY()] = true;
+			
+			if(pos.getX()==N && pos.getY()==M)
+			{
+				System.out.println(pos.path);
+				return;
+			}
+			
+			if(pos.getX()!=N)
+			{
+				if(graph[pos.getX()+1][pos.getY()]==1 && !visited[pos.getX()+1][pos.getY()])
+				{	
+					q.offer(new Position(pos.getX()+1,pos.getY(),pos.path+1));
+					visited[pos.getX()+1][pos.getY()] = true;
+				}
+			}
+			if(pos.getY()!=M)
+			{
+				if(graph[pos.getX()][pos.getY()+1]==1 && !visited[pos.getX()][pos.getY()+1])
+				{
+					q.offer(new Position(pos.getX(), pos.getY()+1, pos.path+1));
+					visited[pos.getX()][pos.getY()+1] = true;
+				}
+			}
+			
+			if(pos.getX()!=1)
+			{
+				if(graph[pos.getX()-1][pos.getY()]==1 && !visited[pos.getX()-1][pos.getY()])
+				{	
+					q.offer(new Position(pos.getX()-1, pos.getY(), pos.path+1));
+					visited[pos.getX()-1][pos.getY()] = true;
+				}
+			}
+			if(pos.getY()!=1)
+			{
+				if(graph[pos.getX()][pos.getY()-1]==1 && !visited[pos.getX()][pos.getY()-1])
+				{
+					q.offer(new Position(pos.getX(), pos.getY()-1, pos.path+1));
+					visited[pos.getX()][pos.getY()-1] = true;
+				}
+			}
+			
+			
+		}
 		
 	}
 	
@@ -160,5 +526,43 @@ public class Graph {
 		}
 	}
 	
+	static class Position{
+		private int x,y,path;
+		public Position() {
+			
+		}
+		public Position(int x, int y)
+		{
+			this.x=x;
+			this.y=y;
+			this.path=path;
+		}
+		public Position(int x, int y,int path)
+		{
+			this.x=x;
+			this.y=y;
+			this.path=path;
+		}
+		
+		public int getPath() {
+			return path;
+		}
+		public void setPath(int path) {
+			this.path = path;
+		}
+		public int getX() {
+			return x;
+		}
+		public void setX(int x) {
+			this.x = x;
+		}
+		public int getY() {
+			return y;
+		}
+		public void setY(int y) {
+			this.y = y;
+		}
+		
+	}
 
 }
