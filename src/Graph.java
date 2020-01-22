@@ -86,6 +86,49 @@ public class Graph {
 		
 	}
 	
+	static void bj6603() throws Exception
+	{
+		InputStreamReader is = new InputStreamReader(System.in);
+		BufferedReader b = new BufferedReader(is);
+
+		
+		StringTokenizer strtok;
+		int k;
+		
+		while(true)
+		{
+			strtok = new StringTokenizer(b.readLine()," ");
+			k = Integer.parseInt(strtok.nextToken());
+			
+			if(k==0)
+				break;
+			
+			int s[] = new int[k];
+			
+			for(int i=0;i<k;i++)
+				s[i] = Integer.parseInt(strtok.nextToken());
+			
+			int graph[][] = new int[50][50];
+			for(int i=0;i<50;i++)
+				for(int j=0;j<50;j++)
+				{
+					graph[i][j] = 0;
+				}
+			
+			for(int i=0;i<k;i++)	
+			{
+				for(int j=1;j<50;j++)
+				{
+					graph[s[i]][j] = 1;
+					graph[j][s[i]] = 1;
+				}
+			}
+		}
+		
+		
+		
+	}
+	
 	static void bj14502() throws Exception
 	{
 		InputStreamReader k = new InputStreamReader(System.in);
@@ -96,9 +139,11 @@ public class Graph {
 		int M = Integer.parseInt(strtok.nextToken());
 		
 		int graph[][] = new int[N][M];
+		
 		boolean visited[][] = new boolean[N][M];
 		
 		Queue<Position> q = new LinkedList<>();
+		ArrayList<Position> starts = new ArrayList<>();
 		
 		for(int i=0;i<N;i++)
 		{
@@ -107,96 +152,121 @@ public class Graph {
 			{
 				graph[i][j] = Integer.parseInt(strtok.nextToken());
 				
-				if(graph[i][j] == 0)
-					visited[i][j] = false;
-				else if(graph[i][j] == 1)
-					visited[i][j] = true;
-				else if(graph[i][j] == 2)
+				if(graph[i][j] == 2)
 				{
-					q.offer(new Position(i,j));
-					visited[i][j] = true;
+					starts.add(new Position(i,j));
 				}
 					
 			}
 		}
-		
-		for(int i=0;i<N;i++)
-		{
-			for(int j=0;j<N;j++)
-			{
-				if(graph[i][j]==0)//첫번째 벽놓기
-				{
-					graph[i][j]=1;
-					
-					for(int n=0;n<N;n++)
-					{
-						for(int m=0;m<M;m++)
-						{
-							if(graph[n][m]==0)//두번째 벽놓기
-						}
-					}
-				}
-			}
-		}
-		
-		while(!q.isEmpty())
-		{
-			Position pos = q.poll();
-			
-			if(pos.getX()!=0)//상
-			{
-				if(graph[pos.getX()-1][pos.getY()]==0 &&!visited[pos.getX()-1][pos.getY()])
-				{
-					q.offer(new Position(pos.getX()-1,pos.getY()));
-					graph[pos.getX()-1][pos.getY()] = 2;
-					visited[pos.getX()-1][pos.getY()] = true;
-				}
-			}
-			
-			if(pos.getX()!=N-1)//하
-			{
-				if(graph[pos.getX()+1][pos.getY()]==0 &&!visited[pos.getX()+1][pos.getY()])
-				{
-					q.offer(new Position(pos.getX()+1,pos.getY()));
-					graph[pos.getX()+1][pos.getY()] = 2;
-					visited[pos.getX()+1][pos.getY()] = true;
-				}
-			}
-			
-			if(pos.getY()!=0)//좌
-			{
-				if(graph[pos.getX()][pos.getY()-1]==0 &&!visited[pos.getX()][pos.getY()-1])
-				{
-					q.offer(new Position(pos.getX(),pos.getY()-1));
-					graph[pos.getX()][pos.getY()-1] = 2;
-					visited[pos.getX()][pos.getY()-1] = true;
-				}
-			}
-			
-			if(pos.getY()!=M-1)//우
-			{
-				if(graph[pos.getX()][pos.getY()+1]==0 &&!visited[pos.getX()][pos.getY()+1])
-				{
-					q.offer(new Position(pos.getX(),pos.getY()+1));
-					graph[pos.getX()][pos.getY()+1] = 2;
-					visited[pos.getX()][pos.getY()+1] = true;
-				}
-			}
-		}
-		
-		int count=0;
+		ArrayList<Integer> result = new ArrayList<Integer>();
 		
 		for(int i=0;i<N;i++)
 		{
 			for(int j=0;j<M;j++)
 			{
-				System.out.print(graph[i][j]+" " );
-				//if(graph[i][j]==0)
-					//count++;
+				if(graph[i][j]==0)//첫번째 벽놓기
+				{
+					graph[i][j]=1;
+					for(int n=0;n<N;n++)
+					{
+						for(int m=0;m<M;m++)
+						{
+							if(graph[n][m]==0)//두번째 벽놓기
+							{
+								graph[n][m]=1;
+								
+								for(int y=0;y<N;y++)
+								{
+									for(int u=0;u<M;u++)
+									{
+										if(graph[y][u]==0)//세번째 벽놓기
+										{
+											graph[y][u]=1;
+											
+											q = new LinkedList<>();
+											
+											for(int e=0;e<N;e++)
+												for(int r=0;r<M;r++)
+													visited[e][r]=false;
+											
+											for(int e=0;e<starts.size();e++)
+												q.offer(new Position(starts.get(e).getX(),starts.get(e).getY()));
+											
+											while(!q.isEmpty())
+											{
+												Position pos = q.poll();
+												
+												if(pos.getX()!=0)//상
+												{
+													if(graph[pos.getX()-1][pos.getY()]==0 && !visited[pos.getX()-1][pos.getY()])
+													{
+														q.offer(new Position(pos.getX()-1,pos.getY()));
+														visited[pos.getX()-1][pos.getY()] = true;
+													}
+												}
+												
+												if(pos.getX()!=N-1)//하
+												{
+													if(graph[pos.getX()+1][pos.getY()]==0 && !visited[pos.getX()+1][pos.getY()])
+													{
+														q.offer(new Position(pos.getX()+1,pos.getY()));
+														visited[pos.getX()+1][pos.getY()] = true;
+													}
+												}
+												
+												if(pos.getY()!=0)//좌
+												{
+													if(graph[pos.getX()][pos.getY()-1]==0 && !visited[pos.getX()][pos.getY()-1])
+													{
+														q.offer(new Position(pos.getX(),pos.getY()-1));
+														visited[pos.getX()][pos.getY()-1] = true;
+													}
+												}
+												
+												if(pos.getY()!=M-1)//우
+												{
+													if(graph[pos.getX()][pos.getY()+1]==0 && !visited[pos.getX()][pos.getY()+1])
+													{
+														q.offer(new Position(pos.getX(),pos.getY()+1));
+														visited[pos.getX()][pos.getY()+1] = true;
+													}
+												}
+											}
+											
+											int count=0;
+											
+											for(int e=0;e<N;e++)
+											{
+												for(int r=0;r<M;r++)
+												{
+													if(graph[e][r]==0 && !visited[e][r])
+														count++;
+												}
+											}
+											result.add(count);
+											
+											graph[y][u]=0;
+										}
+									}
+								}
+								graph[n][m]=0;
+							}
+							
+						}
+					}
+					graph[i][j]=0;
+				}
 			}
-			System.out.println();
 		}
-		//System.out.println(count);
+		
+		int max=result.get(0);
+		for(int i=0;i<result.size();i++)
+		{
+			if(max < result.get(i))
+				max=result.get(i);
+		}
+		System.out.println(max);
 		
 	}
 	
