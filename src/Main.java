@@ -30,7 +30,7 @@ public class Main {
 		Graph graph = new Graph();
 		try {
 			
-			graph.bj7576();
+			graph.bj14502();
 		}
 		catch(Exception e)
 		{

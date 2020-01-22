@@ -46,7 +46,439 @@ public class Graph {
 			visited[i] = false;
 
 	}
+	
+	static class Position{
+		private int x,y,path;
+		public Position() {
+			
+		}
+		public Position(int x, int y)
+		{
+			this.x=x;
+			this.y=y;
+			this.path=path;
+		}
+		public Position(int x, int y,int path)
+		{
+			this.x=x;
+			this.y=y;
+			this.path=path;
+		}
+		
+		public int getPath() {
+			return path;
+		}
+		public void setPath(int path) {
+			this.path = path;
+		}
+		public int getX() {
+			return x;
+		}
+		public void setX(int x) {
+			this.x = x;
+		}
+		public int getY() {
+			return y;
+		}
+		public void setY(int y) {
+			this.y = y;
+		}
+		
+	}
+	
+	static void bj14502() throws Exception
+	{
+		InputStreamReader k = new InputStreamReader(System.in);
+		BufferedReader b = new BufferedReader(k);
+		
+		StringTokenizer strtok = new StringTokenizer(b.readLine()," ");
+		int N = Integer.parseInt(strtok.nextToken());
+		int M = Integer.parseInt(strtok.nextToken());
+		
+		int graph[][] = new int[N][M];
+		boolean visited[][] = new boolean[N][M];
+		
+		Queue<Position> q = new LinkedList<>();
+		
+		for(int i=0;i<N;i++)
+		{
+			strtok = new StringTokenizer(b.readLine()," ");
+			for(int j=0;j<M;j++)
+			{
+				graph[i][j] = Integer.parseInt(strtok.nextToken());
+				
+				if(graph[i][j] == 0)
+					visited[i][j] = false;
+				else if(graph[i][j] == 1)
+					visited[i][j] = true;
+				else if(graph[i][j] == 2)
+				{
+					q.offer(new Position(i,j));
+					visited[i][j] = true;
+				}
+					
+			}
+		}
+		
+		for(int i=0;i<N;i++)
+		{
+			for(int j=0;j<N;j++)
+			{
+				if(graph[i][j]==0)//첫번째 벽놓기
+				{
+					graph[i][j]=1;
+					
+					for(int n=0;n<N;n++)
+					{
+						for(int m=0;m<M;m++)
+						{
+							if(graph[n][m]==0)//두번째 벽놓기
+						}
+					}
+				}
+			}
+		}
+		
+		while(!q.isEmpty())
+		{
+			Position pos = q.poll();
+			
+			if(pos.getX()!=0)//상
+			{
+				if(graph[pos.getX()-1][pos.getY()]==0 &&!visited[pos.getX()-1][pos.getY()])
+				{
+					q.offer(new Position(pos.getX()-1,pos.getY()));
+					graph[pos.getX()-1][pos.getY()] = 2;
+					visited[pos.getX()-1][pos.getY()] = true;
+				}
+			}
+			
+			if(pos.getX()!=N-1)//하
+			{
+				if(graph[pos.getX()+1][pos.getY()]==0 &&!visited[pos.getX()+1][pos.getY()])
+				{
+					q.offer(new Position(pos.getX()+1,pos.getY()));
+					graph[pos.getX()+1][pos.getY()] = 2;
+					visited[pos.getX()+1][pos.getY()] = true;
+				}
+			}
+			
+			if(pos.getY()!=0)//좌
+			{
+				if(graph[pos.getX()][pos.getY()-1]==0 &&!visited[pos.getX()][pos.getY()-1])
+				{
+					q.offer(new Position(pos.getX(),pos.getY()-1));
+					graph[pos.getX()][pos.getY()-1] = 2;
+					visited[pos.getX()][pos.getY()-1] = true;
+				}
+			}
+			
+			if(pos.getY()!=M-1)//우
+			{
+				if(graph[pos.getX()][pos.getY()+1]==0 &&!visited[pos.getX()][pos.getY()+1])
+				{
+					q.offer(new Position(pos.getX(),pos.getY()+1));
+					graph[pos.getX()][pos.getY()+1] = 2;
+					visited[pos.getX()][pos.getY()+1] = true;
+				}
+			}
+		}
+		
+		int count=0;
+		
+		for(int i=0;i<N;i++)
+		{
+			for(int j=0;j<M;j++)
+			{
+				System.out.print(graph[i][j]+" " );
+				//if(graph[i][j]==0)
+					//count++;
+			}
+			System.out.println();
+		}
+		//System.out.println(count);
+		
+	}
+	
+	static void bj11724() throws Exception
+	{
+		InputStreamReader k = new InputStreamReader(System.in);
+		BufferedReader b = new BufferedReader(k);
+		
+		StringTokenizer strtok = new StringTokenizer(b.readLine()," ");
+		int N = Integer.parseInt(strtok.nextToken());
+		int M = Integer.parseInt(strtok.nextToken());
+		
+		int graph[][] = new int[N+1][N+1];
+		boolean visited[] = new boolean[N+1];
+		
+		for(int i=1;i<=N;i++)
+			visited[i]=false;
+		
+		for(int i=1;i<=N;i++)
+		{
+			for(int j=1;j<=N;j++)
+			{
+				graph[i][j] = 0;
+			}
+		}
+		
+		int x=1,y=1;
+		for(int i=0;i<M;i++)
+		{
+			strtok = new StringTokenizer(b.readLine()," ");
+			x = Integer.parseInt(strtok.nextToken());
+			y = Integer.parseInt(strtok.nextToken());
+			graph[x][y]=1;
+			graph[y][x]=1;
+		}
+		
+		Queue<Integer> q = new LinkedList<>();
+		int count=0;//연결요소의 개수
+		
+		for(int i=1;i<=N;i++)
+		{
+			if(!visited[i])//방문안한 노드일때 탐색시작 & count증가
+			{
+				count++;
+				q = new LinkedList<>();
+				q.offer(i);
+				visited[i]=true;
+				
+				while(!q.isEmpty())
+				{
+					int v = q.poll();
+					
+					for(int j=1;j<=N;j++)
+					{
+						if(graph[v][j]==1 && !visited[j])
+						{
+							q.offer(j);
+							visited[j]=true;
+						}
+					}
+				}
+			}
+		}
+		System.out.println(count);
+		
+	}
+	
+	static void bj11403() throws Exception
+	{
+		InputStreamReader k = new InputStreamReader(System.in);
+		BufferedReader b = new BufferedReader(k);
+		
+		int N = Integer.parseInt(b.readLine());//정점 개수
+		
+		int graph[][] = new int[N][N];//input
+		int result[][] = new int[N][N];//output
+		
+		boolean visited[] = new boolean[N];
+		
+		for(int i=0;i<N;i++)
+		{
+			StringTokenizer strtok = new StringTokenizer(b.readLine()," ");
+			for(int j=0;j<N;j++)
+			{
+				graph[i][j] = Integer.parseInt(strtok.nextToken());
+				
+				result[i][j] = 0;//초기화
+			}
+		}
+		
+		for(int i=0;i<N;i++)//총 N번만큼 경로탐색
+		{
+			Queue<Integer> q = new LinkedList<>();
+			
+			for(int j=0;j<N;j++)//visited초기화
+					visited[j]=false;
+			
+			q.offer(i);
+			//주의 : 자기자신에게로 돌아오는 경로도 생각해야하기에 i는 visited체크 안함 ex) 0->1->2->0
+			while(!q.isEmpty())
+			{
+				int v = q.poll();
+				
+				for(int j=0;j<N;j++)
+				{
+					if(graph[v][j]==1 && !visited[j])
+					{
+						result[i][j] = 1;//i->j로 가는 경로가 존재
+						q.offer(j);
+						visited[j]=true;
+					}
+				}
+			}
+		}
+		
+		for(int i=0;i<N;i++)
+		{
+			for(int j=0;j<N;j++)
+			{
+				System.out.print(result[i][j]);
+				if(j!=N-1)
+					System.out.print(" ");
+			}
+			System.out.println();
+		}
+	}
+	
+	static void bj1012() throws Exception
+	{
+		InputStreamReader k = new InputStreamReader(System.in);
+		BufferedReader b = new BufferedReader(k);
+		
+		int T = Integer.parseInt(b.readLine());//테스트 케이스 개수
+		
+		for(int i=0;i<T;i++)
+		{
+			StringTokenizer strtok = new StringTokenizer(b.readLine()," ");
+			int M = Integer.parseInt(strtok.nextToken());//row
+			int N = Integer.parseInt(strtok.nextToken());//column
+			int K = Integer.parseInt(strtok.nextToken());//배추개수
+			
+			int graph[][] = new int[M][N];
+			boolean visited[][] = new boolean[M][N];
+			
+			for(int m=0;m<M;m++)
+				for(int n=0;n<N;n++)
+				{
+					graph[m][n] = 0;
+					visited[m][n] = false;
+				}
+			
+			Queue<Position> q = new LinkedList<>();
+			
+			for(int j=0;j<K;j++)
+			{
+				strtok = new StringTokenizer(b.readLine()," ");
+				graph[Integer.parseInt(strtok.nextToken())][Integer.parseInt(strtok.nextToken())] = 1;//배추위치
+			}
+			
+			int count = 0;//배추군집개수(지렁이마리수)
+			
+			for(int m=0;m<M;m++)
+			{
+				for(int n=0;n<N;n++)
+				{
+					if(graph[m][n]==1 && !visited[m][n])//그래프 전체 순회하다가 1 인, 방문안한 위치 만나면 BFS 탐색 
+					{
+						count++;
+						q.offer(new Position(m,n));
+						visited[m][n]=true;
+						
+						while(!q.isEmpty())
+						{
+							Position pos = q.poll();
+							
+							if(pos.getX()!=0)//상
+							{
+								if(graph[pos.getX()-1][pos.getY()]==1 &&!visited[pos.getX()-1][pos.getY()])
+								{
+									q.offer(new Position(pos.getX()-1,pos.getY()));
+									visited[pos.getX()-1][pos.getY()] = true;
+								}
+							}
+							
+							if(pos.getX()!=M-1)//하
+							{
+								if(graph[pos.getX()+1][pos.getY()]==1 &&!visited[pos.getX()+1][pos.getY()])
+								{
+									q.offer(new Position(pos.getX()+1,pos.getY()));
+									visited[pos.getX()+1][pos.getY()] = true;
+								}
+							}
+							
+							if(pos.getY()!=0)//좌
+							{
+								if(graph[pos.getX()][pos.getY()-1]==1 &&!visited[pos.getX()][pos.getY()-1])
+								{
+									q.offer(new Position(pos.getX(),pos.getY()-1));
+									visited[pos.getX()][pos.getY()-1] = true;
+								}
+							}
+							
+							if(pos.getY()!=N-1)//우
+							{
+								if(graph[pos.getX()][pos.getY()+1]==1 &&!visited[pos.getX()][pos.getY()+1])
+								{
+									q.offer(new Position(pos.getX(),pos.getY()+1));
+									visited[pos.getX()][pos.getY()+1] = true;
+								}
+							}
+						}
+					}
+				}
+			}
+			System.out.println(count);
+		}
+		
+	}
 
+	static void bj1697() throws Exception
+	{
+		InputStreamReader k = new InputStreamReader(System.in);
+		BufferedReader b = new BufferedReader(k);
+		
+		StringTokenizer strtok = new StringTokenizer(b.readLine()," ");//지도 크기 N
+		int N = Integer.parseInt(strtok.nextToken());
+		int K = Integer.parseInt(strtok.nextToken());
+		
+		int[] graph = new int[100001];
+		boolean[] visited = new boolean[100001];
+
+		
+		for(int i=0;i<visited.length;i++)
+		{
+			visited[i] = false; 
+		}
+		
+		Queue<Integer> q = new LinkedList<>();
+		q.offer(N);
+		visited[N]=true;
+		graph[N]=0;
+	
+		
+		while(!q.isEmpty())
+		{
+			int v = q.poll();
+			
+			if(v==K)
+			{
+			
+				System.out.println(graph[K]);
+				return;
+			}
+			
+			if(v-1 != -1 && !visited[v-1])
+			{
+				q.offer(v-1);
+				visited[v-1] = true;
+				graph[v-1] = graph[v]+1;
+			
+			}
+			if(v+1 != 100001 && !visited[v+1])
+			{
+				q.offer(v+1);
+				visited[v+1] = true;
+				graph[v+1] = graph[v]+1;
+			
+			}
+			
+			if(v*2 < 100001 && !visited[v*2])
+			{
+				q.offer(v*2);
+				visited[v*2] = true;
+				graph[v*2] = graph[v]+1;
+			
+			}
+			
+		}
+	}
+	
+	
+	
 	static void bj7576() throws Exception//토마토
 	{
 		InputStreamReader k = new InputStreamReader(System.in);
@@ -526,43 +958,6 @@ public class Graph {
 		}
 	}
 	
-	static class Position{
-		private int x,y,path;
-		public Position() {
-			
-		}
-		public Position(int x, int y)
-		{
-			this.x=x;
-			this.y=y;
-			this.path=path;
-		}
-		public Position(int x, int y,int path)
-		{
-			this.x=x;
-			this.y=y;
-			this.path=path;
-		}
-		
-		public int getPath() {
-			return path;
-		}
-		public void setPath(int path) {
-			this.path = path;
-		}
-		public int getX() {
-			return x;
-		}
-		public void setX(int x) {
-			this.x = x;
-		}
-		public int getY() {
-			return y;
-		}
-		public void setY(int y) {
-			this.y = y;
-		}
-		
-	}
+	
 
 }
