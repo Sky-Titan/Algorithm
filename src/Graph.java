@@ -125,9 +125,14 @@ public class Graph {
 		int C = Integer.parseInt(strtok.nextToken());
 		
 		int graph[][] = new int[R][C];
+		int melt[][] = new int[R][C];//녹는 날짜
 		boolean visited[][] = new boolean[R][C];
 		
 		//'.' -> 0 ==> 물 공간, 'X' -> 1 ==> 빙판 공간, 'L' -> -1 ==> 백조
+		
+		Queue<Position> q = new LinkedList<>();
+		Position bird = new Position();
+
 		
 		for(int i=0;i<R;i++)
 		{
@@ -135,15 +140,233 @@ public class Graph {
 			String str = b.readLine();
 			for(int j=0;j<C;j++)
 			{
-				visited[i][j] = false;
+				melt[i][j] = 0;
+				//visited[i][j] = false;
 				if(str.charAt(j)=='.')//물
 					graph[i][j] = 0;
 				else if(str.charAt(j)=='X')//빙판
 					graph[i][j] = 1;
 				else//백조
+				{
 					graph[i][j] = -1;
+					bird.setX(i);
+					bird.setY(j);
+				}
 			}
 		}
+		
+		
+		//boolean isMeet = false;//백조들이 만났는지 여부
+		int day=0;//만나는데 걸리는 최소 일수
+		
+		for(int i=0;i<R;i++)
+		{
+			for(int j=0;j<C;j++)
+			{
+				if(graph[i][j]== 1 && !visited[i][j]) //빙판 찾기
+				{
+					if(i!=0)
+					{
+						if(graph[i-1][j] == 0)//물이랑 닿아잇으면추가
+						{
+							q.offer(new Position(i,j));
+							melt[i][j] = 1;
+							visited[i][j] = true;
+							continue;
+						}
+					}
+					if(j!=0)
+					{
+						if(graph[i][j-1] == 0)//물이랑 닿아잇으면추가
+						{
+							q.offer(new Position(i,j));
+							melt[i][j] = 1;
+							visited[i][j] = true;
+							continue;
+						}
+					}
+					if(i!=R-1)
+					{
+						if(graph[i+1][j] == 0)//물이랑 닿아잇으면추가
+						{
+							q.offer(new Position(i,j));
+							melt[i][j] = 1;
+							visited[i][j] = true;
+							continue;
+						}
+					}
+					if(j!=C-1)
+					{
+						if(graph[i][j+1] == 0)//물이랑 닿아잇으면추가
+						{
+							q.offer(new Position(i,j));
+							melt[i][j] = 1;
+							visited[i][j] = true;
+							continue;
+						}
+					}
+					
+				}
+			}
+		}
+		
+		int max=0;
+		//모든 얼음들이 몇일째에 녹는지 체크
+		while(!q.isEmpty())
+		{
+			Position pos = q.poll();
+			if(max < melt[pos.getX()][pos.getY()])
+				max = melt[pos.getX()][pos.getY()];
+			
+			if(pos.getX()!=R-1)
+			{
+				if(graph[pos.getX()+1][pos.getY()] == 1 && !visited[pos.getX()+1][pos.getY()])//물
+				{	
+					q.offer(new Position(pos.getX()+1,pos.getY()));
+					melt[pos.getX()+1][pos.getY()] = melt[pos.getX()][pos.getY()] + 1;
+					visited[pos.getX()+1][pos.getY()] = true;
+				}
+				
+			}
+			if(pos.getY()!=C-1)
+			{
+				if(graph[pos.getX()][pos.getY()+1] == 1 && !visited[pos.getX()][pos.getY()+1])
+				{
+					q.offer(new Position(pos.getX(), pos.getY()+1));
+					melt[pos.getX()][pos.getY()+1] = melt[pos.getX()][pos.getY()] + 1;
+					visited[pos.getX()][pos.getY()+1] = true;
+					
+				}
+				
+			}
+			
+			if(pos.getX()!=0)
+			{
+				if(graph[pos.getX()-1][pos.getY()] == 1 && !visited[pos.getX()-1][pos.getY()])
+				{	
+					q.offer(new Position(pos.getX()-1, pos.getY()));
+					melt[pos.getX()-1][pos.getY()] = melt[pos.getX()][pos.getY()] + 1;
+					visited[pos.getX()-1][pos.getY()] = true;
+				}
+				
+			}
+			if(pos.getY()!=0)
+			{
+				if( graph[pos.getX()][pos.getY()-1] == 1&& !visited[pos.getX()][pos.getY()-1])
+				{
+					q.offer(new Position(pos.getX(), pos.getY()-1));			
+					melt[pos.getX()][pos.getY()-1] = melt[pos.getX()][pos.getY()] + 1;
+					visited[pos.getX()][pos.getY()-1] = true;
+				
+				}
+				
+			}
+		}
+		
+		
+		
+		
+			for(int r=0;r<R;r++)
+			{
+				for(int c=0;c<C;c++)
+				{
+					visited[r][c] = false;
+		//			System.out.print(melt[i][j]);
+				}
+		//		System.out.println();
+			}
+			bird.setDistance(melt[bird.getX()][bird.getY()]);
+			q.offer(bird);
+			visited[bird.getX()][bird.getY()] = true;
+			
+			
+			while(!q.isEmpty())
+			{
+				Position pos = q.poll();
+				
+				if(graph[pos.getX()][pos.getY()] == -1 && (pos.getX()!=bird.getX() || pos.getY()!=bird.getY()) )
+				{
+					System.out.println(i);
+					return;
+				}
+				
+				if(pos.getX()!=R-1)
+				{
+					if(melt[pos.getX()+1][pos.getY()] <= i && !visited[pos.getX()+1][pos.getY()])//물
+					{	
+						Position temp = new Position(pos.getX()+1,pos.getY());
+						
+						if(melt[pos.getX()+1][pos.getY()] > pos.getDistance())
+							temp.setDistance(melt[pos.getX()+1][pos.getY()]);
+						else
+							temp.setDistance(pos.getDistance());
+						
+						q.offer(temp);
+						
+							visited[pos.getX()+1][pos.getY()] = true;
+					}
+					
+				}
+				if(pos.getY()!=C-1)
+				{
+					if(melt[pos.getX()][pos.getY()+1] <= i &&!visited[pos.getX()][pos.getY()+1])
+					{
+						Position temp = new Position(pos.getX(),pos.getY()+1);
+						
+						if(melt[pos.getX()][pos.getY()+1] > pos.getDistance())
+							temp.setDistance(melt[pos.getX()][pos.getY()+1]);
+						else
+							temp.setDistance(pos.getDistance());
+						
+						q.offer(temp);
+						
+							visited[pos.getX()][pos.getY()+1] = true;
+						
+					}
+					
+				}
+				
+				if(pos.getX()!=0)
+				{
+					if(melt[pos.getX()-1][pos.getY()] <= i &&!visited[pos.getX()-1][pos.getY()])
+					{	
+						Position temp = new Position(pos.getX()-1,pos.getY());
+					
+						if(melt[pos.getX()-1][pos.getY()] > pos.getDistance())
+							temp.setDistance(melt[pos.getX()-1][pos.getY()]);
+						else
+							temp.setDistance(pos.getDistance());
+						
+						q.offer(temp);
+				
+						visited[pos.getX()-1][pos.getY()] = true;
+					}
+					
+				}
+				if(pos.getY()!=0)
+				{
+					if(melt[pos.getX()][pos.getY()-1] <= i &&!visited[pos.getX()][pos.getY()-1])
+					{
+						Position temp = new Position(pos.getX(),pos.getY()-1);
+					
+						if(melt[pos.getX()][pos.getY()-1] > pos.getDistance())
+							temp.setDistance(melt[pos.getX()][pos.getY()-1]);
+						else
+							temp.setDistance(pos.getDistance());
+						
+						q.offer(temp);
+						
+							visited[pos.getX()][pos.getY()-1] = true;
+					
+					}
+					
+				}
+			}
+		
+		
+		
+
+		
 		
 	}
 	
