@@ -50,7 +50,9 @@ public class Graph {
 	static class Position{
 		private int x,y,z,distance;
 		
+		private int max, min;
 		private ArrayList<Integer> path;
+		
 		public Position() {
 			
 		}
@@ -73,6 +75,21 @@ public class Graph {
 			this.y=y;
 			this.distance=distance;
 			this.path = path;
+		}
+		
+		
+		
+		public int getMax() {
+			return max;
+		}
+		public void setMax(int max) {
+			this.max = max;
+		}
+		public int getMin() {
+			return min;
+		}
+		public void setMin(int min) {
+			this.min = min;
 		}
 		public void addV(int v)
 		{
@@ -113,6 +130,130 @@ public class Graph {
 			this.z = z;
 		}
 		
+	}
+	
+	static void bj1981() throws Exception
+	{
+		InputStreamReader is = new InputStreamReader(System.in);
+		BufferedReader b = new BufferedReader(is);
+		
+		int n = Integer.parseInt(b.readLine());
+		
+		int graph[][] = new int[n+1][n+1];
+		boolean visited[][] = new boolean[n+1][n+1];
+		
+		
+		for(int i=1;i<=n;i++)
+		{
+			StringTokenizer strtok = new StringTokenizer(b.readLine()," ");
+			for(int j=1;j<=n;j++)
+			{
+				visited[i][j] = false;
+				graph[i][j] = Integer.parseInt(strtok.nextToken());
+			}
+		}
+		
+		Queue<Position> q = new LinkedList<>();
+		
+		Position p = new Position(1,1);
+		p.setPath(new ArrayList<>());
+		p.getPath().add(graph[1][1]);
+		p.setMax(graph[1][1]);
+		p.setMin(graph[1][1]);
+		visited[1][1] = true;
+		q.offer(p);
+		
+		Position[][] p_graph = new Position[n+1][n+1];
+		
+		p_graph[1][1] = p;
+		
+		int subtract[][] = new int [n+1][n+1];
+		subtract[1][1] = 0;
+		
+		while(!q.isEmpty())
+		{
+			Position pos = q.poll();
+			
+			int sub = 200;
+			
+			if(pos.getX()!=1)//상
+			{
+				int up_min = p_graph[pos.getX()-1][pos.getY()].getMin();
+				int up_max = p_graph[pos.getX()-1][pos.getY()].getMax();
+				int v = graph[pos.getX()][pos.getY()];
+				
+				if(v < up_min)
+					up_min = v;
+				if(v > up_max)
+					up_max = v;
+				
+				pos.setMax(up_max);
+				pos.setMin(up_min);
+				
+				p_graph[pos.getX()][pos.getY()] = pos;
+				subtract[pos.getX()][pos.getY()] =  pos.getMax() - pos.getMin();
+				sub =  pos.getMax() - pos.getMin();
+			}
+			
+			if(pos.getY()!=1)//좌
+			{
+				int left_min = p_graph[pos.getX()][pos.getY()-1].getMin();
+				int left_max = p_graph[pos.getX()][pos.getY()-1].getMax();
+				int v = graph[pos.getX()][pos.getY()];
+				
+				if(v < left_min)
+					left_min = v;
+				if(v > left_max)
+					left_max = v;
+				
+				if(sub > left_max - left_min)
+				{
+					pos.setMax(left_max);
+					pos.setMin(left_min);
+				}
+				
+				p_graph[pos.getX()][pos.getY()] = pos;
+				subtract[pos.getX()][pos.getY()] = pos.getMax() - pos.getMin();
+			}
+			
+			if(pos.getX()!=n)//하
+			{
+				if(!visited[pos.getX()+1][pos.getY()])
+				{
+					q.offer(new Position(pos.getX()+1,pos.getY()));
+					visited[pos.getX()+1][pos.getY()] = true;
+				}
+			}
+			
+			if(pos.getY()!=n)//우
+			{
+				if(!visited[pos.getX()][pos.getY()+1])
+				{
+					q.offer(new Position(pos.getX(),pos.getY()+1));
+					visited[pos.getX()][pos.getY()+1] = true;
+				}
+			}
+			
+			
+		}
+		
+		for(int i=1;i<=n;i++)
+		{
+			for(int j=1;j<=n;j++)
+				System.out.print(subtract[i][j]+" ");
+			System.out.println();
+		}
+		System.out.println();
+		for(int i=1;i<=n ;i++)
+		{
+			for(int j=1;j<=n;j++)
+			{
+				System.out.print("("+p_graph[i][j].getMin()+", "+p_graph[i][j].getMax()+")");
+			}
+			System.out.println();
+		}
+		
+		System.out.println(subtract[n][n]);
 	}
 	
 	static void bj3197() throws Exception//백조
