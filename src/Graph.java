@@ -11,41 +11,11 @@ public class Graph {
 	public Graph() {
 		// TODO Auto-generated constructor stub
 	}
-	static Queue<Integer> q = new LinkedList<>();
-	static int[][] graph = {
-			   //0,1,2,3,4,5,6,7,8,9,10,11,12,13
-				{0,0,0,0,0,0,0,0,0,0, 0, 0, 0, 0},//0
-				{0,0,1,1,0,0,0,0,0,0, 0, 0, 0, 0},//1
-				{0,1,0,0,1,1,1,0,0,0, 0, 0, 0, 0},//2
-				{0,1,0,0,0,0,0,1,1,0, 0, 0, 0, 0},//3
-				{0,0,1,0,0,0,0,0,0,1, 0, 0, 0, 0},//4
-				{0,0,1,0,0,0,0,0,0,0, 0, 0, 0, 0},//5
-				{0,0,1,0,0,0,0,0,0,0, 1, 1, 0, 0},//6
-				{0,0,0,1,0,0,0,0,0,0, 0, 0, 0, 0},//7
-				{0,0,0,1,0,0,0,0,0,0, 0, 0, 1, 1},//8
-				{0,0,0,0,1,0,0,0,0,0, 0, 0, 0, 0},//9
-				{0,0,0,0,0,0,1,0,0,0, 0, 0, 0, 0},//10
-				{0,0,0,0,0,0,1,0,0,0, 0, 0, 0, 0},//11
-				{0,0,0,0,0,0,0,0,1,0, 0, 0, 0, 0},//12
-				{0,0,0,0,0,0,0,0,1,0, 0, 0, 0, 0}//13
-				
-				};
-
-	
-	
-	static boolean visited[] = new boolean[14];
-
-	
-	static int N,M,V;//정점개수,간선개수,시작번호
 	
 	
 	
-	static void initialize()
-	{
-		for(int i=0;i<visited.length;i++)
-			visited[i] = false;
-
-	}
+	
+	
 	
 	static class Position{
 		private int x,y,z,distance;
@@ -131,6 +101,120 @@ public class Graph {
 		}
 		
 	}
+
+	static boolean isMeet1987[];
+	static char graph1987[][];
+	
+	static void bj1987() throws Exception
+	{
+		InputStreamReader is = new InputStreamReader(System.in);
+		BufferedReader b = new BufferedReader(is);
+		
+		StringTokenizer strtok = new StringTokenizer(b.readLine()," ");
+		int R = Integer.parseInt(strtok.nextToken());
+		int C = Integer.parseInt(strtok.nextToken());
+		
+		graph1987 = new char[R+1][C+1];
+
+		isMeet1987 = new boolean[26];//만난적 있는 알파벳인지
+		
+		for(int i=0;i<26;i++)
+			isMeet1987[i] = false;
+		
+		for(int i=0;i<R;i++)
+		{
+			String str = b.readLine();
+			for(int j=0;j<C;j++)
+			{
+				graph1987[i+1][j+1] = str.charAt(j);
+
+			}
+			
+		}
+		
+		int result;
+		result = A_bj1987(1, 1, R,C, 0,isMeet1987);
+	
+		System.out.println(result);
+		
+	}
+	
+	static int A_bj1987(int x,int y,int R,int C,int count,boolean isMeet[])
+	{
+		isMeet[graph1987[x][y]-65] = true;
+		count++;
+		int result=0;
+		
+		int max = count;
+		
+		if(x!=1)//상
+		{
+			if(!isMeet[graph1987[x-1][y] - 65])
+			{
+				result = A_bj1987(x-1, y,count,R,C,isMeet);
+				
+				if(max < result)
+				{	
+					max = result;
+				}
+			}
+		}
+		if(x!=R)//하
+		{
+			if(!isMeet[graph1987[x+1][y] - 65])
+			{
+				result = A_bj1987(x+1, y,count,R,C,isMeet);
+				
+				
+				if(max < result)
+				{	
+					max = result;
+				}
+			}
+		}
+		if(y!=1)//좌
+		{
+			if(!isMeet[graph1987[x][y-1] - 65])
+			{
+				result = A_bj1987(x, y-1,count,R,C,isMeet);
+				
+				
+				if(max < result)
+				{	
+					max = result;
+				}
+			}
+		}
+		if(y!=C)//우
+		{
+			if(!isMeet[graph1987[x][y+1] - 65])
+			{
+				result = A_bj1987(x, y+1,count,R,C,isMeet);
+				
+				
+				if(max < result)
+				{	
+					max = result;
+				}	
+			}
+		}
+		
+		/*
+		for(int i=x;i<=R;i++)
+		{
+			for(int j=y;j<=C;j++)
+			{
+				if(!isMeet1987[graph1987[i][j] - 65] && !visited1987[i][j])
+				{
+					A_bj1987(i, j, R,C);
+				}
+			}
+		}
+		*/
+		return max;
+	}
+	
+	
 	
 	static void bj1981() throws Exception
 	{
@@ -1768,7 +1852,7 @@ public class Graph {
 		
 	}
 	
-	static void bj1260() throws Exception
+/*	static void bj1260() throws Exception
 	{
 		InputStreamReader k = new InputStreamReader(System.in);
 		BufferedReader b = new BufferedReader(k);
@@ -1855,6 +1939,6 @@ public class Graph {
 		}
 	}
 	
-	
+	*/
 
 }

@@ -18,19 +18,11 @@ public class Main {
 	
 	public static void main(String[] args) {
 		
-		//DynamicProgramming dp = new DynamicProgramming();
-		try
-		{
-	//		dp.bj2618();
-		}
-		catch(Exception e)
-		{
-			
-		}
+		
 		Graph graph = new Graph();
 		try {
 			
-			graph.bj1981();
+			graph.bj1987();
 		}
 		catch(Exception e)
 		{
