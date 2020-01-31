@@ -101,8 +101,108 @@ public class Graph {
 		}
 		
 	}
+	
+	static void bj1389() throws Exception
+	{
+		
+	}
 
-	static boolean isMeet1987[];
+	static char graph10026[][], graph10026_2[][] ;
+	static boolean visited10026[][] ;
+	static void bj10026() throws Exception
+	{
+		InputStreamReader is = new InputStreamReader(System.in);
+		BufferedReader b = new BufferedReader(is);
+		
+		int N = Integer.parseInt(b.readLine());
+		
+		graph10026 = new char[N][N];
+		graph10026_2 = new char[N][N];
+		visited10026 = new boolean[N][N];
+		
+		for(int i=0;i<N;i++)
+		{
+			String str = b.readLine();
+			for(int j=0;j<N;j++)
+			{
+				graph10026[i][j] = str.charAt(j);
+				if(str.charAt(j)=='G')
+					graph10026_2[i][j] = 'R';
+				else
+					graph10026_2[i][j] = str.charAt(j);
+				visited10026[i][j] = false;
+			}
+		}
+		
+		int Blind=0, NoBlind=0;
+		
+		for(int i=0;i<N;i++)
+		{
+			for(int j=0;j<N;j++)
+			{
+				if(!visited10026[i][j])
+				{
+					NoBlind++;
+					A_bj10026(i, j, graph10026,N);//색맹아닌 사람
+				}
+			}
+		}
+		
+		for(int i=0;i<N;i++)
+			for(int j=0;j<N;j++)
+				visited10026[i][j]=false;
+		
+		for(int i=0;i<N;i++)
+		{
+			for(int j=0;j<N;j++)
+			{
+				if(!visited10026[i][j])
+				{
+					Blind++;
+					A_bj10026(i, j, graph10026_2, N);//색맹인 사람
+				}
+			}
+		}
+	
+		System.out.println(NoBlind+" "+Blind);
+	}
+	
+	static void A_bj10026(int x, int y,char graph[][],int N) 
+	{
+		visited10026[x][y] = true;
+		char color = graph[x][y];
+		
+		if(x!=0)//상
+		{
+			if(graph[x-1][y] == color && !visited10026[x-1][y])
+			{
+				A_bj10026(x-1, y, graph, N);
+			}
+		}
+		if(x!=N-1)//하
+		{
+			if(graph[x+1][y] == color && !visited10026[x+1][y])
+			{
+				A_bj10026(x+1, y, graph, N);
+			}
+		}
+		if(y!=0)//좌
+		{
+			if(graph[x][y-1] == color && !visited10026[x][y-1])
+			{
+				A_bj10026(x, y-1, graph, N);
+			}
+		}
+		if(y!=N-1)//우
+		{
+			if(graph[x][y+1] == color && !visited10026[x][y+1])
+			{
+				A_bj10026(x, y+1, graph, N);
+			}
+		}
+		
+	}
+
 	static char graph1987[][];
 	
 	static void bj1987() throws Exception
@@ -113,13 +213,12 @@ public class Graph {
 		StringTokenizer strtok = new StringTokenizer(b.readLine()," ");
 		int R = Integer.parseInt(strtok.nextToken());
 		int C = Integer.parseInt(strtok.nextToken());
-		
 		graph1987 = new char[R+1][C+1];
 
-		isMeet1987 = new boolean[26];//만난적 있는 알파벳인지
+		boolean[] isMeet = new boolean[26];//만난적 있는 알파벳인지
 		
 		for(int i=0;i<26;i++)
-			isMeet1987[i] = false;
+			isMeet[i] = false;
 		
 		for(int i=0;i<R;i++)
 		{
@@ -133,8 +232,7 @@ public class Graph {
 		}
 		
 		int result;
-		result = A_bj1987(1, 1, R,C, 0,isMeet1987);
-	
+		result = A_bj1987(1, 1, R,C, 0,isMeet);
 		System.out.println(result);
 		
 	}
@@ -144,14 +242,17 @@ public class Graph {
 		isMeet[graph1987[x][y]-65] = true;
 		count++;
 		int result=0;
-		
+
 		int max = count;
 		
 		if(x!=1)//상
 		{
 			if(!isMeet[graph1987[x-1][y] - 65])
 			{
-				result = A_bj1987(x-1, y,count,R,C,isMeet);
+				boolean isMeet2[] = new boolean[26];
+				isMeet2 = (boolean[]) isMeet.clone();
+				
+				result = A_bj1987(x-1, y,R,C,count,isMeet2);
 				
 				if(max < result)
 				{	
@@ -163,7 +264,10 @@ public class Graph {
 		{
 			if(!isMeet[graph1987[x+1][y] - 65])
 			{
-				result = A_bj1987(x+1, y,count,R,C,isMeet);
+				boolean isMeet2[] = new boolean[26];
+				isMeet2 = (boolean[]) isMeet.clone();
+				
+				result = A_bj1987(x+1, y,R,C,count,isMeet2);
 				
 				
 				if(max < result)
@@ -176,7 +280,10 @@ public class Graph {
 		{
 			if(!isMeet[graph1987[x][y-1] - 65])
 			{
-				result = A_bj1987(x, y-1,count,R,C,isMeet);
+				boolean isMeet2[] = new boolean[26];
+				isMeet2 = (boolean[]) isMeet.clone();
+				
+				result = A_bj1987(x, y-1,R,C,count,isMeet2);
 				
 				
 				if(max < result)
@@ -189,7 +296,10 @@ public class Graph {
 		{
 			if(!isMeet[graph1987[x][y+1] - 65])
 			{
-				result = A_bj1987(x, y+1,count,R,C,isMeet);
+				boolean isMeet2[] = new boolean[26];
+				isMeet2 = (boolean[]) isMeet.clone();
+				
+				result = A_bj1987(x, y+1,R,C,count,isMeet2);
 				
 				
 				if(max < result)
@@ -199,18 +309,7 @@ public class Graph {
 			}
 		}
 		
-		/*
-		for(int i=x;i<=R;i++)
-		{
-			for(int j=y;j<=C;j++)
-			{
-				if(!isMeet1987[graph1987[i][j] - 65] && !visited1987[i][j])
-				{
-					A_bj1987(i, j, R,C);
-				}
-			}
-		}
-		*/
+	
 		return max;
 	}
 	
