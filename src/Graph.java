@@ -104,9 +104,114 @@ public class Graph {
 	
 	static void bj1389() throws Exception
 	{
+		InputStreamReader is = new InputStreamReader(System.in);
+		BufferedReader b = new BufferedReader(is);
 		
+		StringTokenizer strtok = new StringTokenizer(b.readLine()," ");
+		int N = Integer.parseInt(strtok.nextToken());
+		int M = Integer.parseInt(strtok.nextToken());
+		
+		int graph[][] = new int[N+1][N+1];
+		int result[][] = new int[N+1][N+1];//케빈베이컨 결과들
+		boolean visited[] = new boolean[N+1];
+		
+		for(int i=1;i<=N;i++)//초기화
+		{
+			visited[i] = false;
+			for(int j=1;j<=N;j++)
+			{	
+				graph[i][j] = 0;
+				result[i][j] = 0;
+			}
+		}
+		
+		for(int i=0;i<M;i++)
+		{
+			strtok = new StringTokenizer(b.readLine()," ");
+			int x = Integer.parseInt(strtok.nextToken());
+			int y = Integer.parseInt(strtok.nextToken());
+			
+			result[x][y] = 1;
+			result[y][x] = 1;
+			
+			graph[x][y] = 1;
+			graph[y][x] = 1;
+		}
+
+		
+		for(int i=1;i<=N;i++)
+		{
+		
+			for(int j=1;j<=N;j++)
+			{
+				for(int k=1;k<=N;k++)
+				{	
+					if(graph[i][k]!=1)
+						visited[k] = false;
+					else
+						visited[k] = true;
+				}
+				visited[i] = true;
+				if(graph[i][j] == 1)
+				{
+					A_bj1389(i,j, N, graph, visited, 1, result);
+				}
+				
+			}
+			
+		}
+		
+		int min=0;
+		int user=1;
+		for(int i=1;i<=N;i++)
+		{
+			int sum=0;
+			for(int j=1;j<=N;j++)
+			{
+				sum+=result[i][j];
+			}
+			if(i==1)
+			{
+				min=sum;
+			}
+			else
+			{
+				if(min > sum)
+				{
+					min=sum;
+					user=i;
+				}
+			}
+			
+		}
+		System.out.println(user);
+	
 	}
 
+	static void A_bj1389(int start,int user,int N ,int[][] graph,boolean visited[],int count,int[][] result)
+	{
+		boolean[] visited_temp = (boolean[]) visited.clone();
+		if(result[start][user]==0)
+		{
+			result[start][user] = count;
+		}
+		else
+		{
+			if(result[start][user] > count)
+				result[start][user] = count;
+		}
+		
+		for(int i=1;i<=N;i++)
+		{
+			if(graph[user][i] == 1 && !visited_temp[i])
+			{
+				visited_temp[i] = true;
+				A_bj1389(start, i, N, graph, visited_temp, count+1, result);
+			}
+		}
+		
+	}
+	
 	static char graph10026[][], graph10026_2[][] ;
 	static boolean visited10026[][] ;
 	static void bj10026() throws Exception
