@@ -138,33 +138,48 @@ public class Graph {
 		
 		if(x!=0)
 		{
-			if(graph[x-1][y]!=0 && !visited[x-1][y])
+			if(graph[x-1][y]==0 && !visited[x-1][y])
 			{
 				A_bj2573(x-1, y, graph, melt, visited, N, M);
 			}
-			
+			else if(graph[x-1][y]!=0)
+			{
+				
+			}
 		}
 		if(x!=N)
 		{
-			if(graph[x+1][y]!=0 && !visited[x+1][y])
+			if(graph[x+1][y]==0 && !visited[x+1][y])
 			{
 				A_bj2573(x+1, y, graph, melt, visited, N, M);
+			}
+			else if(graph[x+1][y]!=0)
+			{
+				
 			}
 			
 		}
 		if(y!=0)
 		{
-			if(graph[x][y-1]!=0 && !visited[x][y-1])
+			if(graph[x][y-1]==0 && !visited[x][y-1])
 			{
 				A_bj2573(x, y-1, graph, melt, visited, N, M);
+			}
+			else if(graph[x][y-1]!=0)
+			{
+				
 			}
 			
 		}
 		if(y!=M)
 		{
-			if(graph[x][y+1]!=0 && !visited[x][y+1])
+			if(graph[x][y+1]==0 && !visited[x][y+1])
 			{
 				A_bj2573(x, y+1, graph, melt, visited, N, M);
+			}
+			else if(graph[x][y+1]!=0)
+			{
+				
 			}
 			
 		}
