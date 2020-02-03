@@ -102,6 +102,105 @@ public class Graph {
 		
 	}
 	
+	static boolean[] visited1707;
+	static void bj1707() throws Exception
+	{
+		InputStreamReader is = new InputStreamReader(System.in);
+		BufferedReader b = new BufferedReader(is);
+		
+		int K = Integer.parseInt(b.readLine());
+		
+		for(int i=0;i<K;i++)
+		{
+			StringTokenizer strtok = new StringTokenizer(b.readLine()," ");
+			int V = Integer.parseInt(strtok.nextToken());//정점수
+			int E = Integer.parseInt(strtok.nextToken());//간선수
+			
+		//	int graph[][] = new int[V+1][V+1];
+			ArrayList<ArrayList<Integer>> graph = new ArrayList<ArrayList<Integer>>();
+			
+			visited1707 = new boolean[V+1];
+			
+			int set[] = new int [V+1];//각 v가 어느 집합에 속해잇는지 0 = 아무데도 안속해잇음, 1 = 첫번째 집합, 2 = 두번째집합
+			
+			graph.add(new ArrayList<>());
+			for(int j=1;j<=V;j++)//초기화
+			{
+				set[j] = 0;
+				visited1707[j] = false;
+				
+				graph.add(new ArrayList<Integer>());
+				
+			}
+			
+			for(int j=0;j<E;j++)
+			{
+				strtok = new StringTokenizer(b.readLine()," ");
+				int x = Integer.parseInt(strtok.nextToken());
+				int y = Integer.parseInt(strtok.nextToken());
+				
+				graph.get(x).add(y);
+				graph.get(y).add(x);
+				
+			}
+			
+	
+			for(int j=1;j<=V;j++)
+			{
+				if(!visited1707[j])
+				{
+					visited1707[j] = true;
+					set[j] = 1;
+					A_bj1707(j, graph, set);
+				}
+			}
+		
+		
+			boolean result = true;
+			for(int j=1;j<=V;j++)
+			{
+				for(int k=0;k<graph.get(j).size();k++)
+				{
+					if(set[j] == set[graph.get(j).get(k)])
+					{
+						System.out.println("NO");
+						result=false;
+						j = V;
+						k = V;
+						break;
+					}
+				}
+			}
+			if(result)
+				System.out.println("YES");
+			graph = null;
+			visited1707 = null;
+			set = null;
+		}
+	}
+	
+	static void A_bj1707(int v,ArrayList<ArrayList<Integer>> graph, int[] set)
+	{
+	
+		for(int i=0;i<graph.get(v).size();i++)
+		{
+			if(set[v]==1)
+			{
+				set[graph.get(v).get(i)]=2;
+			}
+			else if(set[v]==2)
+			{
+				set[graph.get(v).get(i)]=1;
+			}
+			
+			if(!visited1707[graph.get(v).get(i)])
+			{
+				visited1707[graph.get(v).get(i)] = true;
+				A_bj1707(graph.get(v).get(i), graph, set);
+			}
+		}
+	}
+	
 	static void bj1389() throws Exception
 	{
 		InputStreamReader is = new InputStreamReader(System.in);
