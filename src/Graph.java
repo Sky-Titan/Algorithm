@@ -102,6 +102,74 @@ public class Graph {
 		
 	}
 	
+	static void bj2573() throws Exception
+	{
+		InputStreamReader is = new InputStreamReader(System.in);
+		BufferedReader b = new BufferedReader(is);
+		
+		StringTokenizer strtok = new StringTokenizer(b.readLine()," ");
+		int N = Integer.parseInt(strtok.nextToken());
+		int M = Integer.parseInt(strtok.nextToken());
+		
+		int graph[][] = new int[N][N];
+		int melt[][] = new int[N][N];
+		boolean visited[][] = new boolean[N][N];
+		
+		for(int i=0;i<N;i++)
+		{
+			strtok = new StringTokenizer(b.readLine()," ");
+			for(int j=0;j<M;j++)
+			{
+				visited[i][j] = false;
+				
+				graph[i][j] = Integer.parseInt(strtok.nextToken());
+				if(graph[i][j]!=0)
+					melt[i][j] = graph[i][j] + 1;
+				else
+					melt[i][j] = 0;
+			}
+		}
+		
+	}
+	
+	static void A_bj2573(int x, int y,int[][] graph,int[][] melt,boolean[][] visited,int N,int M)
+	{
+		visited[x][y] = true;
+		
+		if(x!=0)
+		{
+			if(graph[x-1][y]!=0 && !visited[x-1][y])
+			{
+				A_bj2573(x-1, y, graph, melt, visited, N, M);
+			}
+			
+		}
+		if(x!=N)
+		{
+			if(graph[x+1][y]!=0 && !visited[x+1][y])
+			{
+				A_bj2573(x+1, y, graph, melt, visited, N, M);
+			}
+			
+		}
+		if(y!=0)
+		{
+			if(graph[x][y-1]!=0 && !visited[x][y-1])
+			{
+				A_bj2573(x, y-1, graph, melt, visited, N, M);
+			}
+			
+		}
+		if(y!=M)
+		{
+			if(graph[x][y+1]!=0 && !visited[x][y+1])
+			{
+				A_bj2573(x, y+1, graph, melt, visited, N, M);
+			}
+			
+		}
+	}
+	
 	static boolean[] visited1707;
 	static void bj1707() throws Exception
 	{
