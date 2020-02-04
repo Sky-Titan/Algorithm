@@ -102,6 +102,130 @@ public class Graph {
 		
 	}
 	
+	static void bj2416() throws Exception
+	{
+		InputStreamReader is = new InputStreamReader(System.in);
+		BufferedReader b = new BufferedReader(is);
+		
+		int N = Integer.parseInt(b.readLine());
+		int graph[][] = new int[N][N];
+		boolean visited[][] = new boolean[N][N];
+		
+		int[] pos = new int[2];
+		for(int i=0;i<N;i++)
+		{
+			StringTokenizer strtok = new StringTokenizer(b.readLine()," ");
+			for(int j=0;j<N;j++)
+			{
+				graph[i][j] = Integer.parseInt(strtok.nextToken());
+				visited[i][j] = false;
+				
+				if(graph[i][j] != 0)
+				{
+					pos[0] = i;
+					pos[1] = j;
+				}
+					
+			}
+		}
+		
+		int pivot = 1;
+		ArrayList<Integer> bridge = new ArrayList<>();
+		
+		while(true)
+		{
+			int count =0;//다리 길이
+			int result = A_bj2416(pos[0], pos[1], pivot, count, graph, visited, N, pos);
+			
+			if(pivot == 1)
+				pivot = 0;
+			else
+			{
+				bridge.add(result);
+				pivot = 1;
+			}
+		}
+		
+	}
+	
+	static int A_bj2416(int x, int y,int pivot, int count, int[][] graph, boolean[][] visited,int N,int[] pos)
+	{
+		visited[x][y] = true;
+		boolean finish = true;
+		count++;
+		
+		ArrayList<Integer> result = new ArrayList<>();
+		
+		if(x!=0)
+		{
+			if(graph[x-1][y] == pivot && !visited[x-1][y])
+			{
+				result.add(A_bj2416(x-1, y, pivot, count, graph, visited, N, pos));
+				finish = false;
+			}
+			
+		}
+		if(x!=N-1)
+		{
+			if(graph[x+1][y] == pivot && !visited[x+1][y])
+			{
+				result.add(A_bj2416(x+1, y, pivot, count, graph, visited, N, pos));
+				finish = false;
+			}
+		}
+		if(y!=0)
+		{
+			if(graph[x][y-1] == pivot && !visited[x][y-1])
+			{
+				result.add(A_bj2416(x, y-1, pivot, count, graph, visited, N, pos));
+				finish = false;
+			}
+		}
+		if(y!=N-1)
+		{
+			if(graph[x][y+1] == pivot && !visited[x][y+1])
+			{
+				result.add(A_bj2416(x, y+1, pivot, count, graph, visited, N, pos));
+				finish = false;
+			}
+		}
+		
+		if(finish)
+		{
+			if(x != 0 && graph[x-1][y] != pivot)
+			{
+				pos[0] = x-1;
+				pos[1] = y;
+			}
+			else if(x != N-1 && graph[x+1][y] != pivot)
+			{
+				pos[0] = x+1;
+				pos[1] = y;
+			}
+			else if(y != 0 && graph[x][y-1] != pivot)
+			{
+				pos[0] = x;
+				pos[1] = y-1;
+			}
+			else if(y != N-1 && graph[x][y+1] != pivot)
+			{
+				pos[0] = x;
+				pos[1] = y+1;
+			}
+			return count;
+		}
+		else
+		{
+			int min = result.get(0);
+			for(int i=0;i<result.size();i++)
+			{
+				if(min > result.get(i))
+					min = result.get(i);
+			}
+			return min;
+		}
+	}
+	
 	static void bj2573() throws Exception
 	{
 		InputStreamReader is = new InputStreamReader(System.in);
@@ -111,79 +235,126 @@ public class Graph {
 		int N = Integer.parseInt(strtok.nextToken());
 		int M = Integer.parseInt(strtok.nextToken());
 		
-		int graph[][] = new int[N][N];
-		int melt[][] = new int[N][N];
-		boolean visited[][] = new boolean[N][N];
+		int graph[][] = new int[N][M];
+		int melt[][] = new int[N][M];
+		boolean visited[][] = new boolean[N][M];
 		
+		int result[] = new int[2];
 		for(int i=0;i<N;i++)
 		{
 			strtok = new StringTokenizer(b.readLine()," ");
+			
 			for(int j=0;j<M;j++)
 			{
 				visited[i][j] = false;
 				
 				graph[i][j] = Integer.parseInt(strtok.nextToken());
-				if(graph[i][j]!=0)
-					melt[i][j] = graph[i][j] + 1;
-				else
-					melt[i][j] = 0;
+				melt[i][j] = graph[i][j];
+				if(graph[i][j] != 0)
+				{
+					result[0] = i;
+					result[1] = j;
+				}
 			}
+			
 		}
 		
+		int count=0;
+		boolean NoZero=true;
+		
+		while(NoZero)
+		{
+			NoZero=false;
+			A_bj2573(result[0], result[1], graph, melt, visited, N, M, result);
+		
+			count++;
+			for(int i=0;i<N;i++)
+			{	
+				for(int j=0;j<M;j++)
+				{
+					if(graph[i][j] > 0 )
+					{
+						NoZero = true;
+						if(!visited[i][j])
+						{
+							System.out.println(count-1);
+							return;
+						}
+					}
+					
+					graph[i][j] = melt[i][j];
+					visited[i][j] = false;
+				}
+			}
+		}
+		System.out.println(0);
 	}
 	
-	static void A_bj2573(int x, int y,int[][] graph,int[][] melt,boolean[][] visited,int N,int M)
+	static void A_bj2573(int x, int y,int[][] graph,int[][] melt,boolean[][] visited,int N,int M,int result[])
 	{
 		visited[x][y] = true;
 		
+		int count=0;//현재 물
+		
 		if(x!=0)
 		{
-			if(graph[x-1][y]==0 && !visited[x-1][y])
+			if(graph[x-1][y] != 0 && !visited[x-1][y])
 			{
-				A_bj2573(x-1, y, graph, melt, visited, N, M);
+				A_bj2573(x-1, y, graph, melt, visited, N, M,result);
 			}
-			else if(graph[x-1][y]!=0)
+			else if(graph[x-1][y] == 0)
 			{
-				
+				count++;
 			}
 		}
-		if(x!=N)
+		if(x!=N-1)
 		{
-			if(graph[x+1][y]==0 && !visited[x+1][y])
+			if(graph[x+1][y] != 0 && !visited[x+1][y])
 			{
-				A_bj2573(x+1, y, graph, melt, visited, N, M);
+				A_bj2573(x+1, y, graph, melt, visited, N, M,result);
 			}
-			else if(graph[x+1][y]!=0)
+			else if(graph[x+1][y] == 0)
 			{
-				
+				count++;
 			}
 			
 		}
 		if(y!=0)
 		{
-			if(graph[x][y-1]==0 && !visited[x][y-1])
+			if(graph[x][y-1] != 0 && !visited[x][y-1])
 			{
-				A_bj2573(x, y-1, graph, melt, visited, N, M);
+				A_bj2573(x, y-1, graph, melt, visited, N, M,result);
 			}
-			else if(graph[x][y-1]!=0)
+			else if(graph[x][y-1] == 0)
 			{
-				
+				count++;
 			}
 			
 		}
-		if(y!=M)
+		if(y!=M-1)
 		{
-			if(graph[x][y+1]==0 && !visited[x][y+1])
+			if(graph[x][y+1] != 0 && !visited[x][y+1])
 			{
-				A_bj2573(x, y+1, graph, melt, visited, N, M);
+				A_bj2573(x, y+1, graph, melt, visited, N, M,result);
 			}
-			else if(graph[x][y+1]!=0)
+			else if(graph[x][y+1] == 0)
 			{
-				
+				count++;
 			}
 			
+		}
+		
+		melt[x][y] -= count;
+		if(melt[x][y] < 0)
+			melt[x][y] = 0;
+		
+		if(melt[x][y] > 0)
+		{
+			result[0] = x;
+			result[1] = y;
 		}
 	}
+		
 	
 	static boolean[] visited1707;
 	static void bj1707() throws Exception
