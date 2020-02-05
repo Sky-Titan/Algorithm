@@ -102,6 +102,94 @@ public class Graph {
 		
 	}
 	
+	static void bj9446() throws Exception
+	{
+		InputStreamReader is = new InputStreamReader(System.in);
+		BufferedReader b = new BufferedReader(is);
+		
+		int T = Integer.parseInt(b.readLine());
+		
+		for(int t=0;t<T;t++)
+		{
+			int n = Integer.parseInt(b.readLine());
+			int choices;
+			
+			StringTokenizer strtok = new StringTokenizer(b.readLine()," ");
+			
+			ArrayList<ArrayList<Integer>> graph = new ArrayList<>();
+			boolean visited[] = new boolean[n+1];
+			
+			for(int i=0;i<=n;i++)
+			{	
+				graph.add(new ArrayList<>());
+				visited[i] = false;
+			}
+			
+			for(int i=1;i<=n;i++)
+			{
+				choices = Integer.parseInt(strtok.nextToken());
+				graph.get(i).add(choices);
+			}
+			
+			ArrayList<Integer> team = new ArrayList<>(); //팀에 속해있는 학생들 (cycle에 속해있는 노드들)
+			
+			for(int i=1;i<=n;i++)
+			{
+				if(!visited[i])
+				{
+					//System.out.println("탐색 : "+i);
+					//visited[i] = true;
+					ArrayList<Integer> temp = new ArrayList<>();
+					A_bj9446(i, team, temp, visited, graph, n);
+					
+				}
+			}
+			
+			//for(int i=0;i<team.size();i++)
+				//System.out.println(team.get(i));
+			
+			System.out.println(n-team.size());
+			
+			
+		}
+	}
+	
+	static void A_bj9446(int s, ArrayList<Integer> team, ArrayList<Integer> temp,boolean[] visited, ArrayList<ArrayList<Integer>> graph, int n) 
+	{
+		//visited[s] = true;
+		temp.add(s);
+		
+		for(int i=0;i<graph.get(s).size();i++)
+		{
+			if(visited[graph.get(s).get(i)])//이미 한번 탐색한 곳은 더이상 탐색 x
+			{
+				return;
+			}
+			else if(!temp.contains(graph.get(s).get(i)) && !visited[graph.get(s).get(i)])
+			{
+				A_bj9446(graph.get(s).get(i), team, temp, visited, graph, n);
+			}
+			else if(temp.contains(graph.get(s).get(i)) && !visited[graph.get(s).get(i)])//사이클 성립 : graph.get(s).get(i) = 시작점
+			{
+				boolean add = false;
+				for(int j=0;j<temp.size();j++)
+				{
+					visited[temp.get(j)] = true;
+					if(temp.get(j) == graph.get(s).get(i))//시작점 찾으면 추가
+					{
+						add = true;
+					}
+					if(add)
+					{
+						
+						team.add(temp.get(j));
+					}
+				}
+				return;
+			}
+		}
+	}
+	
 	static void bj2416() throws Exception
 	{
 		InputStreamReader is = new InputStreamReader(System.in);
