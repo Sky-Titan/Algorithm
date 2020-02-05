@@ -111,120 +111,253 @@ public class Graph {
 		int graph[][] = new int[N][N];
 		boolean visited[][] = new boolean[N][N];
 		
-		int[] pos = new int[2];
+		Queue<Position> q = new LinkedList<>();
+		Queue<Position> q2 = new LinkedList<>();
+		
 		for(int i=0;i<N;i++)
 		{
 			StringTokenizer strtok = new StringTokenizer(b.readLine()," ");
 			for(int j=0;j<N;j++)
 			{
 				graph[i][j] = Integer.parseInt(strtok.nextToken());
-				visited[i][j] = false;
-				
-				if(graph[i][j] != 0)
+				if(graph[i][j] ==1 && q.isEmpty())
 				{
-					pos[0] = i;
-					pos[1] = j;
+					q.offer(new Position(i,j));// bfs 탐색을 시작할 섬의 첫 위치
+					visited[i][j] = true;
 				}
+				else
+				{
+					visited[i][j] = false;
 					
+				}
 			}
 		}
 		
-		int pivot = 1;
-		ArrayList<Integer> bridge = new ArrayList<>();
 		
-		while(true)
-		{
-			int count =0;//다리 길이
-			int result = A_bj2416(pos[0], pos[1], pivot, count, graph, visited, N, pos);
-			
-			if(pivot == 1)
-				pivot = 0;
-			else
+		ArrayList<Integer> bridge = new ArrayList<>();//섬 간의 거리들 저장
+		
+		while(!q.isEmpty())
+		{			
+			//1번 bfs	: 섬 탐색 -> visited true처리 및 섬 끝자락 부분의 바다들 큐에 추가
+			while(!q.isEmpty())
 			{
-				bridge.add(result);
-				pivot = 1;
+				Position pos = q.poll();
+				int x = pos.getX();
+				int y = pos.getY();
+						
+				if(x!=0)
+				{
+					if(graph[x-1][y] == 1 && !visited[x-1][y])//해당 섬일경우
+					{
+						Position p2 = new Position(x-1,y);
+						visited[x-1][y] = true;
+						q.add(p2);
+					}
+					else if(graph[x-1][y] == 0 && !visited[x-1][y])//바다일경우
+					{
+						Position p2 = new Position(x-1,y);
+						p2.distance = 1;
+						visited[x-1][y] = true;
+						q2.add(p2);
+					}
+				}
+				if(x!=N-1)
+				{
+					if(graph[x+1][y] == 1 && !visited[x+1][y])//해당 섬일경우
+					{
+						Position p2 = new Position(x+1,y);
+						visited[x+1][y] = true;
+						q.add(p2);
+					}
+					else if(graph[x+1][y] == 0 && !visited[x+1][y])//바다일경우
+					{
+						Position p2 = new Position(x+1,y);
+						p2.distance = 1;
+						visited[x+1][y] = true;
+						q2.add(p2);
+					}
+				}
+				if(y!=0)
+				{
+					if(graph[x][y-1] == 1 && !visited[x][y-1])//해당 섬일경우
+					{
+						Position p2 = new Position(x,y-1);
+						visited[x][y-1] = true;
+						q.add(p2);
+					}
+					else if(graph[x][y-1] == 0 && !visited[x][y-1])//바다일경우
+					{
+						Position p2 = new Position(x,y-1);
+						p2.distance = 1;
+						visited[x][y-1] = true;
+						q2.add(p2);
+					}
+				}
+				if(y!=N-1)
+				{
+					if(graph[x][y+1] == 1 && !visited[x][y+1])//해당 섬일경우
+					{
+						Position p2 = new Position(x,y+1);
+						visited[x][y+1] = true;
+						q.add(p2);
+					}
+					else if(graph[x][y+1] == 0 && !visited[x][y+1])//바다일경우
+					{
+						Position p2 = new Position(x,y+1);
+						p2.distance = 1;
+						visited[x][y+1] = true;
+						q2.add(p2);
+					}
+				}
+			}
+			q.addAll(q2);
+			q2.clear();
+				
+			//2번 bfs : 다른 섬까지의 거리계산
+			while(!q.isEmpty())
+			{
+				Position pos = q.poll();
+				int x = pos.getX();
+				int y = pos.getY();
+						
+				if(x!=0)
+				{
+					if(graph[x-1][y] == 1 && !visited[x-1][y])//다른 섬일경우
+					{
+						bridge.add(pos.distance);
+						if(q2.isEmpty())
+						{
+							q2.offer(new Position(x-1,y));
+							visited[x-1][y] = true;
+						}
+					}
+					else if(graph[x-1][y] == 0 && !visited[x-1][y])//바다일경우
+					{
+						Position p2 = new Position(x-1,y);
+						p2.distance = pos.distance+1;
+						visited[x-1][y] = true;
+						q.add(p2);
+					}
+				}
+				if(x!=N-1)
+				{
+					if(graph[x+1][y] == 1 && !visited[x+1][y])//다른 섬일경우
+					{
+						bridge.add(pos.distance);
+						if(q2.isEmpty())
+						{
+							q2.offer(new Position(x+1,y));
+							visited[x+1][y] = true;
+						}
+					}
+					else if(graph[x+1][y] == 0 && !visited[x+1][y])//바다일경우
+					{
+						Position p2 = new Position(x+1,y);
+						p2.distance = pos.distance+1;
+						visited[x+1][y] = true;
+						q.add(p2);
+					}
+				}
+				if(y!=0)
+				{
+					if(graph[x][y-1] == 1 && !visited[x][y-1])//다른 섬일경우
+					{
+						bridge.add(pos.distance);
+						if(q2.isEmpty())
+						{
+							q2.offer(new Position(x,y-1));
+							visited[x][y-1] = true;
+						}
+					}
+					else if(graph[x][y-1] == 0 && !visited[x][y-1])//바다일경우
+					{
+						Position p2 = new Position(x,y-1);
+						p2.distance = pos.distance+1;
+						visited[x][y-1] = true;
+						q.add(p2);
+					}
+				}
+				if(y!=N-1)
+				{
+					if(graph[x][y+1] == 1 && !visited[x][y+1])//다른 섬일경우
+					{
+						bridge.add(pos.distance);
+						if(q2.isEmpty())
+						{
+							q2.offer(new Position(x,y+1));
+							visited[x][y+1] = true;
+						}
+					}
+					else if(graph[x][y+1] == 0 && !visited[x][y+1])//바다일경우
+					{
+						Position p2 = new Position(x,y+1);
+						p2.distance = pos.distance+1;
+						visited[x][y+1] = true;
+						q.add(p2);
+					}
+				}
+			}
+			
+			q.addAll(q2);
+			q2.clear();
+					
+			if(!q.isEmpty())
+			{
+				for(int x=0;x<N;x++)
+				for(int y=0;y<N;y++)
+				{
+					if(graph[x][y]==0)
+						visited[x][y] = false;
+				}
 			}
 		}
 		
+		int min = bridge.get(0);
+		
+		for(int i=0;i<bridge.size();i++)
+		{
+			if(min > bridge.get(i))
+				min = bridge.get(i);
+		}
+		System.out.println(min);
 	}
 	
-	static int A_bj2416(int x, int y,int pivot, int count, int[][] graph, boolean[][] visited,int N,int[] pos)
+	static void A_bj2416(int x, int y, int pivot, int[][] graph, boolean[][] visited, int N, int island_num)
 	{
 		visited[x][y] = true;
-		boolean finish = true;
-		count++;
-		
-		ArrayList<Integer> result = new ArrayList<>();
-		
+		if(pivot==1)
+			graph[x][y] = island_num;
+
 		if(x!=0)
 		{
 			if(graph[x-1][y] == pivot && !visited[x-1][y])
 			{
-				result.add(A_bj2416(x-1, y, pivot, count, graph, visited, N, pos));
-				finish = false;
+				A_bj2416(x-1, y, pivot, graph, visited, N, island_num);
 			}
-			
 		}
 		if(x!=N-1)
 		{
 			if(graph[x+1][y] == pivot && !visited[x+1][y])
 			{
-				result.add(A_bj2416(x+1, y, pivot, count, graph, visited, N, pos));
-				finish = false;
+				A_bj2416(x+1, y, pivot, graph, visited, N, island_num);
 			}
 		}
 		if(y!=0)
 		{
 			if(graph[x][y-1] == pivot && !visited[x][y-1])
 			{
-				result.add(A_bj2416(x, y-1, pivot, count, graph, visited, N, pos));
-				finish = false;
+				A_bj2416(x, y-1, pivot, graph, visited, N, island_num);
 			}
 		}
 		if(y!=N-1)
 		{
 			if(graph[x][y+1] == pivot && !visited[x][y+1])
 			{
-				result.add(A_bj2416(x, y+1, pivot, count, graph, visited, N, pos));
-				finish = false;
+				A_bj2416(x, y+1, pivot, graph, visited, N, island_num);
 			}
-		}
-		
-		if(finish)
-		{
-			if(x != 0 && graph[x-1][y] != pivot)
-			{
-				pos[0] = x-1;
-				pos[1] = y;
-			}
-			else if(x != N-1 && graph[x+1][y] != pivot)
-			{
-				pos[0] = x+1;
-				pos[1] = y;
-			}
-			else if(y != 0 && graph[x][y-1] != pivot)
-			{
-				pos[0] = x;
-				pos[1] = y-1;
-			}
-			else if(y != N-1 && graph[x][y+1] != pivot)
-			{
-				pos[0] = x;
-				pos[1] = y+1;
-			}
-			return count;
-		}
-		else
-		{
-			int min = result.get(0);
-			for(int i=0;i<result.size();i++)
-			{
-				if(min > result.get(i))
-					min = result.get(i);
-			}
-			return min;
 		}
 	}
+	
 	
 	static void bj2573() throws Exception
 	{
