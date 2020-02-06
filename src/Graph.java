@@ -108,86 +108,69 @@ public class Graph {
 		BufferedReader b = new BufferedReader(is);
 		
 		int T = Integer.parseInt(b.readLine());
-		
+
 		for(int t=0;t<T;t++)
 		{
 			int n = Integer.parseInt(b.readLine());
-			int choices;
 			
-			StringTokenizer strtok = new StringTokenizer(b.readLine()," ");
-			
-			ArrayList<ArrayList<Integer>> graph = new ArrayList<>();
+			ArrayList<ArrayList<Integer>> graph = new ArrayList<ArrayList<Integer>>();
 			boolean visited[] = new boolean[n+1];
+			boolean finished[] = new boolean[n+1];
 			
 			for(int i=0;i<=n;i++)
-			{	
-				graph.add(new ArrayList<>());
+			{
 				visited[i] = false;
+				finished[i] = false;
+				graph.add(new ArrayList<Integer>());
 			}
 			
+			StringTokenizer strtok = new StringTokenizer(b.readLine()," ");
 			for(int i=1;i<=n;i++)
 			{
-				choices = Integer.parseInt(strtok.nextToken());
-				graph.get(i).add(choices);
+				graph.get(i).add(Integer.parseInt(strtok.nextToken()));
 			}
 			
-			ArrayList<Integer> team = new ArrayList<>(); //팀에 속해있는 학생들 (cycle에 속해있는 노드들)
-			
+			int[] team = new int[1];
+			team[0] = 0;
 			for(int i=1;i<=n;i++)
 			{
 				if(!visited[i])
 				{
-					//System.out.println("탐색 : "+i);
-					//visited[i] = true;
-					ArrayList<Integer> temp = new ArrayList<>();
-					A_bj9446(i, team, temp, visited, graph, n);
-					
+					Queue<Integer> cycle = new LinkedList<>();
+					int cnt = 0;
+					A_bj9446(i, visited, graph, team ,cycle, cnt,finished);
 				}
 			}
-			
-			//for(int i=0;i<team.size();i++)
-				//System.out.println(team.get(i));
-			
-			System.out.println(n-team.size());
-			
-			
+			System.out.println(n-team[0]);
 		}
+	
 	}
 	
-	static void A_bj9446(int s, ArrayList<Integer> team, ArrayList<Integer> temp,boolean[] visited, ArrayList<ArrayList<Integer>> graph, int n) 
+	static void A_bj9446(int s, boolean visited[], ArrayList<ArrayList<Integer>> graph, int[] team ,Queue<Integer> cycle,int cnt,boolean[] finished) 
 	{
-		//visited[s] = true;
-		temp.add(s);
-		
+		visited[s] = true;
+		cycle.offer(s);
+		cnt++;
 		for(int i=0;i<graph.get(s).size();i++)
 		{
-			if(visited[graph.get(s).get(i)])//이미 한번 탐색한 곳은 더이상 탐색 x
+			if(!visited[graph.get(s).get(i)]) // 방문 x -> 계속 탐색
 			{
-				return;
+				A_bj9446(graph.get(s).get(i), visited, graph, team, cycle,cnt, finished);
 			}
-			else if(!temp.contains(graph.get(s).get(i)) && !visited[graph.get(s).get(i)])
+			else//방문 o -> 1. cycle 있음 2. cycle 없음(이미탐색완료)
 			{
-				A_bj9446(graph.get(s).get(i), team, temp, visited, graph, n);
-			}
-			else if(temp.contains(graph.get(s).get(i)) && !visited[graph.get(s).get(i)])//사이클 성립 : graph.get(s).get(i) = 시작점
-			{
-				boolean add = false;
-				for(int j=0;j<temp.size();j++)
+				if(!finished[graph.get(s).get(i)])
 				{
-					visited[temp.get(j)] = true;
-					if(temp.get(j) == graph.get(s).get(i))//시작점 찾으면 추가
+					team[0]++;
+					for(int j=graph.get(s).get(i);j != s; j=graph.get(j).get(0))
 					{
-						add = true;
-					}
-					if(add)
-					{
-						
-						team.add(temp.get(j));
+						team[0]++;
 					}
 				}
-				return;
+				
 			}
 		}
+		finished[s] = true;
 	}
 	
 	static void bj2416() throws Exception
