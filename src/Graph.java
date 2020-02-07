@@ -22,6 +22,7 @@ public class Graph {
 		
 		private int max, min;
 		private ArrayList<Integer> path;
+		private ArrayList<Position> graph_path;
 		
 		public Position() {
 			
@@ -100,6 +101,158 @@ public class Graph {
 			this.z = z;
 		}
 		
+	}
+	
+	static void bj11559() throws Exception
+	{
+		InputStreamReader is = new InputStreamReader(System.in);
+		BufferedReader b = new BufferedReader(is);
+		
+		int N = 12,M=6;
+		char graph[][] = new char[N][M];
+		boolean visited[][] = new boolean[N][M];
+		boolean checked[][] = new boolean[N][M];//콤보 처리 된 부분
+		
+		for(int i=0;i<N;i++)
+		{
+			String str = b.readLine();
+			for(int j=0;j<M;j++)
+			{
+				graph[i][j] = str.charAt(j);
+				visited[i][j] = false;
+				checked[i][j] = false;
+			}
+		}
+		
+		int combo = 0;//연쇄 횟수
+		
+		boolean finish = false;//콤보 있는지 여부
+		
+		Queue<Position> q = new LinkedList<>();
+		
+		while(!finish)
+		{
+			for(int i=0;i<N;i++)
+			{
+				for(int j=0;j<M;j++)
+				{
+					if(graph[i][j] != '.' && !visited[i][j])
+					{
+						A_bj11559(i, j, N, M, '.', graph, visited, 0, checked, new ArrayList<>());
+			
+					}
+				}
+			}
+			
+			
+			finish = true;
+			
+			for(int i=0;i<N;i++)
+			{
+				for(int j=0;j<M;j++)
+				{
+					visited[i][j] = false;
+					if(checked[i][j])
+					{
+						goDown(i, j, graph);
+						checked[i][j] = false;
+						finish = false;
+					}
+				}
+			}
+			
+			for(int i=0;i<N;i++)
+			{
+				for(int j=0;j<M;j++)
+				{
+					System.out.print(graph[i][j]);
+				}
+				System.out.println();
+			}
+			System.out.println();
+			
+			if(!finish)//콤보 있는지 확인
+				combo++;
+		}
+		System.out.println(combo);
+		
+	}
+	
+	static void A_bj11559(int x, int y,int N,int M, char before, char graph[][], boolean visited[][], int count, boolean checked[][], ArrayList<Position> temp) 
+	{
+		visited[x][y] = true;
+		char now = graph[x][y];
+		
+		ArrayList<Position> t;
+		
+		
+		if(now == before && temp.size() > 0)//그전 문자와 같다면 count 증가
+		{
+			temp.add(new Position(x,y));
+			t = temp;
+		}
+		else// 새로 시작 단계
+		{
+			t = new ArrayList<>();
+			t.add(new Position(x,y));
+			
+		}
+		//System.out.println(now+" size : "+t.size());
+		if(t.size() == 4)//콤보 성립
+		{
+			for(int i=0;i<t.size();i++)
+			{
+				checked[t.get(i).x][t.get(i).y] = true;
+			}
+			t = new ArrayList<>();
+			count=0;
+			
+		}
+		
+		if(x!=0)
+		{
+			if(graph[x-1][y] == now && !visited[x-1][y])
+			{
+				A_bj11559(x-1, y, N, M, now, graph, visited, count, checked, t);
+				
+			} 
+		}
+		if(x!=N-1)
+		{
+			if(graph[x+1][y] == now && !visited[x+1][y])
+			{
+				A_bj11559(x+1, y, N, M, now, graph, visited, count, checked, t);
+				
+			}
+		}
+		if(y!=0)
+		{
+			if(graph[x][y-1] == now && !visited[x][y-1])
+			{
+				A_bj11559(x, y-1, N, M, now, graph, visited, count, checked, t);
+				
+			}
+		}
+		if(y!=M-1)
+		{
+			if(graph[x][y+1] == now && !visited[x][y+1])
+			{
+				A_bj11559(x, y+1, N, M, now, graph, visited, count, checked, t);
+	
+			}
+		}
+		
+	}
+	
+	static void goDown(int x, int y, char[][] graph)
+	{
+		for(int i=x;i>=0;i--)
+		{
+			if(i==0)
+				graph[i][y] = '.';
+			else
+				graph[i][y] = graph[i-1][y];
+		}
 	}
 	
 	static void bj9446() throws Exception
