@@ -1,5 +1,6 @@
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedList;
@@ -103,6 +104,82 @@ public class Graph {
 		
 	}
 	
+	static void bj1325() throws Exception
+	{
+		InputStreamReader is = new InputStreamReader(System.in);
+		BufferedReader b = new BufferedReader(is);
+		
+		StringTokenizer strtok = new StringTokenizer(b.readLine()," ");
+		int N = Integer.parseInt(strtok.nextToken());
+		int M = Integer.parseInt(strtok.nextToken());
+		
+		ArrayList<ArrayList<Integer>> graph = new ArrayList<>();
+		ArrayList<ArrayList<Integer>> graph_reverse = new ArrayList<>();
+		int time[][] = new int[N+1][3];//(discovery time, finish time,index) 
+		
+		boolean visited[] = new boolean[N+1];
+		int hacked_num[] = new int[N+1];//각 컴퓨터가 해킹 가능한 컴퓨터 수
+		
+		for(int i=0;i<=N;i++)
+		{
+			graph.add(new ArrayList<>());
+			graph_reverse.add(new ArrayList<>());
+			visited[i] = false;
+		}
+		
+		for(int i=0;i<M;i++)
+		{
+			strtok = new StringTokenizer(b.readLine()," ");
+			
+			int A = Integer.parseInt(strtok.nextToken());
+			int B = Integer.parseInt(strtok.nextToken());
+			
+			graph_reverse.get(A).add(B);//역방향 그래프
+			graph.get(B).add(A);//B -> A로 갈 수 있음 (A가 B를 신뢰)
+		}
+		
+		int count = 1;
+		int t[] = {0};//시작 시간, 끝난 시간 쟤는 용도
+		
+		int start[] = new int[N+1], finish[] = new int[N+1], index[] = new int[N+1];
+		
+		for(int i=1;i<=N;i++)
+		{
+			if(!visited[i])
+			{	
+				A_bj1325(i,t, start, finish, index, graph, visited , count);
+			}
+		}
+	
+		//(discover time, finish time) 출력
+		for(int i=1;i<=N;i++)
+		{
+			System.out.println("index : "+time[i][2]+", ("+time[i][0]+", "+time[i][1]+")");
+		}
+		
+	}
+	
+	static void A_bj1325(int now, int[] t,int[] start, int[] finish, int[] index, ArrayList<ArrayList<Integer>> graph, boolean[] visited, int count)
+	{
+		visited[now] = true;
+		
+		start[now] = ++t[0];//시작 시간
+		
+	
+		for(int i=0;i<graph.get(now).size();i++)
+		{
+			int next = graph.get(now).get(i);
+			
+			if(!visited[next])
+			{
+				A_bj1325(next, t, start, finish, index, graph, visited, count);
+			}
+			
+		}
+		finish[now] = ++t[0];//끝난시간
+		index[now] = now;
+	}
+	
 	static void bj11559() throws Exception
 	{
 		InputStreamReader is = new InputStreamReader(System.in);
@@ -128,17 +205,15 @@ public class Graph {
 		
 		boolean finish = false;//콤보 있는지 여부
 		
-		Queue<Position> q = new LinkedList<>();
-		
 		while(!finish)
 		{
-			for(int i=0;i<N;i++)
+			for(int i=0;i<N;i++)//상->하
 			{
-				for(int j=0;j<M;j++)
+				for(int j=0;j<M;j++)//좌->우
 				{
 					if(graph[i][j] != '.' && !visited[i][j])
 					{
-						A_bj11559(i, j, N, M, '.', graph, visited, 0, checked, new ArrayList<>());
+						A_bj11559(i, j, N, M, graph[i][j], graph, visited, checked, new ArrayList<>());
 			
 					}
 				}
@@ -161,87 +236,68 @@ public class Graph {
 				}
 			}
 			
-			for(int i=0;i<N;i++)
-			{
-				for(int j=0;j<M;j++)
-				{
-					System.out.print(graph[i][j]);
-				}
-				System.out.println();
-			}
-			System.out.println();
-			
 			if(!finish)//콤보 있는지 확인
 				combo++;
 		}
+		
+		
 		System.out.println(combo);
 		
 	}
 	
-	static void A_bj11559(int x, int y,int N,int M, char before, char graph[][], boolean visited[][], int count, boolean checked[][], ArrayList<Position> temp) 
+	static void A_bj11559(int x, int y,int N,int M, char color, char graph[][], boolean visited[][], boolean checked[][], ArrayList<Position> temp) 
 	{
 		visited[x][y] = true;
 		char now = graph[x][y];
 		
-		ArrayList<Position> t;
+		temp.add(new Position(x,y));//현재 노드 추가
 		
-		
-		if(now == before && temp.size() > 0)//그전 문자와 같다면 count 증가
-		{
-			temp.add(new Position(x,y));
-			t = temp;
-		}
-		else// 새로 시작 단계
-		{
-			t = new ArrayList<>();
-			t.add(new Position(x,y));
-			
-		}
-		//System.out.println(now+" size : "+t.size());
-		if(t.size() == 4)//콤보 성립
-		{
-			for(int i=0;i<t.size();i++)
-			{
-				checked[t.get(i).x][t.get(i).y] = true;
-			}
-			t = new ArrayList<>();
-			count=0;
-			
-		}
 		
 		if(x!=0)
 		{
-			if(graph[x-1][y] == now && !visited[x-1][y])
+			if(graph[x-1][y] == color && !visited[x-1][y])
 			{
-				A_bj11559(x-1, y, N, M, now, graph, visited, count, checked, t);
+
+				A_bj11559(x-1, y, N, M, color, graph, visited, checked, temp);
 				
 			} 
 		}
 		if(x!=N-1)
 		{
-			if(graph[x+1][y] == now && !visited[x+1][y])
+			if(graph[x+1][y] == color && !visited[x+1][y])
 			{
-				A_bj11559(x+1, y, N, M, now, graph, visited, count, checked, t);
+
+				A_bj11559(x+1, y, N, M, color, graph, visited, checked, temp);
 				
 			}
 		}
 		if(y!=0)
 		{
-			if(graph[x][y-1] == now && !visited[x][y-1])
+			if(graph[x][y-1] == color && !visited[x][y-1])
 			{
-				A_bj11559(x, y-1, N, M, now, graph, visited, count, checked, t);
+
+				A_bj11559(x, y-1, N, M, color, graph, visited, checked, temp);
 				
 			}
 		}
 		if(y!=M-1)
 		{
-			if(graph[x][y+1] == now && !visited[x][y+1])
+			if(graph[x][y+1] == color && !visited[x][y+1])
 			{
-				A_bj11559(x, y+1, N, M, now, graph, visited, count, checked, t);
+				
+				A_bj11559(x, y+1, N, M, color, graph, visited, checked, temp);
 	
 			}
 		}
 		
+		if(temp.size() >= 4)//콤보 성립
+		{
+			for(int i=0;i<temp.size();i++)
+			{
+				checked[temp.get(i).x][temp.get(i).y] = true;
+			}
+			temp.clear();//초기화
+		}
 	}
 	
 	static void goDown(int x, int y, char[][] graph)

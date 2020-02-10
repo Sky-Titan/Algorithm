@@ -14,11 +14,10 @@ public class Main {
 	
 	public static void main(String[] args) {
 		
-	//	System.out.println(cal_water(7, 2, 2, 1));
 		Graph graph = new Graph();
 		try {
 			
-			graph.bj11559();
+			graph.bj1325();
 		}
 		catch(Exception e)
 		{
