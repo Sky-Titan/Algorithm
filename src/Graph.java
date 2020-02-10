@@ -147,19 +147,77 @@ public class Graph {
 		{
 			if(!visited[i])
 			{	
-				A_bj1325(i,t, start, finish, index, graph, visited , count);
+				A_bj1325(i,t, start, finish, index, graph, visited);
 			}
 		}
 	
 		//(discover time, finish time) 출력
-		for(int i=1;i<=N;i++)
+	//	for(int i=1;i<=N;i++)
+	//	{
+	//		System.out.println("index : "+time[i][2]+", ("+time[i][0]+", "+time[i][1]+")");
+	//	}
+		
+		
+		//finish time 느린 순서대로 역방향 그래프에서 dfs 탐색을 통해서 강결합 컴포넌트들 분리
+		for(int i=0;i<=N;i++)
+			visited[i] = false;//초기화
+		
+		ArrayList<ArrayList<Integer>> component = new ArrayList<ArrayList<Integer>>();//강결합 컴포넌트들
+		for(int i=N*2; i>=1;i--)
 		{
-			System.out.println("index : "+time[i][2]+", ("+time[i][0]+", "+time[i][1]+")");
+			int now = 1;
+			for(int j=1;j<=N;j++)
+			{
+				if(finish[j] == i)//finish time 찾기
+				{
+					now = j;
+					if(!visited[j])
+					{
+						component.add(new ArrayList<Integer>());
+						B_bj1325(now, graph_reverse, component, component.size()-1, visited);
+					}
+					break;
+				}
+			}
 		}
+		
+		ArrayList<ArrayList<Integer>> graph_for_componet = new ArrayList<ArrayList<Integer>>();//컴포넌트사이의 그래프
+		
+		int result[] = new int[component.size()];//컴포넌트들의 해킹가능한 컴퓨터들
+		
+		for(int i=0;i<result.length;i++)
+			result[i] = component.get(i).size();//초기화
+		
+		for(int i=0;i<=visited.length;i++)
+		{
+			visited[i] = false;
+		}
+		
+		for(int i=0;i<component.size();i++)
+		{
+			//visited처리
+			if(!visited[component.get(i).get(0)])
+			{
+				C_bj1325(i, graph, component, result, visited);
+			}
+		}
+		
+		for(int i=0;i<result.length;i++)
+			System.out.println(result[i]);
 		
 	}
 	
-	static void A_bj1325(int now, int[] t,int[] start, int[] finish, int[] index, ArrayList<ArrayList<Integer>> graph, boolean[] visited, int count)
+	static int find_component(int member,  ArrayList<ArrayList<Integer>> component)
+	{
+		for(int i=0;i<component.size();i++)
+		{
+			if(component.get(i).contains(member))//해당 멤버를 포함하는 component값 리턴
+				return i;
+		}
+		return -1;
+	}
+	
+	static void A_bj1325(int now, int[] t,int[] start, int[] finish, int[] index, ArrayList<ArrayList<Integer>> graph, boolean[] visited)//강결합 컴포넌트 분리를 위한 finish time 찾기
 	{
 		visited[now] = true;
 		
@@ -172,12 +230,54 @@ public class Graph {
 			
 			if(!visited[next])
 			{
-				A_bj1325(next, t, start, finish, index, graph, visited, count);
+				A_bj1325(next, t, start, finish, index, graph, visited);
 			}
 			
 		}
 		finish[now] = ++t[0];//끝난시간
 		index[now] = now;
+	}
+	
+	static void B_bj1325(int now, ArrayList<ArrayList<Integer>> graph_reverse, ArrayList<ArrayList<Integer>> component, int c_count,boolean[] visited)//역방향 그래프에서 강결합 컴포넌트 분리
+	{
+		visited[now] = true;
+		component.get(c_count).add(now);
+		
+		for(int i=0;i<graph_reverse.get(now).size();i++)
+		{
+			int next = graph_reverse.get(now).get(i);
+			
+			if(!visited[next])
+			{
+				B_bj1325(next, graph_reverse, component, c_count, visited);
+			}
+		}
+		
+	}
+	
+	static int C_bj1325(int now, ArrayList<ArrayList<Integer>> graph, ArrayList<ArrayList<Integer>> component, int[] result, boolean[] visited)
+	{
+		for(int i=0;i<component.get(now).size();i++)
+		{
+			visited[component.get(now).get(i)] = true;
+		}
+		
+		for(int i=0;i<component.get(now).size();i++)
+		{
+			int member = component.get(now).get(i);
+			for(int j=0;j<graph.get(member).size();j++)
+			{
+				int next = graph.get(member).get(j);
+				if(!visited[next])
+				{
+					int c_index = find_component(next, component);
+					
+					result[now] += C_bj1325(c_index, graph, component, result, visited);
+				}
+			}
+		}
+		
+		return result[now];
 	}
 	
 	static void bj11559() throws Exception
