@@ -181,17 +181,15 @@ public class Graph {
 			}
 		}
 		
-		ArrayList<ArrayList<Integer>> graph_for_componet = new ArrayList<ArrayList<Integer>>();//컴포넌트사이의 그래프
+		
+		//ArrayList<ArrayList<Integer>> graph_for_componet = new ArrayList<ArrayList<Integer>>();//컴포넌트사이의 그래프
 		
 		int result[] = new int[component.size()];//컴포넌트들의 해킹가능한 컴퓨터들
 		
 		for(int i=0;i<result.length;i++)
 			result[i] = component.get(i).size();//초기화
 		
-		for(int i=0;i<=visited.length;i++)
-		{
-			visited[i] = false;
-		}
+		
 		
 		for(int i=0;i<component.size();i++)
 		{
