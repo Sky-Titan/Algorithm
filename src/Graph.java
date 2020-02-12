@@ -104,6 +104,81 @@ public class Graph {
 		
 	}
 	
+	static void bj2668() throws Exception //cycle 문제
+	{
+		InputStreamReader is = new InputStreamReader(System.in);
+		BufferedReader b = new BufferedReader(is);
+		
+		int N = Integer.parseInt(b.readLine());
+		
+		ArrayList<ArrayList<Integer>> graph = new ArrayList<>();
+		boolean visited[] = new boolean[N+1];
+		boolean finish[] = new boolean[N+1];
+		
+		for(int i=0;i<=N;i++)
+		{
+			finish[i] = false;
+			visited[i] = false;
+			graph.add(new ArrayList<>());
+		}
+		
+		for(int i=1;i<=N;i++)//그래프 입력
+		{
+			graph.get(i).add(Integer.parseInt(b.readLine()));
+		}
+		
+		ArrayList<Integer> result = new ArrayList<>();
+		
+		
+		for(int i=1;i<=N;i++)
+		{
+			if(!visited[i])
+			{
+				A_bj2668(i, graph, visited, finish, result);
+				
+				for(int j=0;j<=N;j++)
+				{
+					finish[j] = false;
+				}
+			}
+		}
+		
+		Object[] r = result.toArray();
+		Arrays.sort(r);
+		System.out.println(r.length);
+		for(int i=0;i<r.length;i++)
+			System.out.println((int)r[i]);
+	}
+	
+	static void A_bj2668(int now, ArrayList<ArrayList<Integer>> graph, boolean[] visited, boolean[] finish, ArrayList<Integer> result)
+	{
+		visited[now] = true;
+		finish[now] = true;
+		
+		for(int i=0;i<graph.get(now).size();i++)
+		{
+			int next = graph.get(now).get(i);
+			
+			if(!visited[next])
+			{
+				A_bj2668(next, graph, visited, finish, result);
+			}
+			else//방문한 적이 있는경우 cycle인지 아닌지 구분
+			{
+				if(finish[next])//cycle O
+				{
+					result.add(now);
+					for(int j=next; j!=now; j=graph.get(j).get(0))
+					{
+						if(!result.contains(j))
+							result.add(j);
+					}
+				}
+				
+			}
+		}
+	}
+	
 	static void bj1325() throws Exception
 	{
 		InputStreamReader is = new InputStreamReader(System.in);

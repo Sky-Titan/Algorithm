@@ -17,7 +17,7 @@ public class Main {
 		Graph graph = new Graph();
 		try {
 			
-			graph.bj1325();
+			graph.bj2668();
 		}
 		catch(Exception e)
 		{
