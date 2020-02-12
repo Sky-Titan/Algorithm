@@ -115,10 +115,9 @@ public class Graph {
 		
 		ArrayList<ArrayList<Integer>> graph = new ArrayList<>();
 		ArrayList<ArrayList<Integer>> graph_reverse = new ArrayList<>();
-		int time[][] = new int[N+1][3];//(discovery time, finish time,index) 
 		
 		boolean visited[] = new boolean[N+1];
-		int hacked_num[] = new int[N+1];//각 컴퓨터가 해킹 가능한 컴퓨터 수
+		
 		
 		for(int i=0;i<=N;i++)
 		{
@@ -138,7 +137,6 @@ public class Graph {
 			graph.get(B).add(A);//B -> A로 갈 수 있음 (A가 B를 신뢰)
 		}
 		
-		int count = 1;
 		int t[] = {0};//시작 시간, 끝난 시간 쟤는 용도
 		
 		int start[] = new int[N+1], finish[] = new int[N+1], index[] = new int[N+1];
@@ -151,18 +149,14 @@ public class Graph {
 			}
 		}
 	
-		//(discover time, finish time) 출력
-	//	for(int i=1;i<=N;i++)
-	//	{
-	//		System.out.println("index : "+time[i][2]+", ("+time[i][0]+", "+time[i][1]+")");
-	//	}
 		
 		
-		//finish time 느린 순서대로 역방향 그래프에서 dfs 탐색을 통해서 강결합 컴포넌트들 분리
 		for(int i=0;i<=N;i++)
 			visited[i] = false;//초기화
 		
 		ArrayList<ArrayList<Integer>> component = new ArrayList<ArrayList<Integer>>();//강결합 컴포넌트들
+		
+		//finish time 느린 순서대로 역방향 그래프에서 dfs 탐색을 통해서 강결합 컴포넌트들 분리
 		for(int i=N*2; i>=1;i--)
 		{
 			int now = 1;
@@ -181,27 +175,88 @@ public class Graph {
 			}
 		}
 		
+		ArrayList<ArrayList<Integer>> graph_for_componet = new ArrayList<ArrayList<Integer>>();//컴포넌트사이의 그래프
 		
-		//ArrayList<ArrayList<Integer>> graph_for_componet = new ArrayList<ArrayList<Integer>>();//컴포넌트사이의 그래프
+		for(int i=0;i<component.size();i++)
+			graph_for_componet.add(new ArrayList<>());
 		
-		int result[] = new int[component.size()];//컴포넌트들의 해킹가능한 컴퓨터들
+		//컴포넌트사이의 그래프 만들기
+		for(int i=1;i<=N;i++)
+		{
+			int now_component = find_component(i, component);
 		
-		for(int i=0;i<result.length;i++)
-			result[i] = component.get(i).size();//초기화
+			for(int j=0;j<graph.get(i).size();j++)
+			{
+				int next_component = find_component(graph.get(i).get(j), component);
+
+				if(!graph_for_componet.get(now_component).contains(next_component) && now_component!=next_component)//중복제거
+					graph_for_componet.get(now_component).add(next_component);//그래프에 추가
+			}
+			
+		}
 		
+		ArrayList<ArrayList<Integer>> result = new ArrayList<ArrayList<Integer>>();//각 component가 해킹시킬수 있는 component들의 리스트
 		
+		visited = new boolean[component.size()];
+		
+		for(int i=0;i<visited.length;i++)
+		{
+			result.add(new ArrayList<>());
+			visited[i] = false;
+		}
 		
 		for(int i=0;i<component.size();i++)
 		{
-			//visited처리
-			if(!visited[component.get(i).get(0)])
+			if(!visited[i])
 			{
-				C_bj1325(i, graph, component, result, visited);
+				C_bj1325(i, graph_for_componet, visited, result);
 			}
 		}
 		
-		for(int i=0;i<result.length;i++)
-			System.out.println(result[i]);
+		int[] result_final = new int[result.size()];//각 component가 해킹 시킬수 있는 computer들의 개수 list
+		
+		int max_size = 0;
+		
+		for(int i=0;i<result_final.length;i++)
+		{
+			result_final[i] = component.get(i).size();
+			for(int j=0;j<result.get(i).size();j++)
+			{
+				result_final[i] += component.get(result.get(i).get(j)).size();
+			}
+
+			if(i==0)
+			{
+				max_size = result_final[i];
+			}
+			else
+			{
+				if(max_size < result_final[i])
+				{
+					max_size = result_final[i];
+				}
+			}
+
+		}
+
+		
+		ArrayList<Integer> end = new ArrayList<>();//최종 결과
+
+		for(int i=0;i<result_final.length;i++)
+		{
+			if(max_size == result_final[i]) //최대 개수랑 같으면 해당 component의 멤버들 전부 추가
+			{
+				for(int j=0;j<component.get(i).size();j++)
+					end.add(component.get(i).get(j));
+			}
+		}
+		
+		Object[] list =end.toArray();
+		Arrays.sort(list);
+		
+		for(int i=0;i<list.length;i++)
+			System.out.print((int)list[i] +" ");
+
 		
 	}
 	
@@ -253,29 +308,27 @@ public class Graph {
 		
 	}
 	
-	static int C_bj1325(int now, ArrayList<ArrayList<Integer>> graph, ArrayList<ArrayList<Integer>> component, int[] result, boolean[] visited)
+	static void C_bj1325(int now, ArrayList<ArrayList<Integer>> graph_for_component, boolean[] visited, ArrayList<ArrayList<Integer>> result)
 	{
-		for(int i=0;i<component.get(now).size();i++)
-		{
-			visited[component.get(now).get(i)] = true;
-		}
+		visited[now] = true;
 		
-		for(int i=0;i<component.get(now).size();i++)
+		for(int i=0; i<graph_for_component.get(now).size(); i++)
 		{
-			int member = component.get(now).get(i);
-			for(int j=0;j<graph.get(member).size();j++)
+			int next = graph_for_component.get(now).get(i);
+			if(!visited[next])
 			{
-				int next = graph.get(member).get(j);
-				if(!visited[next])
-				{
-					int c_index = find_component(next, component);
-					
-					result[now] += C_bj1325(c_index, graph, component, result, visited);
-				}
+				C_bj1325(next, graph_for_component, visited, result);
+			}
+			
+			if(!result.get(now).contains(next))
+				result.get(now).add(next);
+			
+			for(int j=0;j<result.get(next).size();j++)
+			{
+				if(!result.get(now).contains(result.get(next).get(j)))
+					result.get(now).add(result.get(next).get(j));
 			}
 		}
-		
-		return result[now];
 	}
 	
 	static void bj11559() throws Exception
