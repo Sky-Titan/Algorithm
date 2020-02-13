@@ -104,7 +104,7 @@ public class Graph {
 		
 	}
 	
-	static void bj1613() throws Exception
+	static void bj1613_2() throws Exception
 	{
 		InputStreamReader is = new InputStreamReader(System.in);
 		BufferedReader b = new BufferedReader(is);
@@ -172,18 +172,98 @@ public class Graph {
 		
 	}
 	
-	static void A_bj1613(int now, ArrayList<ArrayList<Integer>> graph, boolean[] visited, ArrayList<ArrayList<Integer>> result)
+	static void bj1613() throws Exception
+	{
+		InputStreamReader is = new InputStreamReader(System.in);
+		BufferedReader b = new BufferedReader(is);
+		
+		StringTokenizer strtok = new StringTokenizer(b.readLine()," ");
+		int n = Integer.parseInt(strtok.nextToken());//사건개수(정점)
+		int k = Integer.parseInt(strtok.nextToken());//사건관계개수(간선)
+		
+		int[][] graph = new int [n+1][n+1];
+		
+		boolean visited[] = new boolean[n+1];
+		
+		for(int i=0;i<=n;i++)
+		{	
+			for(int j=0;j<=n;j++)
+				graph[i][j] = 0;
+
+			visited[i] = false;
+		}
+		
+		for(int i=0;i<k;i++)
+		{
+			strtok = new StringTokenizer(b.readLine()," ");
+			int x = Integer.parseInt(strtok.nextToken());
+			int y = Integer.parseInt(strtok.nextToken());
+			
+			graph[x][y] = 1;
+		}
+		
+		int s = Integer.parseInt(b.readLine());//관계를 알고싶은 사건쌍의 개수
+		
+		for(int i=1;i<=n;i++)
+		{
+			ArrayList<Integer> temp = new ArrayList<>();
+			if(!visited[i])
+				A_bj1613(i, n,temp, graph, visited);
+		}
+		
+		for(int i=0;i<s;i++)
+		{
+			strtok = new StringTokenizer(b.readLine()," ");
+			int[] list = new int[2];
+			list[0] = Integer.parseInt(strtok.nextToken());
+			list[1] = Integer.parseInt(strtok.nextToken());
+			
+			if(graph[list[0]][list[1]] != 0)//-1
+				System.out.println(-1);
+			else if(graph[list[1]][list[0]] != 0)//1
+				System.out.println(1);
+			else
+				System.out.println(0);
+		}
+	}
+	
+	static void A_bj1613(int now, int n, ArrayList<Integer> temp, int[][] graph, boolean[] visited)
 	{
 		visited[now] = true;
-		result.get(result.size()-1).add(now);
+	
+		temp.add(now);
 		
-		for(int i=0;i<graph.get(now).size();i++)
+		for(int i=1;i<=n;i++)
 		{
-			int next = graph.get(now).get(i);
-			
-			if(!visited[next])
+							
+			if(!visited[i])
 			{
-				A_bj1613(next, graph, visited, result);
+				if(graph[now][i]==1)
+				{	
+					for(int j=0;j<temp.size()-1;j++)
+					{
+						int x = temp.get(j);
+						graph[x][i] = 2;
+					}
+					A_bj1613(i, n, temp, graph, visited);
+				
+				}
+			}
+			else
+			{
+				if(graph[now][i]==1)
+				{
+					for(int j=0;j<temp.size()-1;j++)
+					{
+						int x = temp.get(j);
+						graph[x][i] = 2;
+						for(int k=1;k<=n;k++)
+						{
+							if(graph[i][k]!=0 && graph[x][k] != 1)
+								graph[x][k] = 2;
+						}
+					}
+				}
 			}
 		}
 		
