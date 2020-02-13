@@ -104,6 +104,232 @@ public class Graph {
 		
 	}
 	
+	static void bj1613() throws Exception
+	{
+		InputStreamReader is = new InputStreamReader(System.in);
+		BufferedReader b = new BufferedReader(is);
+		
+		StringTokenizer strtok = new StringTokenizer(b.readLine()," ");
+		int n = Integer.parseInt(strtok.nextToken());//사건개수(정점)
+		int k = Integer.parseInt(strtok.nextToken());//사건관계개수(간선)
+		
+		int graph[][] = new int[n+1][n+1];
+		
+		boolean visited[] = new boolean[n+1];
+		
+		for(int i=1;i<=n;i++)
+		{	
+			for(int j=1;j<=n;j++)
+			{
+				if(i==j)
+					graph[i][j] = 0;
+				else
+					graph[i][j] = 100000;//무한
+			}
+			visited[i] = false;
+		}
+		
+		for(int i=0;i<k;i++)
+		{
+			strtok = new StringTokenizer(b.readLine()," ");
+			int x = Integer.parseInt(strtok.nextToken());
+			int y = Integer.parseInt(strtok.nextToken());
+			
+			graph[x][y] = 1;
+		}
+		
+		//플로이드 와샬 알고리즘
+		for(int l=1;l<=n;l++)
+		{
+			//모든 정점이 l을 거쳐감
+			for(int i=1;i<=n;i++)
+			{
+				for(int j=1;j<=n;j++)
+				{
+					if(graph[i][j] > graph[i][l] + graph[l][j])
+						graph[i][j] = graph[i][l] + graph[l][j];
+				}
+			}
+		}
+		
+		
+		int s = Integer.parseInt(b.readLine());//관계를 알고싶은 사건쌍의 개수
+		
+		for(int i=0;i<s;i++)
+		{
+			strtok = new StringTokenizer(b.readLine()," ");
+			int x = Integer.parseInt(strtok.nextToken());
+			int y = Integer.parseInt(strtok.nextToken());
+			
+			if(graph[x][y] == 100000 && graph[y][x] == 100000)//0
+				System.out.println(0);
+			else if(graph[x][y] != 100000 && graph[y][x] == 100000)//x가 먼저 일어남 : -1
+				System.out.println(-1);
+			else
+				System.out.println(1);
+		}
+		
+		
+	}
+	
+	static void A_bj1613(int now, ArrayList<ArrayList<Integer>> graph, boolean[] visited, ArrayList<ArrayList<Integer>> result)
+	{
+		visited[now] = true;
+		result.get(result.size()-1).add(now);
+		
+		for(int i=0;i<graph.get(now).size();i++)
+		{
+			int next = graph.get(now).get(i);
+			
+			if(!visited[next])
+			{
+				A_bj1613(next, graph, visited, result);
+			}
+		}
+		
+	}
+	
+	static void bj6593() throws Exception
+	{
+		InputStreamReader is = new InputStreamReader(System.in);
+		BufferedReader b = new BufferedReader(is);
+		
+		while(true)
+		{
+			StringTokenizer strtok = new StringTokenizer(b.readLine()," ");
+			
+			int L = Integer.parseInt(strtok.nextToken());//층
+			int R = Integer.parseInt(strtok.nextToken());
+			int C = Integer.parseInt(strtok.nextToken());
+			
+			if(L == 0 && R == 0 && C == 0)
+			{
+				break;
+			}
+			
+			char graph[][][] = new char[L][R][C];
+			boolean visited[][][] = new boolean[L][R][C];
+			
+			Position S = new Position();//시작지점
+			Position E = new Position();//탈출지점
+			
+			for(int i=0;i<L;i++)
+			{
+				for(int j=0;j<R;j++)
+				{
+					String str = b.readLine();
+					for(int k=0;k<C;k++)
+					{
+						graph[i][j][k] = str.charAt(k);
+						visited[i][j][k] = false;
+						if(graph[i][j][k] == 'S')
+						{
+							S.x = i;
+							S.y = j;
+							S.z = k;
+						}
+						else if(graph[i][j][k] == 'E')
+						{
+							E.x = i;
+							E.y = j;
+							E.z = k;
+						}
+					}
+				}
+				b.readLine();
+			}
+			
+			Queue<Position> q = new LinkedList<>();
+			S.distance=0;
+			visited[S.x][S.y][S.z] = true;
+			q.offer(S);
+			
+			boolean isSuccess = false;//탈출여부
+			int minute = 0;//탈출시간
+			while(!q.isEmpty())
+			{
+				Position pos = q.poll();
+				int x = pos.x;
+				int y = pos.y;
+				int z = pos.z;
+				int distance = pos.distance;
+				//System.out.println(x+" "+y+" "+z+" ");
+				if(x == E.x && y == E.y && z == E.z) //탈출성공
+				{
+					isSuccess = true;
+					minute = pos.distance;
+					break;
+				}
+				
+				if(x!=0)
+				{
+					if(graph[x-1][y][z] != '#' && !visited[x-1][y][z])
+					{
+						Position p = new Position(x-1, y, z);
+						p.distance = distance+1;
+						visited[x-1][y][z] = true;
+						q.offer(p);
+					}
+				}
+				if(x!=L-1)
+				{
+					if(graph[x+1][y][z] != '#' && !visited[x+1][y][z])
+					{
+						Position p = new Position(x+1, y, z);
+						p.distance = distance+1;
+						visited[x+1][y][z] = true;
+						q.offer(p);
+					}
+				}
+				if(y!=0)
+				{
+					if(graph[x][y-1][z] != '#' && !visited[x][y-1][z])
+					{
+						Position p = new Position(x, y-1, z);
+						p.distance = distance+1;
+						visited[x][y-1][z] = true;
+						q.offer(p);
+					}
+				}
+				if(y!=R-1)
+				{
+					if(graph[x][y+1][z] != '#' && !visited[x][y+1][z])
+					{
+						Position p = new Position(x, y+1, z);
+						p.distance = distance+1;
+						visited[x][y+1][z] = true;
+						q.offer(p);
+					}
+				}
+				if(z!=0)
+				{
+					if(graph[x][y][z-1] != '#' && !visited[x][y][z-1])
+					{
+						Position p = new Position(x, y, z-1);
+						p.distance = distance+1;
+						visited[x][y][z-1] = true;
+						q.offer(p);
+					}
+				}
+				if(z!=C-1)
+				{
+					if(graph[x][y][z+1] != '#' && !visited[x][y][z+1])
+					{
+						Position p = new Position(x, y, z+1);
+						p.distance = distance+1;
+						visited[x][y][z+1] = true;
+						q.offer(p);
+					}
+				}
+			}
+			
+			if(isSuccess)//탈출성공
+				System.out.println("Escaped in "+minute+" minute(s).");
+			else//탈출실패
+				System.out.println("Trapped!");
+		}
+	}
+	
 	static void bj2668() throws Exception //cycle 문제
 	{
 		InputStreamReader is = new InputStreamReader(System.in);
