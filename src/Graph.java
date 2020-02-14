@@ -28,6 +28,12 @@ public class Graph {
 		public Position() {
 			
 		}
+		
+		public Position(int x)
+		{
+			this.x=x;
+			
+		}
 		public Position(int x, int y)
 		{
 			this.x=x;
@@ -181,14 +187,19 @@ public class Graph {
 		int n = Integer.parseInt(strtok.nextToken());//사건개수(정점)
 		int k = Integer.parseInt(strtok.nextToken());//사건관계개수(간선)
 		
-		int[][] graph = new int [n+1][n+1];
+		ArrayList<ArrayList<Integer>> graph = new ArrayList<>();
+		ArrayList<ArrayList<Integer>> graph_reverse = new ArrayList<>();
+		ArrayList<ArrayList<Integer>> result = new ArrayList<>();
+		
 		
 		boolean visited[] = new boolean[n+1];
 		
 		for(int i=0;i<=n;i++)
 		{	
-			for(int j=0;j<=n;j++)
-				graph[i][j] = 0;
+			graph.add(new ArrayList<>());
+			graph_reverse.add(new ArrayList<>());
+			result.add(new ArrayList<>());
+			
 
 			visited[i] = false;
 		}
@@ -199,17 +210,83 @@ public class Graph {
 			int x = Integer.parseInt(strtok.nextToken());
 			int y = Integer.parseInt(strtok.nextToken());
 			
-			graph[x][y] = 1;
+			graph.get(x).add(y);
+			graph_reverse.get(y).add(x);
+			
+		}
+		Queue<Position> q = new LinkedList<>();
+		
+		for(int i=1;i<=n;i++)
+		{
+			if(graph_reverse.get(i).size()==0)
+			{
+				Position p = new Position(i);
+				p.path = new ArrayList<>();
+				p.path.add(i);
+				q.offer(p);
+				visited[i] = true;
+			}
+				
 		}
 		
 		int s = Integer.parseInt(b.readLine());//관계를 알고싶은 사건쌍의 개수
 		
-		for(int i=1;i<=n;i++)
+		while(!q.isEmpty())
 		{
-			ArrayList<Integer> temp = new ArrayList<>();
-			if(!visited[i])
-				A_bj1613(i, n,temp, graph, visited);
+			Position pos = q.poll();
+			int x = pos.x;
+			
+			for(int i=0;i<graph_reverse.get(x).size();i++)
+			{
+				int former = graph_reverse.get(x).get(i);
+				for(int j=0;j<result.get(former).size();j++)
+				{
+					if(!result.get(x).contains(result.get(former).get(j)))
+							result.get(x).add(result.get(former).get(j));
+				}
+			}
+			
+			for(int i=0;i<graph.get(x).size();i++)
+			{
+				int next = graph.get(x).get(i);
+				
+				for(int j=0;j<result.get(x).size();j++)
+				{
+					if(!result.get(next).contains(result.get(x).get(j)))
+					{
+						result.get(next).add(result.get(x).get(j));
+					}
+				}
+				for(int j=0;j<pos.path.size();j++)
+				{
+					if(!result.get(next).contains(pos.path.get(j)))
+					{
+						result.get(next).add(pos.path.get(j));
+					}
+				}
+				
+				
+				if(!visited[next])
+				{
+					Position p = new Position(next);
+					p.path = new ArrayList<>();
+					p.path.addAll(pos.path);
+					p.path.add(next);
+					q.offer(p);
+					visited[next] = true;
+				}
+			}
 		}
+		
+	/*	for(int i=0;i<start.size();i++)
+		{
+			System.out.println(start.get(i));
+			if(!visited[start.get(i)])
+			{
+				ArrayList<Integer> temp = new ArrayList<>();
+				A_bj1613(start.get(i), n, temp, graph, result, visited);
+			}
+		}*/
 		
 		for(int i=0;i<s;i++)
 		{
@@ -217,53 +294,50 @@ public class Graph {
 			int[] list = new int[2];
 			list[0] = Integer.parseInt(strtok.nextToken());
 			list[1] = Integer.parseInt(strtok.nextToken());
-			
-			if(graph[list[0]][list[1]] != 0)//-1
-				System.out.println(-1);
-			else if(graph[list[1]][list[0]] != 0)//1
+
+			if(result.get(list[0]).contains(list[1]))//1
+			{
 				System.out.println(1);
+			}
+			else if(result.get(list[1]).contains(list[0]))//-1
+			{
+				System.out.println(-1);
+			}
 			else
 				System.out.println(0);
 		}
+		
+	/*	for(int i=1;i<=n;i++)
+		{
+			System.out.print(i+" : ");
+			for(int j=0;j<result.get(i).size();j++)
+			{
+				System.out.print(result.get(i).get(j)+" ");
+			}
+			System.out.println();
+		}*/
 	}
 	
-	static void A_bj1613(int now, int n, ArrayList<Integer> temp, int[][] graph, boolean[] visited)
+	static void A_bj1613(int now, int n, ArrayList<Integer> temp, ArrayList<ArrayList<Integer>> graph,ArrayList<ArrayList<Integer>> result, boolean[] visited)
 	{
 		visited[now] = true;
-	
-		temp.add(now);
 		
-		for(int i=1;i<=n;i++)
+		temp.add(now);
+		for(int i=0;i<graph.get(now).size();i++)
 		{
-							
-			if(!visited[i])
+			int next = graph.get(now).get(i);
+			
+			for(int j=0;j<temp.size();j++)
 			{
-				if(graph[now][i]==1)
-				{	
-					for(int j=0;j<temp.size()-1;j++)
-					{
-						int x = temp.get(j);
-						graph[x][i] = 2;
-					}
-					A_bj1613(i, n, temp, graph, visited);
-				
-				}
+				if(!result.get(next).contains(temp.get(j)))
+					result.get(next).add(temp.get(j));
 			}
-			else
+			
+			if(!visited[next])
 			{
-				if(graph[now][i]==1)
-				{
-					for(int j=0;j<temp.size()-1;j++)
-					{
-						int x = temp.get(j);
-						graph[x][i] = 2;
-						for(int k=1;k<=n;k++)
-						{
-							if(graph[i][k]!=0 && graph[x][k] != 1)
-								graph[x][k] = 2;
-						}
-					}
-				}
+				ArrayList<Integer> temp2 = new ArrayList<>();
+				temp2.addAll(temp);
+				A_bj1613(next, n, temp2, graph, result,visited);
 			}
 		}
 		
