@@ -11,6 +11,121 @@ public class DynamicProgramming {
 		// TODO Auto-generated constructor stub
 	}
 	
+	static void bj10844() throws Exception
+	{
+		InputStreamReader is = new InputStreamReader(System.in);
+		BufferedReader b = new BufferedReader(is);
+		
+		int N = Integer.parseInt(b.readLine());
+		
+		int result[][] = new int[10][N+1];
+	}
+	
+	static void bj1912() throws Exception
+	{
+		InputStreamReader is = new InputStreamReader(System.in);
+		BufferedReader b = new BufferedReader(is);
+		
+		int N = Integer.parseInt(b.readLine());
+		
+		int input[] = new int[N];
+		int result[] = new int[N];
+	
+		StringTokenizer strtok = new StringTokenizer(b.readLine()," ");
+		
+		for(int i=0;i<N;i++)
+		{
+			input[i] = Integer.parseInt(strtok.nextToken());
+		}
+		
+		int total_max = input[0];
+		
+		for(int i=0;i<N;i++)
+		{
+			if(i==0)
+			{
+				result[i] = input[i];
+			}
+			else
+			{
+				if(input[i] < result[i-1])
+					result[i] = result[i-1] + input[i];
+				else
+				{
+					if(result[i-1] + input[i] < input[i])
+						result[i] = input[i];
+					else
+						result[i] = result[i-1] + input[i];
+				}
+				if(total_max < result[i])
+					total_max = result[i];
+			}
+		}
+	
+		System.out.println(total_max);
+	}
+	
+	static void bj2156() throws Exception
+	{
+		InputStreamReader is = new InputStreamReader(System.in);
+		BufferedReader b = new BufferedReader(is);
+		
+		int N = Integer.parseInt(b.readLine());
+		
+		int wine[] = new int[N];
+		
+		for(int i=0;i<N;i++)
+		{
+			wine[i] = Integer.parseInt(b.readLine());
+		}
+		
+		int result[][] = new int[N][3];//0 : i-1 안더함(비연속), 1: i-1 더함(연속)
+		
+		for(int i=0;i<N;i++)
+		{
+			if(i==0)
+			{
+				result[i][0] = wine[i];
+				result[i][1] = wine[i];
+				result[i][2] = wine[i];
+			}
+			else if(i==1)
+			{
+				result[i][0] = wine[i] + wine[i-1];
+				result[i][1] = wine[i] + wine[i-1];
+				result[i][2] = wine[i] + wine[i-1];
+			}
+			else if(i==2)
+			{
+				result[i][0] = wine[i] + wine[i-1];
+				result[i][1] = wine[i] + wine[i-2];
+				result[i][2] = wine[i] + wine[i-2];
+			}
+			else
+			{
+				result[i][0] = wine[i] + (result[i-1][1] > result[i-1][2] ? result[i-1][1] : result[i-1][2]);
+				result[i][1] = wine[i] + bj_2156_max(result[i-2]);
+				result[i][2] = wine[i] + bj_2156_max(result[i-3]);
+			}
+		}
+		
+		int max = wine[0];
+		for(int i=0;i<N;i++)
+		{
+			int temp = bj_2156_max(result[i]);
+			if(max < temp)
+				max = temp;
+		}
+		System.out.println(max);
+	}
+	
+	static int bj_2156_max(int result[])
+	{
+		int mid = result[1] > result[2] ? result[1] : result[2];
+		int max = result[0] > mid ? result[0] : mid;
+		return max;
+	}
+	
 	static void bj2618() throws Exception//경찰차
 	{
 		InputStreamReader k = new InputStreamReader(System.in);

@@ -14,10 +14,10 @@ public class Main {
 	
 	public static void main(String[] args) {
 		
-		Graph graph = new Graph();
+		DynamicProgramming dp = new DynamicProgramming();
 		try {
 			
-			graph.bj1613();
+			dp.bj10844();
 		}
 		catch(Exception e)
 		{
