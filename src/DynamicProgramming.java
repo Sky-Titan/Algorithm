@@ -11,6 +11,225 @@ public class DynamicProgramming {
 		// TODO Auto-generated constructor stub
 	}
 	
+	static void bj2163() throws Exception
+	{
+		InputStreamReader is = new InputStreamReader(System.in);
+		BufferedReader b = new BufferedReader(is);
+		
+		StringTokenizer strtok = new StringTokenizer(b.readLine()," ");
+		int N = Integer.parseInt(strtok.nextToken());
+		int M = Integer.parseInt(strtok.nextToken());
+	}
+	
+	static void bj14501() throws Exception
+	{
+		InputStreamReader is = new InputStreamReader(System.in);
+		BufferedReader b = new BufferedReader(is);
+		
+		int N = Integer.parseInt(b.readLine());
+		
+		int T[] = new int[N+1];//기간
+		int P[] = new int[N+1];//금액
+		int output[][] = new int[N+2][2];//결과
+		
+		for(int i=1;i<=N;i++)
+		{
+			StringTokenizer strtok = new StringTokenizer(b.readLine()," ");
+			T[i] = Integer.parseInt(strtok.nextToken());
+			P[i] = Integer.parseInt(strtok.nextToken());
+		}
+		
+		int total_max = 0;
+		
+		for(int i=1;i<=N+1;i++)
+		{
+			if(i == 1)
+			{
+				output[i][0] = i + T[i];//완료일
+				output[i][1] = 0;//가격
+			}
+			else
+			{
+				if(i!=N+1)
+					output[i][0] = i + T[i];
+				
+				output[i][1] = output[i-1][1];
+				
+				int max = output[i][1];
+				
+				for(int j=i-1;j>=1;j--)
+				{
+					if(output[j][0] == i && output[j][1] + P[j] > max)
+					{
+						output[i][1] = output[j][1] + P[j];
+						max = output[j][1] + P[j];
+					}
+				}
+					
+			}
+			total_max = Math.max(total_max, output[i][1]);
+		}
+		
+		System.out.println(total_max);
+	}
+	
+	static void bj9461() throws Exception
+	{
+		InputStreamReader is = new InputStreamReader(System.in);
+		BufferedReader b = new BufferedReader(is);
+		
+		int T = Integer.parseInt(b.readLine());
+		
+		for(int t=0;t<T;t++)
+		{
+			int N = Integer.parseInt(b.readLine());
+			long P[] = new long[N+1];
+			
+			for(int i=1;i<=N;i++)
+			{
+				if(i <= 3)
+				{
+					P[i] = 1;
+				}
+				else if(i == 4 || i==5)
+				{
+					P[i] = 2;
+				}
+				else
+				{
+					P[i] = P[i-1] + P[i-5];
+				}
+			}
+			System.out.println(P[N]);
+		}
+		
+	}
+	
+	static void bj11052() throws Exception
+	{
+		InputStreamReader is = new InputStreamReader(System.in);
+		BufferedReader b = new BufferedReader(is);
+		
+		int N = Integer.parseInt(b.readLine());
+		int P[] = new int[N+1];
+		int output[] = new int[N+1];
+		
+		StringTokenizer strtok = new StringTokenizer(b.readLine()," ");
+		
+		for(int i=1;i<=N;i++)
+		{
+			P[i] = Integer.parseInt(strtok.nextToken());
+		}
+		
+		for(int i=1;i<=N;i++)
+		{
+			if(i==1)
+			{
+				output[i] = P[i];
+			}
+			else if(i==2)
+			{
+				output[i] = Math.max(P[i], P[i-1] * 2);
+			}
+			else
+			{
+				int max = Math.max(output[i-1] + P[1], P[i]);
+				
+				if(i%2 == 1)//홀수
+				{
+					for(int j=2;j<Math.ceil(i/2);j++)
+					{
+						max = Math.max(max, output[i-j] + output[j]);
+					}
+					
+				}
+				else
+				{
+					for(int j=2;j<=Math.ceil(i/2);j++)
+					{
+						max = Math.max(max, output[i-j] + output[j]);
+					}
+				}
+				output[i] = max;
+			}
+		}
+		System.out.println(output[N]);
+		
+	}
+	
+	static void bj11053() throws Exception
+	{
+		InputStreamReader is = new InputStreamReader(System.in);
+		BufferedReader b = new BufferedReader(is);
+		
+		int N = Integer.parseInt(b.readLine());
+		
+		int input[] = new int[N];
+		int output[] = new int[N];
+		
+		StringTokenizer strtok = new StringTokenizer(b.readLine()," ");
+		for(int i=0;i<N;i++)
+		{
+			input[i] = Integer.parseInt(strtok.nextToken());
+		}
+		int max = 1;
+		
+		for(int i=0;i<N;i++)
+		{
+			if(i==0)
+			{
+				output[i] = 1;//현재 길이
+				
+			}
+			else
+			{
+				output[i] = 1;
+				
+				
+				int current_length = 1;
+				
+				for(int j=i-1;j >=0;j--)
+				{
+					if(output[j] >= current_length && input[j] < input[i])
+					{
+						output[i] = output[j]+1;
+						current_length = output[j];
+					}
+				}
+				
+			}
+			max = Math.max(output[i], max);
+		}
+
+		System.out.println(max);
+	}
+	
+	static void bj11727() throws Exception
+	{
+		InputStreamReader is = new InputStreamReader(System.in);
+		BufferedReader b = new BufferedReader(is);
+		
+		int N = Integer.parseInt(b.readLine());
+		
+		int result[] = new int[N+1];
+		
+		for(int i=1;i<=N;i++)
+		{
+			if(i==1)
+			{
+				result[i] = 1;
+			}
+			else
+			{
+				if(i % 2 == 1)//홀수
+					result[i] = (result[i-1] * 2 - 1) % 10007 ;
+				else//짝수
+					result[i] = (result[i-1] * 2 + 1) % 10007 ;
+			}
+		}
+		System.out.println(result[N] % 10007);
+	}
+	
 	static void bj10844() throws Exception
 	{
 		InputStreamReader is = new InputStreamReader(System.in);
@@ -18,7 +237,33 @@ public class DynamicProgramming {
 		
 		int N = Integer.parseInt(b.readLine());
 		
-		int result[][] = new int[10][N+1];
+		int result[][] = new int[N+1][10];
+		
+		for(int i=1;i<=N;i++)
+		{
+			if(i==1)
+			{
+				result[i][0] = 0;
+				for(int j=1;j<10;j++)
+				{
+					result[i][j] = 1;
+				}
+			}
+			else
+			{
+				result[i][0] = result[i-1][1] % 1000000000;//꼭 해줄 필요는 없는 부분
+				for(int j=1;j<9;j++)
+				{
+					result[i][j] = (result[i-1][j-1] + result[i-1][j+1]) % 1000000000 ; // 꼭 해줘야하는 부분!!
+				}
+				result[i][9] = result[i-1][8] % 1000000000;//꼭 해줄 필요는 없는 부분
+			}
+		}
+		
+		long sum = 0;
+		for(int i=0;i<10;i++)
+			sum += (result[N][i]);
+		System.out.println(sum % 1000000000);// 꼭해줘야 하는부분!!!
 	}
 	
 	static void bj1912() throws Exception
