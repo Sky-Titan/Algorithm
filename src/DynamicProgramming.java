@@ -11,6 +11,29 @@ public class DynamicProgramming {
 		// TODO Auto-generated constructor stub
 	}
 	
+	static void bj1010() throws Exception
+	{
+		InputStreamReader is = new InputStreamReader(System.in);
+		BufferedReader b = new BufferedReader(is);
+		
+		int T = Integer.parseInt(b.readLine());
+		
+		for(int t=0;t<T;t++)
+		{
+			StringTokenizer strtok = new StringTokenizer(b.readLine()," ");
+			
+			int N = Integer.parseInt(strtok.nextToken());
+			int M = Integer.parseInt(strtok.nextToken());
+			
+			int dp[][] = new int[N+1][M+1];
+			
+			for(int i=1;i<=N;i++)
+			{
+				
+			}
+		}
+	}
+	
 	static void bj2163() throws Exception
 	{
 		InputStreamReader is = new InputStreamReader(System.in);
@@ -19,6 +42,12 @@ public class DynamicProgramming {
 		StringTokenizer strtok = new StringTokenizer(b.readLine()," ");
 		int N = Integer.parseInt(strtok.nextToken());
 		int M = Integer.parseInt(strtok.nextToken());
+		
+		int result= N*M-1;
+		
+		
+		System.out.println(result);
+			
 	}
 	
 	static void bj14501() throws Exception
