@@ -17,7 +17,7 @@ public class Main {
 		DynamicProgramming dp = new DynamicProgramming();
 		try {
 			
-			dp.bj2163();
+			dp.bj2293();
 		}
 		catch(Exception e)
 		{
