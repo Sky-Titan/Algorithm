@@ -12,6 +12,54 @@ public class DynamicProgramming {
 		// TODO Auto-generated constructor stub
 	}
 	
+	static void bj1699() throws Exception
+	{
+		InputStreamReader is = new InputStreamReader(System.in);
+		BufferedReader b = new BufferedReader(is);
+		
+		int N = Integer.parseInt(b.readLine());
+		
+		int dp[] = new int[N+1];
+		dp[0] = 1;
+		
+		
+		for(int i=1;i<=N;i++)
+		{
+			
+		}
+	}
+	
+	static void bj11057() throws Exception
+	{
+		InputStreamReader is = new InputStreamReader(System.in);
+		BufferedReader b = new BufferedReader(is);
+		
+		int N = Integer.parseInt(b.readLine());
+		
+		int dp[][] = new int[N][10];
+		
+		for(int i=0;i<N;i++)
+		{
+			for(int j=0;j<10;j++)
+			{
+				if(i==0)
+				{
+					dp[i][j] = j+1;
+				}
+				else
+				{
+					if(j==0)
+						dp[i][j] = 1;
+					else
+					{
+						dp[i][j] = (dp[i-1][j] + dp[i][j-1]) % 10007;
+					}
+				}
+			}
+		}
+		System.out.println(dp[N-1][9] % 10007);
+	}
+	
 	static void bj2293() throws Exception
 	{
 		InputStreamReader is = new InputStreamReader(System.in);
@@ -21,38 +69,20 @@ public class DynamicProgramming {
 		int N = Integer.parseInt(strtok.nextToken());
 		int K = Integer.parseInt(strtok.nextToken());
 		
-		ArrayList<Integer> input = new ArrayList<>();
+		int[] input = new int[N+1];
 		int output[] = new int[K+1];
-		
-		for(int i=0;i<N;i++)
+		output[0]=1;
+		for(int i=1;i<=N;i++)
 		{
-			input.add(Integer.parseInt(b.readLine()));
+			input[i] = Integer.parseInt(b.readLine());
 		}
 		
-		for(int i=1;i<=K;i++)
+		for(int i=1;i<=N;i++)
 		{
-			if(i==1)
-			{
-				if(input.contains(i))
-					output[i] = 1;
-				else
-					output[i] = 0;
-			}
-			else if(i==2)
-			{
-				output[i] = output[i-1];
-				
-				if(input.contains(i))
-					output[i] ++;
-			}
-			else
-			{
-				output[i] = 0;
-				
-				if(input.contains(i))
-					output[i] ++;
-			}
+			for(int j=input[i];j<=K;j++)
+				output[j] += output[j-input[i]];
 		}
+		
 		System.out.println(output[K]);
 	}
 	
