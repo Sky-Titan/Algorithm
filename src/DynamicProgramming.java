@@ -12,6 +12,217 @@ public class DynamicProgramming {
 		// TODO Auto-generated constructor stub
 	}
 	
+	static void bj9251() throws Exception
+	{
+		InputStreamReader is = new InputStreamReader(System.in);
+		BufferedReader b = new BufferedReader(is);
+		
+		String input[] = new String[2];
+		
+		for(int i=0;i<2;i++)
+		{
+			String str = b.readLine();
+			input[i] = str;
+		}
+		
+
+	}
+	
+	static void bj11051() throws Exception
+	{
+		InputStreamReader is = new InputStreamReader(System.in);
+		BufferedReader b = new BufferedReader(is);
+		
+		StringTokenizer strtok = new StringTokenizer(b.readLine());
+		int N = Integer.parseInt(strtok.nextToken());
+		int K = Integer.parseInt(strtok.nextToken());
+		
+		int choose[][] = new int[N+1][K+1];
+		
+		for(int n=1;n<=N;n++)
+		{
+			for(int k = 0; k<=K; k++)
+			{
+			
+				if(k==0)
+					choose[n][k] = 1;
+				else if(k==n)	
+					choose[n][k] = 1;
+				else
+					choose[n][k] = (choose[n-1][k-1] + choose[n-1][k]) % 10007;
+					
+			}
+		}
+		
+		System.out.println(choose[N][K]%10007);
+		
+	}
+	
+	static void bj11048() throws Exception
+	{
+		InputStreamReader is = new InputStreamReader(System.in);
+		BufferedReader b = new BufferedReader(is);
+		
+		StringTokenizer strtok = new StringTokenizer(b.readLine());
+		int N = Integer.parseInt(strtok.nextToken());
+		int M = Integer.parseInt(strtok.nextToken());
+		
+		int maze[][] = new int[N+1][M+1];
+		int dp[][] = new int[N+1][M+1];
+		
+		for(int i=1;i<=N;i++)
+		{
+			strtok = new StringTokenizer(b.readLine());
+			for(int j=1;j<=M;j++)
+			{
+				maze[i][j] = Integer.parseInt(strtok.nextToken());
+			}
+		}
+		
+		for(int i=1;i<=N;i++)
+		{
+			for(int j=1;j<=M;j++)
+			{
+				if(i==1)
+				{
+					if(j==1)
+						dp[i][j] = maze[i][j];
+					else
+						dp[i][j] = maze[i][j] + dp[i][j-1];
+				}
+				else
+				{
+					if(j==1)
+						dp[i][j] = maze[i][j] + dp[i-1][j];
+					else
+					{
+						int max = Math.max(dp[i-1][j], dp[i][j-1]);
+						max = Math.max(dp[i-1][j-1], max);
+						
+						dp[i][j] = maze[i][j] + max;
+					}
+				}
+			}
+		}
+		
+		System.out.println(dp[N][M]);
+	}
+	
+	static void bj11055() throws Exception
+	{
+		InputStreamReader is = new InputStreamReader(System.in);
+		BufferedReader b = new BufferedReader(is);
+		
+		int N = Integer.parseInt(b.readLine());
+		
+		int input[] = new int[N];
+		int output[] = new int[N];
+		
+		StringTokenizer strtok = new StringTokenizer(b.readLine());
+		
+		for(int i=0;i<N;i++)
+		{
+			input[i] = Integer.parseInt(strtok.nextToken());
+		}
+		
+		int max = 0;
+		
+		for(int i=0;i<N;i++)
+		{
+			if(i==0)
+			{
+				output[i] = input[i];//수열 합
+				
+			}
+			else
+			{
+				output[i] = 0;
+			
+				for(int j=i-1;j>=0;j--)
+				{
+					if(input[j] < input[i] && output[j] > output[i])
+						output[i] = output[j];
+				}
+				output[i] += input[i];
+			}
+			max = Math.max(max, output[i]);
+		}
+		
+		System.out.println(max);
+	}
+	
+	static void bj2167() throws Exception
+	{
+		InputStreamReader is = new InputStreamReader(System.in);
+		BufferedReader b = new BufferedReader(is);
+		
+		StringTokenizer strtok = new StringTokenizer(b.readLine()," ");
+		int N = Integer.parseInt(strtok.nextToken());
+		int M = Integer.parseInt(strtok.nextToken());
+		
+		int input[][] = new int[N+1][M+1];
+		int sum[][] = new int[N+1][M+1];
+		
+		for(int i = 1;i <= N; i++)
+		{
+			strtok = new StringTokenizer(b.readLine()," ");
+			
+			for(int j=1;j<=M;j++)
+			{	
+				input[i][j] = Integer.parseInt(strtok.nextToken());
+			}
+		}
+		
+		for(int i=N;i>=1;i--)
+		{
+			for(int j=M;j>=1;j--)
+			{
+				if(i==N)
+				{
+					if(j==M)
+						sum[i][j] = input[i][j];
+					else
+						sum[i][j] = input[i][j] + sum[i][j+1];
+				}
+				else
+				{
+					if(j==M)
+						sum[i][j] = input[i][j] + sum[i+1][j];
+					else
+						sum[i][j] = input[i][j] + sum[i+1][j] + (sum[i][j+1] - sum[i+1][j+1]);
+				}
+				
+			}
+		}
+	
+		int K = Integer.parseInt(b.readLine());
+		
+		for(int k=0;k<K;k++)
+		{
+			strtok = new StringTokenizer(b.readLine()," ");
+			int x1 = Integer.parseInt(strtok.nextToken());
+			int y1 = Integer.parseInt(strtok.nextToken());
+			int x2 = Integer.parseInt(strtok.nextToken());
+			int y2 = Integer.parseInt(strtok.nextToken());
+			
+			if(x2==N)
+			{
+				if(y2==M)
+					System.out.println(sum[x1][y1]);
+				else
+					System.out.println(sum[x1][y1] - sum[x1][y2+1]);
+			}
+			else
+			{
+				if(y2==M)
+					System.out.println(sum[x1][y1] - sum[x2+1][y1]);
+				else
+					System.out.println(sum[x1][y1] - sum[x2+1][y1] - sum[x1][y2+1] + sum[x2+1][y2+1]);
+			}
+		}
+	}
+	
+	//안품
 	static void bj1699() throws Exception
 	{
 		InputStreamReader is = new InputStreamReader(System.in);
