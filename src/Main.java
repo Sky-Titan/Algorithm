@@ -14,10 +14,10 @@ public class Main {
 	
 	public static void main(String[] args) {
 		
-		DynamicProgramming dp = new DynamicProgramming();
+		Simulation s = new Simulation();
 		try {
 			
-			dp.bj11051();
+			s.bj14503();
 		}
 		catch(Exception e)
 		{

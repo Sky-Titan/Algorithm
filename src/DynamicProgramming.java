@@ -12,6 +12,37 @@ public class DynamicProgramming {
 		// TODO Auto-generated constructor stub
 	}
 	
+	static void bj2133() throws Exception
+	{
+		InputStreamReader is = new InputStreamReader(System.in);
+		BufferedReader b = new BufferedReader(is);
+		
+		int N = Integer.parseInt(b.readLine());
+		
+		int dp[] = new int[N+1];
+		dp[0] = 0;
+		for(int i=1;i<=N;i++)
+		{
+			if(i==1)
+			{
+				dp[i] = 0;
+			}
+			else if(i==2)
+			{
+				dp[i] = 3;
+			}
+			else
+			{
+				if(i%2 == 1)//È¦¼ö
+					dp[i] = 0;
+				else
+					dp[i] = (dp[i - 2] * dp[2]) + dp[i - 4] * 2 + 2;
+			}
+		}
+		
+		System.out.println(dp[N]);
+	}
+	
 	static void bj9251() throws Exception
 	{
 		InputStreamReader is = new InputStreamReader(System.in);
