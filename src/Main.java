@@ -6,7 +6,6 @@ import java.util.LinkedList;
 import java.util.Queue;
 import java.util.StringTokenizer;
 
-import javax.swing.plaf.synth.SynthSpinnerUI;
 
 public class Main {
 
@@ -17,7 +16,7 @@ public class Main {
 		Simulation s = new Simulation();
 		try {
 			
-			s.bj14503();
+			s.bj3190();
 		}
 		catch(Exception e)
 		{
