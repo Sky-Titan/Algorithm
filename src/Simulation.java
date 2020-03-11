@@ -25,6 +25,182 @@ public class Simulation {
 		
 	}
 	
+	static void bj15954() throws Exception
+	{
+		InputStreamReader is = new InputStreamReader(System.in);
+		BufferedReader b = new BufferedReader(is);
+		
+		StringTokenizer strtok = new StringTokenizer(b.readLine());
+		
+		int N = Integer.parseInt(strtok.nextToken());
+		int K = Integer.parseInt(strtok.nextToken());
+		
+		int doll[] = new int[N];
+		
+		strtok = new StringTokenizer(b.readLine());
+		
+		for(int i=0;i<N;i++)
+			doll[i] = Integer.parseInt(strtok.nextToken());
+		
+		double min = 0;
+		
+		for(int k=K;k<=N;k++)
+		{
+			for(int i=0;i<=N-k;i++)
+			{
+				double sum = 0;
+				double m = 0;
+				
+				for(int j=i;j<i+k;j++)
+				{
+					sum += doll[j];
+				}
+
+				m = sum / k;
+				
+				sum = 0;
+				
+				for(int j=i;j<i+k;j++)
+				{
+					sum += Math.pow (doll[j]-m,2);	
+				}
+				
+				if(i==0 && k==K)
+					min = Math.sqrt(sum / k);
+				else
+				{
+					if(min >  Math.sqrt(sum / k))
+						min =  Math.sqrt(sum / k);
+				}
+				
+			}
+		}
+		
+		System.out.println(min);
+	}
+	
+	static void bj15953() throws Exception
+	{
+		InputStreamReader is = new InputStreamReader(System.in);
+		BufferedReader b = new BufferedReader(is);
+		
+		int N = Integer.parseInt(b.readLine());
+		
+		for(int i=0;i<=N;i++)
+		{
+			StringTokenizer strtok = new StringTokenizer(b.readLine());
+			int num1 = Integer.parseInt(strtok.nextToken());
+			int num2 = Integer.parseInt(strtok.nextToken());
+			
+			int result = 0;
+			if(num1 == 1)
+				result += 5000000;
+			else if(2 <= num1 && num1 <= 3)//2~3
+				result += 3000000;
+			else if(4 <= num1 && num1 <= 6)//4~6
+				result += 2000000;
+			else if(7 <= num1 && num1 <= 10)//7~10
+				result += 500000;
+			else if(11 <= num1 && num1 <= 15)
+				result += 300000;
+			else if(16 <= num1 && num1 <= 21)
+				result += 100000;
+			
+			
+			if(num2 == 1)
+				result += 5120000;
+			else if(2 <= num2 && num2 <= 3)
+				result += 2560000;
+			else if(4 <= num2 && num2 <= 7)
+				result += 1280000;
+			else if(8 <= num2 && num2 <= 15)
+				result += 640000;
+			else if(16 <= num2 && num2 <= 31)
+				result += 320000;
+		
+			System.out.println(result);
+		}
+	}
+	
+	//¸øÇ°
+	static void bj15997() throws Exception
+	{
+		InputStreamReader is = new InputStreamReader(System.in);
+		BufferedReader b = new BufferedReader(is);
+		
+		ArrayList<String> country = new ArrayList<>();
+		double[] p = {0,0,0,0};
+		
+		StringTokenizer strtok = new StringTokenizer(b.readLine());
+		for(int i=0;i<4;i++)
+		{
+			country.add(strtok.nextToken());
+		}
+		
+		for(int i=0;i<6;i++)
+		{
+			strtok = new StringTokenizer(b.readLine());
+			String A = strtok.nextToken();
+			String B = strtok.nextToken();
+			double W = Double.parseDouble(strtok.nextToken());//A½Â¸®È®·ü, BÆÐ¹èÈ®·ü
+			double D = Double.parseDouble(strtok.nextToken());//¹«½ÂºÎ È®·ü
+			double L = Double.parseDouble(strtok.nextToken());//B½Â¸®È®·ü, AÆÐ¹èÈ®·ü
+			
+			int index_A = country.indexOf(A);
+			int index_B = country.indexOf(B);
+			p[index_A] += W * 3;
+			p[index_B] += L * 3;
+			p[index_A] += D * 1;
+			p[index_B] += D * 1;
+		}
+		
+		double result[] = new double[4];
+		
+		for(int i=0;i<4;i++)
+		{
+			
+			int count=0;
+			result[i] = ( p[i] * (100.0 / 9.0) ) / 100.0;
+			for(int j=0;j<4;j++)
+			{
+				if(p[j] == p[i])
+					count++;
+			}
+		
+			result[i] /= count;
+			System.out.println(result[i]);
+		}
+	}
+	
+	static void bj1547() throws Exception
+	{
+		InputStreamReader is = new InputStreamReader(System.in);
+		BufferedReader b = new BufferedReader(is);
+		
+		int N = Integer.parseInt(b.readLine());
+		
+		ArrayList<Integer> cup = new ArrayList<>();
+		cup.add(1);
+		cup.add(2);
+		cup.add(3);
+		
+		for(int i=0;i<N;i++)
+		{
+			StringTokenizer strtok = new StringTokenizer(b.readLine());
+			
+			int num1 = Integer.parseInt(strtok.nextToken());
+			int num2 = Integer.parseInt(strtok.nextToken());
+			
+			int index1 = cup.indexOf(num1);
+			int index2 = cup.indexOf(num2);
+			cup.remove(index1);
+			cup.add(index1,num2);
+			cup.remove(index2);
+			cup.add(index2,num1);
+		}
+		System.out.println(cup.get(0));
+	}
+	
 	static void bj14890() throws Exception
 	{
 		InputStreamReader is = new InputStreamReader(System.in);
