@@ -8,10 +8,29 @@ import java.util.StringTokenizer;
 
 public class Simulation {
 
+	static class DoublePosition
+	{
+		Position pos1 = new Position();
+		Position pos2 = new Position();
+		
+		public DoublePosition()
+		{
+			
+		}
+
+		public DoublePosition(Position pos1, Position pos2) {
+			super();
+			this.pos1 = pos1;
+			this.pos2 = pos2;
+		}
+		
+	}
+	
 	static class Position{
 		
 		int x,y;
 		int time=0;
+		int move=0;
 		public Position()
 		{
 			
@@ -22,6 +41,804 @@ public class Simulation {
 			this.y=y;
 		}
 		
+		
+	}
+	
+	static void bj13460() throws Exception
+	{
+		InputStreamReader is = new InputStreamReader(System.in);
+		BufferedReader b = new BufferedReader(is);
+		
+		StringTokenizer strtok = new StringTokenizer(b.readLine());
+		
+		int N = Integer.parseInt(strtok.nextToken());
+		int M = Integer.parseInt(strtok.nextToken());
+
+		char map[][] = new char[N][M];
+		boolean visited[][][][] = new boolean[N][M][N][M];
+		
+		Position red = new Position();
+		Position blue = new Position();
+
+		
+		
+		for(int i=0;i<N;i++)
+		{
+			String str = b.readLine();
+			for(int j=0;j<M;j++)
+			{
+				map[i][j] = str.charAt(j);
+				if(map[i][j] == 'R')
+				{
+					red.x = i;
+					red.y = j;
+				}
+				else if(map[i][j] == 'B')
+				{
+					blue.x = i;
+					blue.y = j;
+				}
+				
+					
+			}
+		}
+		
+		Queue<DoublePosition> q = new LinkedList<>();
+		
+		q.offer(new DoublePosition(red, blue));
+		
+		visited[red.x][red.y][blue.x][blue.y] = true;
+		
+		while(!q.isEmpty())
+		{
+			DoublePosition d = q.poll();
+			Position r_pos = d.pos1;
+			Position b_pos = d.pos2;
+			
+	
+			if(r_pos.time > 10)
+			{
+				System.out.println(-1);
+				return;
+			}
+			
+			if(map[r_pos.x][r_pos.y] == 'O' && map[b_pos.x][b_pos.y] != 'O')
+			{
+
+				System.out.println(r_pos.time);
+				return;
+			}
+			
+			if(r_pos.x != 1 || b_pos.x != 1)//북 - 1
+			{
+				
+				Position last;
+				Position last2;
+				if(r_pos.x < b_pos.x)//빨강 먼저
+				{
+					last = find_last(1, r_pos.x, r_pos.y, b_pos.x, b_pos.y,N, M, map);//기울어 졌을때 빨간 구슬의 맨 끝 위치
+					last2 = find_last(1, b_pos.x, b_pos.y, last.x, last.y,N, M, map);//기울어 졌을때 파란 구슬의 맨 끝 위치
+				}
+				else//파랑 먼저
+				{
+					last2 = find_last(1, b_pos.x, b_pos.y, r_pos.x, r_pos.y,N, M, map);//기울어 졌을때 파란 구슬의 맨 끝 위치
+					last = find_last(1, r_pos.x, r_pos.y, last2.x, last2.y,N, M, map);//기울어 졌을때 빨간 구슬의 맨 끝 위치
+				}
+					
+					
+				if(!visited[last.x][last.y][last2.x][last2.y])
+				{
+					visited[last.x][last.y][last2.x][last2.y] = true;
+					
+					last.time = r_pos.time+1;//기울인 횟수
+					q.offer(new DoublePosition(last,last2));
+				}
+				
+			}
+			
+			if(r_pos.y != M-2 || b_pos.y != M-2)//동 - 2
+			{
+				
+				Position last;
+				Position last2;
+				if(r_pos.y > b_pos.y)//빨강 먼저
+				{
+					last = find_last(2, r_pos.x, r_pos.y, b_pos.x, b_pos.y, N, M, map);//기울어 졌을때 빨간 구슬의 맨 끝 위치
+					last2 = find_last(2, b_pos.x, b_pos.y, last.x, last.y, N, M, map);//기울어 졌을때 파란 구슬의 맨 끝 위치
+				}
+				else//파랑 먼저
+				{
+					last2 = find_last(2, b_pos.x, b_pos.y, r_pos.x, r_pos.y, N, M, map);//기울어 졌을때 파란 구슬의 맨 끝 위치
+					last = find_last(2, r_pos.x, r_pos.y, last2.x, last2.y, N, M, map);//기울어 졌을때 빨간 구슬의 맨 끝 위치
+				}
+					
+				if(!visited[last.x][last.y][last2.x][last2.y])
+				{
+					visited[last.x][last.y][last2.x][last2.y] = true;
+					
+					last.time = r_pos.time+1;//기울인 횟수
+					q.offer(new DoublePosition(last,last2));
+				}
+				
+				
+			}
+			
+			if(r_pos.x != N-2 || b_pos.x != N-2)//남 - 3
+			{
+				
+				Position last;
+				Position last2;
+				if(r_pos.x > b_pos.x)//빨강 먼저
+				{
+					last = find_last(3, r_pos.x, r_pos.y, b_pos.x, b_pos.y, N, M, map);//기울어 졌을때 빨간 구슬의 맨 끝 위치
+					last2 = find_last(3, b_pos.x, b_pos.y, last.x, last.y, N, M, map);//기울어 졌을때 파란 구슬의 맨 끝 위치
+				}
+				else//파랑 먼저
+				{
+					last2 = find_last(3, b_pos.x, b_pos.y, r_pos.x, r_pos.y, N, M, map);//기울어 졌을때 파란 구슬의 맨 끝 위치
+					last = find_last(3, r_pos.x, r_pos.y, last2.x, last2.y, N, M, map);//기울어 졌을때 빨간 구슬의 맨 끝 위치
+				}
+				
+				if(!visited[last.x][last.y][last2.x][last2.y])
+				{
+					visited[last.x][last.y][last2.x][last2.y] = true;
+					
+					last.time = r_pos.time+1;//기울인 횟수
+					q.offer(new DoublePosition(last,last2));
+				}
+				
+			}
+			
+			
+			if(r_pos.y != 1 || b_pos.y != 1)//서 - 4
+			{	
+				
+				Position last;
+				Position last2;
+				if(r_pos.y < b_pos.y)//빨강 먼저
+				{
+					last = find_last(4, r_pos.x, r_pos.y, b_pos.x, b_pos.y, N, M, map);//기울어 졌을때 빨간 구슬의 맨 끝 위치
+					last2 = find_last(4, b_pos.x, b_pos.y, last.x, last.y, N, M, map);//기울어 졌을때 파란 구슬의 맨 끝 위치
+				}
+				else//파랑 먼저
+				{
+					last2 = find_last(4, b_pos.x, b_pos.y, r_pos.x, r_pos.y, N, M, map);//기울어 졌을때 파란 구슬의 맨 끝 위치
+					last = find_last(4, r_pos.x, r_pos.y, last2.x, last2.y, N, M, map);//기울어 졌을때 빨간 구슬의 맨 끝 위치
+				}
+				
+				if(!visited[last.x][last.y][last2.x][last2.y])
+				{
+					visited[last.x][last.y][last2.x][last2.y] = true;
+						
+					last.time = r_pos.time+1;//기울인 횟수
+					q.offer(new DoublePosition(last,last2));
+				}
+				
+			}
+			
+		}
+		System.out.println(-1);
+	}
+	
+	static Position find_last(int d, int x, int y, int x2,int y2,int N, int M, char map[][])
+	{
+		
+		if (d==1)//북
+		{
+			for(int i=x;i >= 0;i--)
+			{
+				if((map[i][y] == '#' || (i==x2 && y==y2)) && map[i][y] !='O')
+					return new Position(i+1,y);
+				else if(map[i][y] == 'O')
+					return new Position(i,y);
+					
+			}
+		}
+		else if(d==2)//동
+		{
+			for(int j=y;j < M;j++)
+			{
+				if((map[x][j] == '#' || (x==x2 && j==y2)) && map[x][j] !='O')
+					return new Position(x,j-1);
+				else if(map[x][j] == 'O')
+					return new Position(x,j);
+					
+			}
+		}
+		else if(d==3)//남
+		{
+			for(int i=x;i < N;i++)
+			{
+				if((map[i][y] == '#' || (i==x2 && y==y2)) && map[i][y] !='O')
+					return new Position(i-1,y);
+				else if(map[i][y] == 'O')
+					return new Position(i,y);
+			}
+		}
+		else//서
+		{
+			for(int j=y;j >= 0;j--)
+			{
+				if( (map[x][j] == '#' || (x==x2 && j==y2)) && map[x][j] !='O')
+				{
+					return new Position(x,j+1);
+				}
+				else if(map[x][j] == 'O')
+					return new Position(x,j);
+			}
+		}
+		return null;
+		
+	}
+	
+	//삼성기출
+	static void bj15686() throws Exception
+	{
+		InputStreamReader is = new InputStreamReader(System.in);
+		BufferedReader b = new BufferedReader(is);
+		
+		StringTokenizer strtok = new StringTokenizer(b.readLine());
+		
+		int N = Integer.parseInt(strtok.nextToken());
+		int M = Integer.parseInt(strtok.nextToken());
+		
+		ArrayList<Position> home = new ArrayList<>();
+		ArrayList<Position> chicken = new ArrayList<>();
+		
+		for(int i=0;i<N;i++)
+		{
+			strtok = new StringTokenizer(b.readLine());
+			
+			for(int j=0;j<N;j++)
+			{
+				int num = Integer.parseInt(strtok.nextToken());
+				
+				if(num == 1)
+				{
+					home.add(new Position(i,j));
+				}
+				else if(num == 2)
+				{
+					chicken.add(new Position(i, j));
+				}
+			}
+		}
+		
+		ArrayList<Position> new_chicken = new ArrayList<>();
+		ArrayList<Integer> result = new ArrayList<>();
+		
+		A_bj15686(M-1, M, 0, home, chicken, new_chicken, result);
+		
+		Object[] r = result.toArray();
+		Arrays.sort(r);
+		System.out.println((int)r[0]);
+	}
+	
+	static void A_bj15686(int now, int M, int index,ArrayList<Position> home,ArrayList<Position> original_chicken, ArrayList<Position> new_chicken, ArrayList<Integer> result)
+	{
+		if(now >= 0)
+		{
+			for(int i=index;i<original_chicken.size()-now;i++)
+			{
+				ArrayList<Position> copy_chicken = new ArrayList<>();
+				copy_chicken.addAll(new_chicken);
+				copy_chicken.add(original_chicken.get(i));
+				
+				A_bj15686(now-1, M, i+1, home,original_chicken, copy_chicken, result);
+			}
+		}
+		else//계산
+		{
+			int count=0;
+			for(int i=0;i<home.size();i++)
+			{
+				int min = Integer.MAX_VALUE;
+				
+				
+				int x_1 = home.get(i).x;
+				int y_1 = home.get(i).y;
+
+				for(int j=0;j<new_chicken.size();j++)
+				{
+					int x_2 = new_chicken.get(j).x;
+					int y_2 = new_chicken.get(j).y;
+					int distance = Math.abs(x_1 - x_2) + Math.abs(y_1 - y_2);
+					min = Math.min(min, distance);
+				}
+				
+				count+=min;
+			}
+			result.add(count);
+		}
+	}
+	
+	//삼성 기출
+	static void bj15683() throws Exception
+	{
+		InputStreamReader is = new InputStreamReader(System.in);
+		BufferedReader b = new BufferedReader(is);
+		
+		StringTokenizer strtok = new StringTokenizer(b.readLine());
+		
+		int N = Integer.parseInt(strtok.nextToken());
+		int M = Integer.parseInt(strtok.nextToken());
+		
+		int[][] map = new int[N][M];
+		
+		ArrayList<Position> list = new ArrayList<>();
+		
+		for(int i=0;i<N;i++)
+		{
+			strtok = new StringTokenizer(b.readLine());
+			
+			for(int j=0;j<M;j++)
+			{
+				map[i][j] = Integer.parseInt(strtok.nextToken());
+				
+				if(1 <= map[i][j] && map[i][j] <=5)
+				{
+					list.add(new Position(i,j));
+				}
+			}
+		}
+		if(list.isEmpty())//cctv 아예 없을때
+		{
+			System.out.println(vacancy_bj15683(N, M, map));
+			return;
+		}
+		ArrayList<Integer> result = new ArrayList<>();
+		
+		A_bj15683(0, N, M, map, list, result);
+		
+		Object[] r = result.toArray();
+		Arrays.sort(r);
+		
+		System.out.println((int)r[0]);
+	}
+	
+	static void A_bj15683(int now,int N,int M ,int map[][], ArrayList<Position> list, ArrayList<Integer> result)
+	{
+		int x = list.get(now).x;
+		int y = list.get(now).y;
+		
+		int num = map[x][y];
+		
+		if(num==1)//한방향 , 4가지 방향
+		{
+			for(int i=1;i<=4;i++)
+			{
+				int map2[][] = new int[N][M];
+				
+				for(int k=0;k<N;k++)
+					map2[k] = map[k].clone();
+				
+				draw_bj15683(x, y, N, M, i, map2);
+				
+				
+				
+				if(now != list.size()-1)//마지막이 아니라면 계속 재귀
+					A_bj15683(now+1, N, M, map2, list, result);
+				else//마지막이라면 사각지대 개수 카운트
+					result.add(vacancy_bj15683(N, M, map2));
+				
+			}
+		}
+		else if(num==2)//2방향, 2가지 방향
+		{
+			for(int i=1;i<=2;i++)
+			{
+				int map2[][] = new int[N][M];
+				
+				for(int k=0;k<N;k++)
+					map2[k] = map[k].clone();
+				
+				draw_bj15683(x, y, N, M, i, map2);
+				draw_bj15683(x, y, N, M, i+2, map2);
+				
+				if(now != list.size()-1)//마지막이 아니라면 계속 재귀
+					A_bj15683(now+1, N, M, map2, list, result);
+				else//마지막이라면 사각지대 개수 카운트
+					result.add(vacancy_bj15683(N, M, map2));
+			}
+		}
+		else if(num==3)//2방향, 4가지방향
+		{
+			for(int i=1;i<=4;i++)
+			{
+				int map2[][] = new int[N][M];
+				
+				for(int k=0;k<N;k++)
+					map2[k] = map[k].clone();
+				
+				if(i!=4)
+				{
+					draw_bj15683(x, y, N, M, i, map2);
+					draw_bj15683(x, y, N, M, i+1, map2);
+				}
+				else//4일때
+				{
+					draw_bj15683(x, y, N, M, 4, map2);
+					draw_bj15683(x, y, N, M, 1, map2);
+				}
+				
+				if(now != list.size()-1)//마지막이 아니라면 계속 재귀
+					A_bj15683(now+1, N, M, map2, list, result);
+				else//마지막이라면 사각지대 개수 카운트
+					result.add(vacancy_bj15683(N, M, map2));
+			}
+		}
+		else if(num==4)//3방향, 4가지 방향
+		{
+			for(int i=1;i<=4;i++)
+			{
+				int map2[][] = new int[N][M];
+				
+				for(int k=0;k<N;k++)
+					map2[k] = map[k].clone();
+				
+				if(i<3)
+				{
+					draw_bj15683(x, y, N, M, i, map2);
+					draw_bj15683(x, y, N, M, i+1, map2);
+					draw_bj15683(x, y, N, M, i+2, map2);
+				}
+				else if(i==3)//3일때
+				{
+					draw_bj15683(x, y, N, M, 3, map2);
+					draw_bj15683(x, y, N, M, 4, map2);
+					draw_bj15683(x, y, N, M, 1, map2);
+				}
+				else//4일때
+				{
+					draw_bj15683(x, y, N, M, 4, map2);
+					draw_bj15683(x, y, N, M, 1, map2);
+					draw_bj15683(x, y, N, M, 2, map2);
+				}
+				
+				if(now != list.size()-1)//마지막이 아니라면 계속 재귀
+					A_bj15683(now+1, N, M, map2, list, result);
+				else//마지막이라면 사각지대 개수 카운트
+					result.add(vacancy_bj15683(N, M, map2));
+				
+			}
+		}
+		else//4방향, 1가지 방향
+		{
+			int map2[][] = new int[N][M];
+			
+			for(int k=0;k<N;k++)
+				map2[k] = map[k].clone();
+			draw_bj15683(x, y, N, M, 1, map2);
+			draw_bj15683(x, y, N, M, 2, map2);
+			draw_bj15683(x, y, N, M, 3, map2);
+			draw_bj15683(x, y, N, M, 4, map2);
+			
+			if(now != list.size()-1)//마지막이 아니라면 계속 재귀
+				A_bj15683(now+1, N, M, map2, list, result);
+			else//마지막이라면 사각지대 개수 카운트
+				result.add(vacancy_bj15683(N, M, map2));
+			
+		}
+			
+	}
+	
+	static int vacancy_bj15683(int N, int M,int map[][])
+	{
+		int count=0;
+		for(int i=0;i<N;i++)
+		{
+			for(int j=0;j<M;j++)
+			{
+				if(map[i][j] == 0)
+					count++;	
+			}
+		}
+		return count;
+	}
+	
+	static void draw_bj15683(int x, int y,int N, int M,int direction, int map[][])
+	{
+		if(direction == 1)//북
+		{
+			for(int i=x;i>=0;i--)
+			{
+				if(map[i][y] == 6)//벽나오면 스톱
+					break;
+				else if(map[i][y] == 0)// 빈공간
+					map[i][y] = -1;//감시영역
+			}
+		}
+		else if(direction == 2)//동
+		{
+			for(int j=y;j<M;j++)
+			{
+				if(map[x][j] == 6)//벽나오면 스톱
+					break;
+				else if(map[x][j] == 0)// 빈공간
+					map[x][j] = -1;//감시영역
+			}
+		}
+		else if(direction == 3)//남
+		{
+			for(int i=x;i<N;i++)
+			{
+				if(map[i][y] == 6)//벽나오면 스톱
+					break;
+				else if(map[i][y] == 0)// 빈공간
+					map[i][y] = -1;//감시영역
+			}
+		}
+		else//서
+		{
+			for(int j=y;j>=0;j--)
+			{
+				if(map[x][j] == 6)//벽나오면 스톱
+					break;
+				else if(map[x][j] == 0)// 빈공간
+					map[x][j] = -1;//감시영역
+			}
+		}
+	}
+	
+	static void solve_line() throws Exception
+	{
+		int time = 0;
+	    boolean visit[][] = new boolean[200001][2];
+	    
+	    Queue<Position> queue = new LinkedList<>();
+	    
+	    InputStreamReader is = new InputStreamReader(System.in);
+		BufferedReader b = new BufferedReader(is);
+		
+		StringTokenizer strtok = new StringTokenizer(b.readLine());
+		int conyPosition = Integer.parseInt(strtok.nextToken());
+		int brownPosition = Integer.parseInt(strtok.nextToken());
+	    
+	    queue.offer(new Position(brownPosition, 0));
+	    
+	    while (true) {
+	      conyPosition += time;
+	        if (conyPosition > 200000)
+	        {
+	        	System.out.println("solve : "+ -1);
+	        	return ;
+	        }
+	        if (visit[conyPosition][time % 2])
+	        {
+	        	System.out.println("sovle : " + time);
+	        	return ;
+	        }
+	        for (int i = 0, size = queue.size(); i < size; i++) {
+	            Position p = queue.poll();
+	        	int currentPosition = p.x;
+	            int newTime = (p.y + 1) % 2;
+	            int newPosition;
+	           
+	            newPosition = currentPosition - 1;
+	            if (newPosition >= 0 && !visit[newPosition][newTime]) {
+	                visit[newPosition][newTime] = true;
+	                queue.offer(new Position(newPosition, newTime));
+	            }
+	            newPosition = currentPosition + 1;
+	            if (newPosition < 200001 && !visit[newPosition][newTime]) {
+	                visit[newPosition][newTime] = true;
+	                queue.offer(new Position(newPosition, newTime));
+	            }
+	            newPosition = currentPosition * 2;
+	            if (newPosition < 200001 && !visit[newPosition][newTime]) {
+	                visit[newPosition][newTime] = true;
+	                queue.offer(new Position(newPosition, newTime));
+	            }
+	        }
+	        time++;
+	    }
+
+	}
+	
+	static void line_intern() throws Exception
+	{
+		InputStreamReader is = new InputStreamReader(System.in);
+		BufferedReader b = new BufferedReader(is);
+		
+		StringTokenizer strtok = new StringTokenizer(b.readLine());
+		int C = Integer.parseInt(strtok.nextToken());
+		int B = Integer.parseInt(strtok.nextToken());
+		
+		boolean visited[][] = new boolean[200001][2];
+		
+		Queue<Position> q = new LinkedList<>();
+		Position pos = new Position(C,B);
+		visited[B][pos.time % 2] = true;
+		q.offer(pos);
+				
+		while(!q.isEmpty())
+		{
+			Position p = q.poll();
+			int c_p = p.x;
+			int b_p = p.y;
+			int move = p.move;
+			int time = p.time;
+			
+			System.out.println("c : "+c_p+" b : "+ b_p);
+			if(c_p > 200000)//범위 벗어나면 -1 출력
+			{
+				System.out.println("my : " + -1);
+				return;
+			}
+			
+			if(b_p == c_p)
+			{
+				System.out.println("my : " + time);
+				return;
+			}
+			
+			if(b_p != 0 && !visited[b_p - 1][(time+1)%2])
+			{
+				visited[b_p - 1][(time+1)%2] = true;
+				
+				Position temp = new Position(c_p + move + 1 ,b_p - 1);
+				temp.move = move + 1;
+				temp.time = time + 1;
+				q.offer(temp);
+			}
+			if(b_p != 200000 && !visited[b_p + 1][(time+1)%2])
+			{
+				visited[b_p + 1][(time+1)%2] = true;
+				
+				Position temp = new Position(c_p + move + 1 ,b_p + 1);
+				temp.move = move + 1;
+				temp.time = time + 1;
+				q.offer(temp);
+			}
+			if(b_p <= 100000 && !visited[b_p * 2][(time+1)%2])
+			{
+				visited[b_p * 2][(time+1)%2] = true;
+					
+				Position temp = new Position(c_p + move + 1 ,b_p * 2);
+				temp.move = move + 1;
+				temp.time = time + 1;
+				q.offer(temp);
+			}
+		}
+		System.out.println("my : "+ -1);
+	}
+	
+	static void bj15956() throws Exception
+	{
+		InputStreamReader is = new InputStreamReader(System.in);
+		BufferedReader b = new BufferedReader(is);
+		
+		String all = b.readLine();
+		StringTokenizer strtok = new StringTokenizer(all,"&&");
+		
+		ArrayList<ArrayList<String>> sub = new ArrayList<>();
+		
+		ArrayList<String> keyword = new ArrayList<>();
+		
+		if(strtok.countTokens() == 1)//한개밖에 없으면 바로 출력하고 끝
+		{
+			System.out.println(all);
+			return;
+		}
+		
+		
+		while(strtok.hasMoreTokens())
+		{
+			String str = strtok.nextToken();
+
+			sub.add(new ArrayList<>());
+			
+			String cut = "";
+			
+			if(str.contains("=="))
+				cut = "==";
+			else
+				cut = "!=";
+			
+			StringTokenizer strtok2 = new StringTokenizer(str,cut);
+			String k1 = strtok2.nextToken();
+			String k2 = strtok2.nextToken();
+			sub.get(sub.size()-1).add(k1);
+			sub.get(sub.size()-1).add(cut);
+			sub.get(sub.size()-1).add(k2);
+			
+			if(!keyword.contains(k1))
+				keyword.add(k1);
+			if(!keyword.contains(k2))
+				keyword.add(k2);
+			
+		}
+
+		String result ="";
+	
+		boolean visited[] = new boolean[keyword.size()];
+		
+		for(int i=0;i<visited.length;i++)
+			visited[i] = false;
+		
+		for(int i=0;i<sub.size();i++)
+		{
+			String k1 = sub.get(i).get(0);
+			String cut = sub.get(i).get(1);
+			String k2 = sub.get(i).get(2);
+			System.out.println("before : "+k1+cut+k2);
+			if(visited[keyword.indexOf(k1)] && visited[keyword.indexOf(k2)])//둘다 이미 ==처리 되어있으면 삭제
+			{	
+				
+			}
+			else
+			{
+				if(!visited[keyword.indexOf(k1)])//==true처리 안 되어있으면
+				{
+					String min_str = k2;
+					
+					for(int j=0;j<sub.size();j++)
+					{
+						if(sub.get(j).contains(k1) && sub.get(j).contains("=="))
+						{
+							String second="";
+							if(sub.get(j).get(0).equals(k1))
+								second = sub.get(j).get(2);
+							else
+								second = sub.get(j).get(0);
+							
+							if(second.length() < min_str.length())//길이가 더 짧으면 대체
+							{
+								min_str = second;
+							}
+						}
+					}
+					
+					k2 = min_str;
+					
+					if(cut=="==")
+					{
+				
+						visited[keyword.indexOf(k1)] = true;
+					}
+					
+				}
+				else
+				{
+					String min_str = k1;
+					
+					for(int j=0;j<sub.size();j++)
+					{
+						if(sub.get(j).contains(k2) && sub.get(j).contains("=="))
+						{
+							String second="";
+							if(sub.get(j).get(0).equals(k2))
+								second = sub.get(j).get(2);
+							else
+								second = sub.get(j).get(0);
+							
+							if((second.length() < min_str.length()) && !visited[keyword.indexOf(second)])//길이가 더 짧으면 대체
+							{
+								min_str = second;
+							}
+						}
+					}
+					
+					k1 = min_str;
+					
+					if(cut=="==")
+					{
+					
+						visited[keyword.indexOf(k2)] = true;
+					}
+				}
+				
+				result += k1;
+				result += sub.get(i).get(1);
+				result += k2;
+				if(i!=sub.size()-1)
+					result += "&&";
+				System.out.println("after : "+sub.get(i).get(0)+sub.get(i).get(1)+sub.get(i).get(2));
+			}
+			
+			
+		}
+		System.out.println(result);
 		
 	}
 	

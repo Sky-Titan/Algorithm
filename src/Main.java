@@ -16,7 +16,7 @@ public class Main {
 		Simulation s = new Simulation();
 		try {
 			
-			s.bj15954();
+			s.bj13460();
 		}
 		catch(Exception e)
 		{
