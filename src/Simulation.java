@@ -2,8 +2,11 @@ import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.Queue;
+import java.util.Set;
 import java.util.StringTokenizer;
 
 public class Simulation {
@@ -44,6 +47,319 @@ public class Simulation {
 		
 	}
 	
+	
+	
+	
+	//삼성 기출
+	static void bj14500() throws Exception
+	{
+		InputStreamReader is = new InputStreamReader(System.in);
+		BufferedReader b = new BufferedReader(is);
+		
+		StringTokenizer strtok = new StringTokenizer(b.readLine());
+		int N = Integer.parseInt(strtok.nextToken());
+		int M = Integer.parseInt(strtok.nextToken());
+		
+		int map[][] = new int[N][M];
+		
+		for(int i=0;i<N;i++)
+		{
+			strtok = new StringTokenizer(b.readLine());
+			for(int j=0;j<M;j++)
+				map[i][j] = Integer.parseInt(strtok.nextToken());
+		}
+		
+		int max = 0;
+		
+		//5가지 도형
+		for(int k=0;k<5;k++)
+		{
+			for(int i=0;i<N;i++)
+			{
+				for(int j=0;j<M;j++)
+				{
+					if(k==0)
+					{
+						
+					}
+					else if(k==1)
+					{
+						
+					}
+					else if(k==2)
+					{
+						
+					}
+					else if(k==3)
+					{
+						
+					}
+					else
+					{
+						
+					}
+				}
+			}
+		}
+	}
+	
+	//삼성 기출
+	static void bj13458() throws Exception
+	{
+		InputStreamReader is = new InputStreamReader(System.in);
+		BufferedReader b = new BufferedReader(is);
+		
+		int N = Integer.parseInt(b.readLine());
+		
+		int people[] = new int[N];//시험장마다 응시자 숫자
+		
+		StringTokenizer strtok = new StringTokenizer(b.readLine());
+		
+		for(int i=0;i<N;i++)
+		{
+			people[i] = Integer.parseInt(strtok.nextToken());
+		}
+		
+		strtok = new StringTokenizer(b.readLine());
+		
+		//각각 시험장에 총감독관1명, 부감독관 여러명씩
+		int B = Integer.parseInt(strtok.nextToken());//총 감독관(1명) - 감시가능 숫자
+		int C = Integer.parseInt(strtok.nextToken());//부 감독관(여러명) - 감시가능 숫자
+		
+		long result = 0;
+		
+		for(int i=0;i<N;i++)
+		{
+			int num = people[i];
+			
+			num -= B;
+			result += 1;//총감독관 추가
+			
+			if(num > 0)
+			{
+				result += Math.ceil((double)num / (double)C);
+			}
+		}
+		System.out.println(result);
+	}
+	
+	static void bj12100() throws Exception
+	{
+		InputStreamReader is = new InputStreamReader(System.in);
+		BufferedReader b = new BufferedReader(is);
+		
+		int N = Integer.parseInt(b.readLine());
+		
+		int map[][] = new int[N][N];
+		
+		for(int i=0;i<N;i++)
+		{
+			StringTokenizer strtok = new StringTokenizer(b.readLine());
+			
+			for(int j=0;j<N;j++)
+			{
+				map[i][j] = Integer.parseInt(strtok.nextToken());
+			}
+		}
+		
+		ArrayList<Integer> result = new ArrayList<>();
+		A_bj12100(0, N, map, result);
+		Object r[] = result.toArray();
+		Arrays.sort(r);
+		System.out.println((int)r[r.length-1]);
+		
+	}
+	
+	static void A_bj12100(int now, int N, int map[][], ArrayList<Integer> result)
+	{
+		
+		//now는 이동 횟수
+		if(now < 5)
+		{
+			
+			for(int i=0;i<4;i++)
+			{
+				int map_moved[][] = new int[N][N];
+				
+				for(int j=0;j<N;j++)
+					map_moved[j] = map[j].clone();
+				
+				move_bj12100(i, N, map_moved);//해당 방향으로 이동
+				result.add(max_bj12100(N, map_moved));//가장 큰 값 찾기
+				
+				
+				if(now < 4)
+					A_bj12100(now+1, N, map_moved, result);
+				
+			}
+		}
+
+	}
+	
+	static void move_bj12100(int d, int N, int map[][])
+	{
+		boolean visited[][] = new boolean[N][N];
+		if(d==0)//북
+		{
+			for(int j=0;j<N;j++)
+			{
+				for(int i=0;i<N;i++)
+				{
+					if(map[i][j] > 0)//이동
+					{
+						for(int k=i;k>=0;k--)//북쪽으로 이동
+						{
+							if(map[k][j] > 0 && k != i) //빈공간은 아닐때
+							{
+								if(map[k+1][j] == map[k][j] && !visited[k][j])//같으면 더하기
+								{
+									visited[k][j] = true;
+									map[k][j] *= 2;
+									map[k+1][j] = 0;
+								}
+								break;
+							}
+							else//빈공간일때
+							{
+								if(k!=i)
+								{
+									int temp = map[k+1][j];
+									map[k+1][j] = 0;
+									map[k][j] = temp;
+								}
+							}
+							
+							
+						}
+					}
+				}
+			}
+		}
+		else if(d==1)//동
+		{
+			for(int i=0;i<N;i++)
+			{
+				for(int j=N-1;j>=0;j--)
+				{
+					if(map[i][j] > 0)//이동
+					{
+						for(int k=j;k<N;k++)//동쪽으로 이동
+						{
+							if(map[i][k] > 0 && k!=j) //빈공간은 패스
+							{
+								if(map[i][k-1] == map[i][k] && !visited[i][k])//같으면 더하기
+								{
+									visited[i][k] = true;
+									map[i][k] *= 2;
+									map[i][k-1] = 0;
+								}
+								break;
+							}
+							else//빈공간일때
+							{
+								if(k != j)
+								{
+									int temp = map[i][k-1];
+									map[i][k-1] = 0;
+									map[i][k] = temp;
+								}
+								
+							}
+						}
+					}
+				}
+			}
+		
+		}
+		else if(d==2)//남
+		{
+			for(int j=0;j<N;j++)
+			{
+				for(int i=N-1;i>=0;i--)
+				{
+					if(map[i][j] > 0)//이동
+					{
+						for(int k=i;k<N;k++)//남쪽으로 이동
+						{
+							if(map[k][j] > 0 && k != i) //빈공간은 패스
+							{
+								if(map[k-1][j] == map[k][j] && !visited[k][j])//같으면 더하기
+								{
+									visited[k][j] = true;
+									map[k][j] *= 2;
+									map[k-1][j] = 0;
+								}
+								break;
+							}
+							else//빈공간일때
+							{
+								if(k != i)
+								{
+									int temp = map[k-1][j];
+									map[k-1][j] = 0;
+									map[k][j] = temp;
+								}
+								
+								
+							}
+						}
+					}
+				}
+			}
+		}
+		else//서
+		{
+			for(int i=0;i<N;i++)
+			{
+				for(int j=0;j<N;j++)
+				{
+					if(map[i][j] > 0)//이동
+					{
+						for(int k=j;k>=0;k--)//서쪽으로 이동
+						{
+							if(map[i][k] > 0 && k != j) //빈공간은 패스
+							{
+								if(map[i][k+1] == map[i][k] && !visited[i][k])//같으면 더하기
+								{
+									visited[i][k] = true;
+									map[i][k] *= 2;
+									map[i][k+1] = 0;
+								}
+								break;
+							}
+							else//빈공간일때
+							{
+								if(k != j)
+								{
+									int temp = map[i][k+1];
+									map[i][k+1] = 0;
+									map[i][k] = temp;
+								}
+								
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+	
+	static int max_bj12100(int N, int map[][])
+	{
+		int max=0;
+		
+		for(int i=0;i<N;i++)
+		{
+			for(int j=0;j<N;j++)
+			{
+				max = Math.max(max, map[i][j]);
+			}
+		}
+		return max;
+	}
+	
+	
+	//삼성 기출
 	static void bj13460() throws Exception
 	{
 		InputStreamReader is = new InputStreamReader(System.in);

@@ -13,10 +13,11 @@ public class Main {
 	
 	public static void main(String[] args) {
 		
-		Simulation s = new Simulation();
+		//Simulation s = new Simulation();
+		Kakao k = new Kakao();
 		try {
 			
-			s.bj13460();
+			k.kakao_recruit2017_7();
 		}
 		catch(Exception e)
 		{
