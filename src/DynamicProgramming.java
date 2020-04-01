@@ -2,7 +2,10 @@ import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.util.StringTokenizer;
 import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.Queue;
 import java.util.Scanner;
+import java.util.Stack;
 
 public class DynamicProgramming {
 
@@ -10,6 +13,327 @@ public class DynamicProgramming {
 	
 	public DynamicProgramming() {
 		// TODO Auto-generated constructor stub
+	}
+	
+	static class Position{
+		
+		public int x,y;
+		public Position()
+		{
+			
+		}
+		public Position(int x, int y)
+		{
+			this.x=x;
+			this.y=y;
+		}
+	}
+	
+	static void bj2493() throws Exception
+	{
+		InputStreamReader is = new InputStreamReader(System.in);
+		BufferedReader b = new BufferedReader(is);
+		
+		int N = Integer.parseInt(b.readLine());
+		
+		StringTokenizer strtok = new StringTokenizer(b.readLine());
+		
+		Stack<Integer> index = new Stack<>();
+		Stack<Integer> value = new Stack<>();
+		
+		for(int i=0;i<N;i++)
+		{
+			int item = Integer.parseInt(strtok.nextToken());
+			
+			while(!index.isEmpty())
+			{
+				if(value.peek() > item)
+				{
+					System.out.print(index.peek()+" ");
+					break;
+				}
+				else
+				{
+					index.pop();
+					value.pop();
+				}
+			}
+			
+			if(index.isEmpty())
+				System.out.print(0+" ");
+		
+			index.push(i+1);
+			value.push(item);
+		}
+
+		
+		
+	}
+	
+	static void bj1520() throws Exception
+	{
+		InputStreamReader is = new InputStreamReader(System.in);
+		BufferedReader b = new BufferedReader(is);
+		
+		StringTokenizer strtok = new StringTokenizer(b.readLine());
+		
+		int N = Integer.parseInt(strtok.nextToken());
+		int M = Integer.parseInt(strtok.nextToken());
+		
+		int map[][] = new int[N][M];
+		int way[][] = new int[N][M];
+		boolean visited[][] = new boolean[N][M];
+		
+		for(int i=0;i<N;i++)
+		{
+			strtok = new StringTokenizer(b.readLine());
+			for(int j=0;j<M;j++)
+			{
+				map[i][j] = Integer.parseInt(strtok.nextToken());
+			}
+		}
+		
+		way[0][0] = 1;
+	
+		
+		for(int i=0;i<N;i++)
+		{
+			
+			for(int j=0;j<M;j++)
+			{
+				//A_bj1520(i, j, N, M, map, visited, way);
+				visited[i][j] = true;
+				if(i!=0)
+				{
+					if(map[i-1][j] > map[i][j])//값 넘겨받기
+					{
+						way[i-1][j] += way[i][j];	
+					}
+				}
+				if(i!=N-1)
+				{
+					if(map[i+1][j] > map[i][j])//값 넘겨받기
+					{
+						way[i+1][j] += way[i][j];	
+					}
+				}
+			}
+		}
+		
+		//A_bj1520(N-1, M-1, N, M, map, visited, way);
+		for(int i=0;i<N;i++)
+		{
+			for(int j=0;j<M;j++)
+				System.out.print(way[i][j]+" ");
+			System.out.println();
+		}
+		System.out.println(way[N-1][M-1]);
+		
+		
+	}
+	
+	static int A_bj1520(int x, int y, int N,int M, int map[][],boolean visited[][],int way[][])
+	{
+		visited[x][y] = true;
+		
+		if(x==0 && y==0)
+		{
+			return way[0][0];
+		}
+		
+		if(x!=0)
+		{
+			
+			if(map[x-1][y] > map[x][y])
+			{
+				
+				if(!visited[x-1][y])
+				{
+					boolean visited2[][] = new boolean[N][M];
+					
+					for(int i=0;i<N;i++)
+						visited2[i] = visited[i].clone();
+					way[x][y] += A_bj1520(x-1, y, N, M, map, visited2, way);
+				}
+				else
+				{
+					way[x][y] += way[x-1][y];
+				}
+			}
+			
+		}
+		if(x!=N-1)
+		{
+			if(map[x+1][y] > map[x][y])
+			{
+				if(!visited[x+1][y])
+				{
+					boolean visited2[][] = new boolean[N][M];
+					
+					for(int i=0;i<N;i++)
+						visited2[i] = visited[i].clone();
+					way[x][y] += A_bj1520(x+1, y, N, M, map, visited2, way);
+				}
+				else
+				{
+					way[x][y] += way[x+1][y];
+				}
+			}
+		}
+		if(y!=0)
+		{
+			if(map[x][y-1] > map[x][y])
+			{
+				if(!visited[x][y-1])
+				{
+					boolean visited2[][] = new boolean[N][M];
+					
+					for(int i=0;i<N;i++)
+						visited2[i] = visited[i].clone();
+					way[x][y] += A_bj1520(x, y-1, N, M, map, visited2, way);
+				}
+				else
+				{
+					way[x][y] += way[x][y-1];
+				}
+			}
+			
+		}
+		if(y!=M-1)
+		{
+			if(map[x][y+1] > map[x][y+1])
+			{
+				if(!visited[x][y+1])
+				{
+					boolean visited2[][] = new boolean[N][M];
+					
+					for(int i=0;i<N;i++)
+						visited2[i] = visited[i].clone();
+					way[x][y] += A_bj1520(x, y+1, N, M, map, visited2, way);
+				}
+				else
+				{
+					way[x][y] += way[x][y+1];
+				}
+			}
+		}
+		
+		return way[x][y];
+	}
+	
+	static void bj11054() throws Exception
+	{
+		InputStreamReader is = new InputStreamReader(System.in);
+		BufferedReader b = new BufferedReader(is);
+		
+		int N = Integer.parseInt(b.readLine());
+		int input[] = new int[N];
+		int output[][] = new int[N][2];
+	
+		StringTokenizer strtok = new StringTokenizer(b.readLine());
+		for(int i=0;i<N;i++)
+		{
+			input[i] = Integer.parseInt(strtok.nextToken());
+			output[i][0] = 1;
+			output[i][1] = 1;
+		}
+		
+		for(int i=1;i<N;i++)
+		{
+			for(int j=i-1;j>=0;j--)
+			{
+				if(input[j] < input[i] && output[j][0] + 1 > output[i][0])
+					output[i][0] = output[j][0] + 1;
+			}
+		}
+		
+		for(int i = N-2;i>=0;i--)
+		{
+			for(int j=i+1;j<N;j++)
+			{
+				if(input[j] < input[i] && output[j][1] + 1 > output[i][1])
+					output[i][1] = output[j][1] + 1;
+			}
+		}
+		
+		int max = output[0][0] + output[0][1] - 1;
+		for(int i=0;i<N;i++)
+			max = Math.max(max, output[i][0] + output[i][1] - 1);
+		System.out.println(max);
+	}
+	
+	static void bj11722() throws Exception
+	{
+		InputStreamReader is = new InputStreamReader(System.in);
+		BufferedReader b = new BufferedReader(is);
+		
+		int N = Integer.parseInt(b.readLine());
+		int input[][] = new int[N][2];
+		
+		
+		
+		StringTokenizer strtok = new StringTokenizer(b.readLine());
+		for(int i=0;i<N;i++)
+		{
+			input[i][0] = Integer.parseInt(strtok.nextToken());
+			input[i][1] = 1;
+		}
+		
+		int total_max=0;
+		
+		for(int i=0;i<N;i++)
+		{
+			if(i>0)
+			{
+				int max_length = input[i][1];
+				
+				for(int j=i-1 ; j>=0;j--)
+				{
+					if(input[j][0] > input[i][0] && input[j][1] + 1 > max_length)
+						max_length = input[j][1] + 1;
+				}
+				input[i][1] = max_length;
+				
+				total_max = Math.max(total_max, input[i][1]);
+			}
+			else
+			{
+				total_max = input[i][1];
+			}
+		}
+		System.out.println(total_max);
+	}
+	
+	static void bj1904() throws Exception
+	{
+		InputStreamReader is = new InputStreamReader(System.in);
+		BufferedReader b = new BufferedReader(is);
+		
+		int N = Integer.parseInt(b.readLine());
+		
+		int dp[] = new int[N+1];
+		
+		for(int i=0;i<=N;i++)
+		{
+			if(i==0)
+			{
+				dp[i] = 0;
+
+			}
+			else if(i==1)
+			{
+				dp[i] = 1;
+			}
+			else if(i==2)
+			{
+				dp[i] = 2;
+			}
+			else
+			{
+				dp[i] = ((dp[i-1] % 15746) + (dp[i-2] % 15746)) % 15746;
+			}
+		}
+		System.out.println(dp[N]%15746);
 	}
 	
 	static void bj2133() throws Exception

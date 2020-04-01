@@ -1,10 +1,11 @@
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
+import java.util.StringTokenizer;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.Queue;
-import java.util.StringTokenizer;
+import java.util.Scanner;
+import java.util.Stack;
 
 
 public class Main {
@@ -13,15 +14,13 @@ public class Main {
 	
 	public static void main(String[] args) {
 		
-		//Simulation s = new Simulation();
-		Kakao k = new Kakao();
-		try {
-			
-			k.kakao_recruit2017_7();
-		}
-		catch(Exception e)
+		Graph graph = new Graph();
+		try
 		{
-			
+			graph.bj1939();
+		}
+		catch (Exception e) {
+			// TODO: handle exception
 		}
 	
 	}

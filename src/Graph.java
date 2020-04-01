@@ -19,8 +19,9 @@ public class Graph {
 	
 	
 	static class Position{
-		private int x,y,z,distance;
+		int x,y,z,distance;
 		
+		int dir = 0;
 		private int max, min;
 		private ArrayList<Integer> path;
 		private ArrayList<Position> graph_path;
@@ -109,6 +110,218 @@ public class Graph {
 		}
 		
 	}
+	
+	static void bj1726() throws Exception
+	{
+		InputStreamReader is = new InputStreamReader(System.in);
+		BufferedReader b = new BufferedReader(is);
+		
+		StringTokenizer strtok = new StringTokenizer(b.readLine());
+		int N = Integer.parseInt(strtok.nextToken());
+		int M = Integer.parseInt(strtok.nextToken());
+		
+		int map[][] = new int[N+1][M+1];
+		boolean visited[][] = new boolean[N+1][M+1];
+		
+		for(int i=1;i<=N;i++)
+		{
+			strtok = new StringTokenizer(b.readLine());
+			
+			for(int j=1;j<=M;j++)
+			{
+				map[i][j] = Integer.parseInt(strtok.nextToken());
+			}
+		}
+		
+		strtok = new StringTokenizer(b.readLine());
+		Position start = new Position(Integer.parseInt(strtok.nextToken()), Integer.parseInt(strtok.nextToken()));
+		start.dir = Integer.parseInt(strtok.nextToken());
+		start.distance = 0;//명령횟수
+		
+		strtok = new StringTokenizer(b.readLine());
+		Position finish = new Position(Integer.parseInt(strtok.nextToken()), Integer.parseInt(strtok.nextToken()));
+		finish.dir = Integer.parseInt(strtok.nextToken());
+		
+		Queue<Position> q = new LinkedList<>();
+		visited[start.x][start.y] = true;
+		q.offer(start);
+		
+		//1234 동서남북
+		while(!q.isEmpty())
+		{
+			Position now = q.poll();
+			int dir = now.dir;
+			int x = now.x;
+			int y = now.y;
+			
+			if(x==finish.x && y == finish.y)
+			{
+				//끝
+			}
+			
+			
+		}
+	}
+	
+	static Position go_k (Position now, int k)
+	{
+		if(now.dir == 1)//동
+		{
+			Position p = new Position(now.x, now.y+k);
+			p.dir = now.dir;
+			p.distance = now.dir+1;
+			return p;
+		}
+		else if(now.dir == 2)//서
+		{
+			Position p = new Position(now.x, now.y-k);
+			p.dir = now.dir;
+			p.distance = now.dir+1;
+			return p;
+		}
+		else if(now.dir == 3)//남
+		{
+			Position p = new Position(now.x+k, now.y);
+			p.dir = now.dir;
+			p.distance = now.dir+1;
+			return p;
+		}
+		else
+		{
+			Position p = new Position(now.x-k, now.y);
+			p.dir = now.dir;
+			p.distance = now.dir+1;
+			return p;
+		}
+	}
+	
+	static int turn_dir(int origin,char direction)
+	{
+		if(direction == 'L')
+		{
+			if(origin == 1)//동
+				return 4;
+			else if(origin == 2)//서
+				return 3;
+			else if(origin == 3)//남
+				return 1;
+			else//북
+				return 2;
+		}
+		else
+		{
+			if(origin == 1)//동
+				return 3;
+			else if(origin == 2)//서
+				return 4;
+			else if(origin == 3)//남
+				return 2;
+			else//북
+				return 1;
+		}
+	}
+	
+	static void bj1939() throws Exception
+	{
+		InputStreamReader is = new InputStreamReader(System.in);
+		BufferedReader b = new BufferedReader(is);
+		
+		StringTokenizer strtok = new StringTokenizer(b.readLine());
+		int N = Integer.parseInt(strtok.nextToken());
+		int M = Integer.parseInt(strtok.nextToken());
+		
+		ArrayList<ArrayList<Edge>> map = new ArrayList<>();
+		
+		for(int i=0;i<=N;i++)
+		{
+			map.add(new ArrayList<>());
+		}
+		
+		int max_weight = Integer.MIN_VALUE;
+		int min_weight = Integer.MAX_VALUE;
+		for(int i=0;i<M;i++)
+		{
+			strtok = new StringTokenizer(b.readLine());
+			
+			int A = Integer.parseInt(strtok.nextToken());
+			int B = Integer.parseInt(strtok.nextToken());
+			int C = Integer.parseInt(strtok.nextToken());
+			
+			map.get(A).add(new Edge(B, C));
+			map.get(B).add(new Edge(A, C));
+			
+			max_weight = Math.max(max_weight, C);
+			min_weight = Math.min(min_weight, C);
+		}
+		
+		strtok = new StringTokenizer(b.readLine());
+		int start = Integer.parseInt(strtok.nextToken());
+		int finish = Integer.parseInt(strtok.nextToken());
+		
+		
+	
+		int left = min_weight;
+		int right = max_weight;
+		
+		int result = Integer.MIN_VALUE;
+		while(left <= right)
+		{
+			int mid = (left + right)/2;
+			boolean isFind = false;
+		
+			boolean visited[] = new boolean[N+1];
+			
+			Queue<Integer> q = new LinkedList<Integer>();
+			q.offer(start);
+			visited[start] = true;
+			while(!q.isEmpty())
+			{
+				int now = q.poll();
+				
+				if(now == finish)
+				{
+					isFind = true;
+					break;
+				}
+				
+				for(int i=0;i<map.get(now).size();i++)
+				{
+					int next = map.get(now).get(i).to;
+					if(!visited[next] && map.get(now).get(i).weight >= mid)
+					{
+						visited[next] = true;
+						q.offer(next);
+					}
+				}
+				
+			}
+			
+			if(isFind)//mid = weight 로도 통과해서 갈수 있으면 더 큰값 집어 넣어봄
+			{
+				left = mid + 1;
+				result = Math.max(result, mid);
+			}
+			else//mid = weight 로는 못통과하면 그거보다 더 작은값 집어 넣어봄
+			{
+				right = mid - 1;
+			}
+		}
+		System.out.println(result);//그중 가장 큰 값 출력
+	}
+	static class Edge{
+		int to;
+		int weight;
+		public Edge(int to, int weight)
+		{
+			this.to = to;
+			this.weight = weight;
+		}
+		public Edge()
+		{
+			
+		}
+	}
+	
 	
 	static void bj1613_2() throws Exception
 	{

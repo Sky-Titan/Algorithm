@@ -40,12 +40,9 @@ public class Kakao {
 			String process_time = strtok.nextToken();
 			
 			strtok = new StringTokenizer(complete_time,":");
+			
 			for(int j=0;j<3;j++)
-			{
 				end_times[i][j] = Double.parseDouble(strtok.nextToken());
-				if(j<2)
-				end_times[i][j] = Math.floor(end_times[i][j]);
-			}
 			
 			strtok = new StringTokenizer(process_time,"s");
 			end_times[i][3] = Double.parseDouble(strtok.nextToken());
@@ -222,7 +219,6 @@ public class Kakao {
 				{
 					return true;
 				}
-				
 			}
 			
 		}
@@ -246,13 +242,12 @@ public class Kakao {
 				{
 					return true;
 				}
-				
-				
 			}
 				
 		}
 		return false;
 	}
+	
 	//2017카카오 공채 - 프렌즈 4블록
 	static void kakao_recruit2017_6() throws Exception
 	{
@@ -359,548 +354,559 @@ public class Kakao {
 	}
 	
 	//2017카카오 공채 - 뉴스 클러스터링
-		static void kakao_recruit2017_5() throws Exception
+	static void kakao_recruit2017_5() throws Exception
+	{
+		String str[] = {"FRANCE","french"};
+			
+		//소문자로 통일
+		for(int i=0;i<2;i++)
 		{
-			String str[] = {"FRANCE","french"};
-			
-			//소문자로 통일
-			for(int i=0;i<2;i++)
+			String temp = "";
+			for(int j=0;j<str[i].length();j++)
 			{
-				String temp = "";
-				for(int j=0;j<str[i].length();j++)
+				if(Character.isAlphabetic(str[i].charAt(j)))
 				{
-					if(Character.isAlphabetic(str[i].charAt(j)))
-					{
-						char ch = Character.toLowerCase(str[i].charAt(j));
-						temp += ch;
-					}
-					else
-					{
-						temp += str[i].charAt(j);
-					}
+					char ch = Character.toLowerCase(str[i].charAt(j));
+					temp += ch;
 				}
-				str[i] = temp;
-			}
-			
-			char former = ' ';//그전 문자
-			
-			ArrayList<String> set[] = new ArrayList[2];//집합
-			HashSet<String> union = new HashSet<>();//합집합
-			HashSet<String> intersect = new HashSet<>();//교집합
-			
-			set[0] = new ArrayList<>();
-			set[1] = new ArrayList<>();
-			for(int i=0;i<2;i++)
-			{
-
-				for(int j=0;j<str[i].length()-1;j++)
+				else
 				{
-					if(Character.isAlphabetic(str[i].charAt(j)) && Character.isAlphabetic(str[i].charAt(j+1)))
-						set[i].add(str[i].charAt(j)+""+str[i].charAt(j+1));
+					temp += str[i].charAt(j);
+				}
+			}
+			str[i] = temp;
+		}
+			
+		char former = ' ';//그전 문자
+			
+		ArrayList<String> set[] = new ArrayList[2];//집합
+		HashSet<String> union = new HashSet<>();//합집합
+		HashSet<String> intersect = new HashSet<>();//교집합
+		
+		set[0] = new ArrayList<>();
+		set[1] = new ArrayList<>();
+		
+		for(int i=0;i<2;i++)
+		{
+			for(int j=0;j<str[i].length()-1;j++)
+			{
+				if(Character.isAlphabetic(str[i].charAt(j)) && Character.isAlphabetic(str[i].charAt(j+1)))
+					set[i].add(str[i].charAt(j)+""+str[i].charAt(j+1));
 					
-				}
-				
 			}
-			Iterator a = set[0].iterator();
-			
-
-			union.addAll(set[0]);
-			union.addAll(set[1]);//합집합
-			
-			
-			
-			intersect.addAll(set[0]);
-			intersect.retainAll(set[1]);//교집합
-			
-			ArrayList<String> intersect2 = new ArrayList<>();
-			ArrayList<String> union2 = new ArrayList<>();
-			
-			int size1 = 0;//intersect
-			int size2 = 0;//union
-			for(int i=0;i<intersect.size();i++)
-			{
-				a = intersect.iterator();
-				String e = String.valueOf(a.next());
-				
-				int min = Integer.MAX_VALUE;
-				
-				int count=0;
-				for(int j=0;j<set[0].size();j++)
-				{
-					if(e.equals(set[0].get(j)))
-						count++;
-				}
-				
-				int count2 = 0;
-				for(int j=0;j<set[1].size();j++)
-				{
-					if(e.equals(set[1].get(j)))
-						count2++;
-				}
-				min = Math.min(count, count2);
-				size1 += min;
-			}
-			
-			for(int i=0;i<union.size();i++)
-			{
-				a = union.iterator();
-				String e = String.valueOf(a.next());
-				
-				int max = Integer.MIN_VALUE;
-				
-				int count=0;
-				for(int j=0;j<set[0].size();j++)
-				{
-					if(e.equals(set[0].get(j)))
-						count++;
-				}
-				
-				int count2 = 0;
-				for(int j=0;j<set[1].size();j++)
-				{
-					if(e.equals(set[1].get(j)))
-						count2++;
-				}
-				max = Math.max(count, count2);
-				size2 += max;
-			}
-			
-			double result = (double)size1 / (double) size2;
-			
-			if(size2 == 0)
-				result = 1;
-			
-			result *= 65536;
-			System.out.println((int)result);
-			
 		}
 		
-		//2017카카오 공채 - 버스
-		static void kakao_recruit2017_4() throws Exception
-		{
-			InputStreamReader is = new InputStreamReader(System.in);
-			BufferedReader b = new BufferedReader(is);
+		Iterator a = set[0].iterator();
 			
-			StringTokenizer strtok = new StringTokenizer(b.readLine());
+		union.addAll(set[0]);
+		union.addAll(set[1]);//합집합
 			
-			int N = Integer.parseInt(strtok.nextToken());//버스 총 댓수
-			int T = Integer.parseInt(strtok.nextToken());//간격
-			int M = Integer.parseInt(strtok.nextToken());//최대 탑승인원
+		intersect.addAll(set[0]);
+		intersect.retainAll(set[1]);//교집합
 			
-			String timetable_original[] = {"23:59"};
-			int timetable[][] = new int[timetable_original.length][2];
+		ArrayList<String> intersect2 = new ArrayList<>();
+		ArrayList<String> union2 = new ArrayList<>();
 			
-			for(int i=0;i<timetable_original.length;i++)
-			{
-				strtok = new StringTokenizer(timetable_original[i],":");
-				timetable[i][0] = Integer.parseInt(strtok.nextToken());
-				timetable[i][1] = Integer.parseInt(strtok.nextToken());
-			}
-			
-			mergeSort(timetable, 0, timetable.length-1);//정렬
+		int size1 = 0;//intersect
+		int size2 = 0;//union
 		
-			int bus[][] = new int[N][2];
-			
-			int hour = 9;
-			int minute = 0;
-			
-			bus[0][0] = hour;
-			bus[0][1] = minute;
-			
-			for(int i=1;i<N;i++)
+		for(int i=0;i<intersect.size();i++)
+		{
+			a = intersect.iterator();
+			String e = String.valueOf(a.next());
+				
+			int min = Integer.MAX_VALUE;
+				
+			int count=0;
+				
+			for(int j=0;j<set[0].size();j++)
 			{
-				minute += T;
-				
-				if(minute >= 60)
-				{	
-					minute -= 60;
-					hour ++;
-				}
-				
-				bus[i][0] = hour;
-				bus[i][1] = minute;
-				
-			}
-
-			int bus_customer[][] = new int[bus.length][M];
-			
-			for(int i=0;i<bus.length;i++)
-				for(int j=0;j<M;j++)
-					bus_customer[i][j] = -1;
-			int j = 0;
-			int i=0;
-			for(;i<bus.length;i++)
-			{
-				int count=0;
-				
-				while(count < M)
-				{
-					if(j == timetable.length)
-						break;
-					if(isFaster(bus[i], timetable[j]))
-					{
-						bus_customer[i][count] = j;
-						j++;
-					}
-					else
-						break;
+				if(e.equals(set[0].get(j)))
 					count++;
-				}
+			}
 				
+			int count2 = 0;
+	
+			for(int j=0;j<set[1].size();j++)
+			{
+				if(e.equals(set[1].get(j)))
+					count2++;
+			}
+			min = Math.min(count, count2);
+			size1 += min;
+		}
+			
+		for(int i=0;i<union.size();i++)
+		{
+			a = union.iterator();
+			String e = String.valueOf(a.next());
+				
+			int max = Integer.MIN_VALUE;
+				
+			int count=0;
+		
+			for(int j=0;j<set[0].size();j++)
+			{
+				if(e.equals(set[0].get(j)))
+					count++;
+			}
+				
+			int count2 = 0;
+			
+			for(int j=0;j<set[1].size();j++)
+			{
+				if(e.equals(set[1].get(j)))
+					count2++;
+			}
+			max = Math.max(count, count2);
+			size2 += max;
+		}
+			
+		double result = (double)size1 / (double) size2;
+			
+		if(size2 == 0)
+			result = 1;
+			
+		result *= 65536;
+		System.out.println((int)result);
+			
+	}
+		
+	//2017카카오 공채 - 버스
+	static void kakao_recruit2017_4() throws Exception
+	{
+		InputStreamReader is = new InputStreamReader(System.in);
+		BufferedReader b = new BufferedReader(is);
+			
+		StringTokenizer strtok = new StringTokenizer(b.readLine());
+		
+		int N = Integer.parseInt(strtok.nextToken());//버스 총 댓수
+		int T = Integer.parseInt(strtok.nextToken());//간격
+		int M = Integer.parseInt(strtok.nextToken());//최대 탑승인원
+		
+		String timetable_original[] = {"23:59"};
+		int timetable[][] = new int[timetable_original.length][2];
+		
+		for(int i=0;i<timetable_original.length;i++)
+		{
+			strtok = new StringTokenizer(timetable_original[i],":");
+			timetable[i][0] = Integer.parseInt(strtok.nextToken());
+			timetable[i][1] = Integer.parseInt(strtok.nextToken());
+		}
+			
+		mergeSort(timetable, 0, timetable.length-1);//정렬
+		
+		int bus[][] = new int[N][2];
+			
+		int hour = 9;
+		int minute = 0;
+			
+		bus[0][0] = hour;
+		bus[0][1] = minute;
+			
+		for(int i=1;i<N;i++)
+		{
+			minute += T;
+				
+			if(minute >= 60)
+			{	
+				minute -= 60;
+				hour ++;
+			}
+				
+			bus[i][0] = hour;
+			bus[i][1] = minute;
+				
+		}
+
+		int bus_customer[][] = new int[bus.length][M];
+			
+		for(int i=0;i<bus.length;i++)
+			for(int j=0;j<M;j++)
+				bus_customer[i][j] = -1;
+		
+		int j = 0;
+		
+		int i = 0;
+		for(;i<bus.length;i++)
+		{
+			int count=0;
+				
+			while(count < M)
+			{
 				if(j == timetable.length)
 					break;
-			}
-			
-			if(i==N)
-				i--;
-			if(bus_customer[i][M-1] != -1)//버스 꽉찬 경우
-			{
-				int last_hour = timetable[bus_customer[i][M-1]][0];
-				int last_min = timetable[bus_customer[i][M-1]][1];
-				
-				if(last_min==0)
+				if(isFaster(bus[i], timetable[j]))
 				{
-					last_min = 59;
-					last_hour--;
-				}
-				else
-					last_min--;
-				
-				System.out.println(intTotime(last_hour)+":"+intTotime(last_min));
-				return;
-			}
-			else//꽉 안 찬 경우
-			{
-				int k = M-1;
-				for(;k>=0;k--)
-				{
-					if(bus_customer[i][k] != -1)
-						break;
-				}
-				int result_hour = 0;
-				int result_min =0;
-				if(k!=-1)
-				{
-					result_hour = timetable[bus_customer[i][k]][0];
-					result_min = timetable[bus_customer[i][k]][1];
-				}
-				else
-				{
-					result_hour = bus[i][0];
-					result_min = bus[i][1];
-				}
-				
-				
-				while(true)
-				{
-					result_min++;
-					if(result_min>59)
-					{
-						result_min = 0;
-						result_hour++;
-					}
-					int temp[] = {result_hour, result_min};
-					
-					if(!isFaster(bus[i], temp))
-					{
-						result_min--;
-						if(result_min==-1)
-						{
-							result_min = 59;
-							result_hour--;
-						}
-						System.out.println(intTotime(result_hour)+":"+intTotime(result_min));
-						return;
-					}
-				}
-					
-			}
-			
-			
-		}
-		
-		static void mergeSort(int timetable[][],int left, int right)
-		{
-			if(left<right)
-			{
-				int mid = (left + right) / 2;
-				mergeSort(timetable, left, mid);
-				mergeSort(timetable, mid+1, right);
-				merge(timetable, left, mid, right);
-			}
-		}
-		static void merge(int timetable[][], int left, int mid, int right)
-		{
-			int i = left;
-			int j = mid+1;
-			int k = 0;
-			int sorted[][] = new int[timetable.length][2];
-			
-			while(i<=mid && j<=right)
-			{
-				if(isFaster(timetable[i], timetable[j]))//j가 더빠름
-				{
-					sorted[k][0] = timetable[j][0];
-					sorted[k][1] = timetable[j][1];
-					k++;
+					bus_customer[i][count] = j;
 					j++;
 				}
 				else
-				{
-					sorted[k][0] = timetable[i][0];
-					sorted[k][1] = timetable[i][1];
-					k++;
-					i++;
-				}
+					break;
+				count++;
+			}
+				
+			if(j == timetable.length)
+				break;
+		}
+			
+		if(i==N)
+			i--;
+		if(bus_customer[i][M-1] != -1)//버스 꽉찬 경우
+		{
+			int last_hour = timetable[bus_customer[i][M-1]][0];
+			int last_min = timetable[bus_customer[i][M-1]][1];
+				
+			if(last_min==0)
+			{
+				last_min = 59;
+				last_hour--;
+			}
+			else
+				last_min--;
+				
+			System.out.println(intTotime(last_hour)+":"+intTotime(last_min));
+			return;
+		}
+		else//꽉 안 찬 경우
+		{
+			int k = M-1;
+			for(;k>=0;k--)
+			{
+				if(bus_customer[i][k] != -1)
+					break;
 			}
 			
-			if(i > mid)
+			int result_hour = 0;
+			int result_min =0;
+			
+			if(k!=-1)
 			{
-				for(;j<=right;j++)
-				{
-					sorted[k][0] = timetable[j][0];
-					sorted[k][1] = timetable[j][1];
-					k++;
-				}
+				result_hour = timetable[bus_customer[i][k]][0];
+				result_min = timetable[bus_customer[i][k]][1];
 			}
 			else
 			{
-				for(;i<=mid;i++)
+				result_hour = bus[i][0];
+				result_min = bus[i][1];
+			}
+					
+			while(true)
+			{
+				result_min++;
+				
+				if(result_min>59)
 				{
-					sorted[k][0] = timetable[i][0];
-					sorted[k][1] = timetable[i][1];
-					k++;
+					result_min = 0;
+					result_hour++;
+				}
+				
+				int temp[] = {result_hour, result_min};
+					
+				if(!isFaster(bus[i], temp))
+				{
+					result_min--;
+					
+					if(result_min==-1)
+					{
+						result_min = 59;
+						result_hour--;
+					}
+					System.out.println(intTotime(result_hour)+":"+intTotime(result_min));
+					return;
 				}
 			}
+					
+		}
 			
-			k=0;
-			for(i = left;i<=right;i++)
+			
+	}
+		
+	static void mergeSort(int timetable[][],int left, int right)
+	{
+		if(left<right)
+		{
+			int mid = (left + right) / 2;
+			
+			mergeSort(timetable, left, mid);
+			mergeSort(timetable, mid+1, right);
+			merge(timetable, left, mid, right);
+		}
+	}
+	
+	static void merge(int timetable[][], int left, int mid, int right)
+	{
+		int i = left;
+		int j = mid+1;
+		int k = 0;
+		
+		int sorted[][] = new int[timetable.length][2];
+		
+		while(i<=mid && j<=right)
+		{
+			if(isFaster(timetable[i], timetable[j]))//j가 더빠름
 			{
-				timetable[i][0] = sorted[k][0];
-				timetable[i][1] = sorted[k][1];
+				sorted[k][0] = timetable[j][0];
+				sorted[k][1] = timetable[j][1];
+				k++;
+				j++;
+			}
+			else
+			{
+				sorted[k][0] = timetable[i][0];
+				sorted[k][1] = timetable[i][1];
+				k++;
+				i++;
+			}
+		}
+			
+		if(i > mid)
+		{
+			for(;j<=right;j++)
+			{
+				sorted[k][0] = timetable[j][0];
+				sorted[k][1] = timetable[j][1];
 				k++;
 			}
 		}
-		
-		static boolean isFaster(int bus[], int people[])
+		else
 		{
-			if(bus[0] > people[0])
-				return true;
-			else if(bus[0] == people[0])
+			for(;i<=mid;i++)
 			{
-				if(bus[1] >= people[1])
-					return true;
-				else
-					return false;
+				sorted[k][0] = timetable[i][0];
+				sorted[k][1] = timetable[i][1];
+				k++;
 			}
+		}
+			
+		k=0;
+		for(i = left;i<=right;i++)
+		{
+			timetable[i][0] = sorted[k][0];
+			timetable[i][1] = sorted[k][1];
+			k++;
+		}
+	}
+		
+	static boolean isFaster(int bus[], int people[])
+	{
+		if(bus[0] > people[0])
+			return true;
+		else if(bus[0] == people[0])
+		{
+			if(bus[1] >= people[1])
+				return true;
 			else
 				return false;
 		}
+		else
+			return false;
+	}
 		
-		static String intTotime(int time)
+	static String intTotime(int time)
+	{
+		if(time < 10)
+			return "0"+time;
+		else
+			return time+"";
+	}
+		
+	//2017카카오 공채 - 캐시
+	static void kakao_recruit2017_3() throws Exception
+	{
+		InputStreamReader is = new InputStreamReader(System.in);
+		BufferedReader b = new BufferedReader(is);
+		
+		int cache_size = Integer.parseInt(b.readLine());
+		String city[] = {"Jeju", "Pangyo", "Seoul", "NewYork", "LA", "SanFrancisco", "Seoul", "Rome", "Paris", "Jeju", "NewYork", "Rome"};
+			
+			
+		Queue<String> cache = new LinkedList<String>();
+			
+		//대소문자 구분안하므로 소문자로 통일
+		for(int i=0;i<city.length;i++)
 		{
-			if(time < 10)
-				return "0"+time;
+			String str = city[i];
+			String str2 = "";
+				
+			for(int j=0;j<str.length();j++)
+				str2 += Character.toLowerCase(str.charAt(j));
+				
+			city[i] = str2;
+		}
+		int sum = 0;
+					
+		for(int i=0;i<city.length;i++)
+		{
+			if(cache.contains(city[i]))//캐시에 있으면 +1;
+				sum += 1;
 			else
-				return time+"";
+				sum += 5;
+				
+			if(cache.size() == cache_size)
+				cache.poll();
+			cache.offer(city[i]);
 		}
+			
+		System.out.println(sum);
+			
+	}
 		
-		//2017카카오 공채 - 캐시
-		static void kakao_recruit2017_3() throws Exception
-		{
-			InputStreamReader is = new InputStreamReader(System.in);
-			BufferedReader b = new BufferedReader(is);
+	//2017카카오 공채 - 다트게임
+	static void kakao_recruit2017_2() throws Exception
+	{
+		InputStreamReader is = new InputStreamReader(System.in);
+		BufferedReader b = new BufferedReader(is);
 			
-			int cache_size = Integer.parseInt(b.readLine());
-			String city[] = {"Jeju", "Pangyo", "Seoul", "NewYork", "LA", "SanFrancisco", "Seoul", "Rome", "Paris", "Jeju", "NewYork", "Rome"};
+		String str = b.readLine();
 			
-			
-			Queue<String> cache = new LinkedList<String>();
-			
-			//대소문자 구분안하므로 소문자로 통일
-			for(int i=0;i<city.length;i++)
-			{
-				String str = city[i];
-				String str2 = "";
-				
-				for(int j=0;j<str.length();j++)
-					str2 += Character.toLowerCase(str.charAt(j));
-				
-				city[i] = str2;
-			}
-			int sum = 0;
-			
-			for(int i=0;i<city.length;i++)
-			{
-				if(cache.contains(city[i]))//캐시에 있으면 +1;
-					sum += 1;
-				else
-					sum += 5;
-				
-				if(cache.size() == cache_size)
-					cache.poll();
-				cache.offer(city[i]);
-			}
-			
-			System.out.println(sum);
-			
-		}
+		String darts[][] = new String[3][3];
 		
-		//2017카카오 공채 - 다트게임
-		static void kakao_recruit2017_2() throws Exception
+		for(int i=0;i<3;i++)
+			for(int j=0;j<3;j++)
+				darts[i][j] = "";
+			
+		int index=0;
+			
+		for(int k=0;k<str.length();k++)
 		{
-			InputStreamReader is = new InputStreamReader(System.in);
-			BufferedReader b = new BufferedReader(is);
+			char ch = str.charAt(k);
 			
-			String str = b.readLine();
-			
-			
-			String darts[][] = new String[3][3];
-			for(int i=0;i<3;i++)
-				for(int j=0;j<3;j++)
-					darts[i][j] = "";
-			
-			int index=0;
-			
-			for(int k=0;k<str.length();k++)
+			if(Character.isDigit(ch))//숫자(점수)
 			{
-				char ch = str.charAt(k);
-				
-				if(Character.isDigit(ch))//숫자(점수)
+				darts[index][0] += ch+"";
+				for(int j=k+1;j<str.length();j++)
 				{
-					darts[index][0] += ch+"";
-					for(int j=k+1;j<str.length();j++)
+					if(Character.isDigit(str.charAt(j)))//숫자면 계속추가
+						darts[index][0] += str.charAt(j)+"";
+					else
 					{
-						if(Character.isDigit(str.charAt(j)))//숫자면 계속추가
-							darts[index][0] += str.charAt(j)+"";
-						else
-						{
-							k = j-1;
-							break;
-						}
-							
+						k = j-1;
+						break;
 					}
-				}
-				else if(Character.isAlphabetic(ch))//문자(보너스)
-				{
-					darts[index][1] += ch;
-					
-					if(k != str.length()-1 && Character.isDigit(str.charAt(k+1)))
-						index++;
-				}
-				else//옵션
-				{
-					darts[index][2] += ch;
-					index++;
+							
 				}
 			}
-			
-			int sum = 0;//점수합
-			int score[] = new int[3];
-			
-			for(int i=0;i<3;i++)
+			else if(Character.isAlphabetic(ch))//문자(보너스)
 			{
-				score[i] = Integer.parseInt(darts[i][0]);
+				darts[index][1] += ch;
 				
-				if(darts[i][1].equals("S"))//1제곱
-					score[i] = (int)Math.pow(score[i], 1);
-				else if(darts[i][1].equals("D"))//2제곱
-					score[i] = (int)Math.pow(score[i], 2);
-				else if(darts[i][1].equals("T"))//3제곱
-					score[i] = (int)Math.pow(score[i], 3);
-				
-				if(darts[i][2].equals("*"))//스타상
-				{
-					score[i] *= 2;
-					
-					if(i!=0)
-						score[i-1] *= 2; 
-				}
-				else if(darts[i][2].equals("#"))//아차상
-					score[i] *= -1;
-					
+				if(k != str.length()-1 && Character.isDigit(str.charAt(k+1)))
+					index++;
 			}
-			
-			for(int i=0;i<3;i++)
-				sum += score[i];
-			
-			System.out.println(sum);
+			else//옵션
+			{
+				darts[index][2] += ch;
+				index++;
+			}
 		}
+			
+		int sum = 0;//점수합
+		int score[] = new int[3];
+			
+		for(int i=0;i<3;i++)
+		{
+			score[i] = Integer.parseInt(darts[i][0]);
+				
+			if(darts[i][1].equals("S"))//1제곱
+				score[i] = (int)Math.pow(score[i], 1);
+			else if(darts[i][1].equals("D"))//2제곱
+				score[i] = (int)Math.pow(score[i], 2);
+			else if(darts[i][1].equals("T"))//3제곱
+				score[i] = (int)Math.pow(score[i], 3);
+				
+			if(darts[i][2].equals("*"))//스타상
+			{
+				score[i] *= 2;
+					
+				if(i!=0)
+					score[i-1] *= 2; 
+			}
+			else if(darts[i][2].equals("#"))//아차상
+				score[i] *= -1;
+					
+		}
+			
+		for(int i=0;i<3;i++)
+			sum += score[i];
+		
+		System.out.println(sum);
+	}
 
 		
-		//2017카카오 공채 - 비밀지도
-		static void kakao_recruit2017_1() throws Exception
-		{
-			InputStreamReader is = new InputStreamReader(System.in);
-			BufferedReader b = new BufferedReader(is);
+	//2017카카오 공채 - 비밀지도
+	static void kakao_recruit2017_1() throws Exception
+	{
+		InputStreamReader is = new InputStreamReader(System.in);
+		BufferedReader b = new BufferedReader(is);
 			
-			int N = Integer.parseInt(b.readLine());
+		int N = Integer.parseInt(b.readLine());
 				
-			int arr1[] = new int[N];
-			int arr2[] = new int[N];
+		int arr1[] = new int[N];
+		int arr2[] = new int[N];
 			
-			StringTokenizer strtok = new StringTokenizer(b.readLine());
+		StringTokenizer strtok = new StringTokenizer(b.readLine());
 			
-			for(int i=0;i<N;i++)
-			{
-				arr1[i] = Integer.parseInt(strtok.nextToken());
-			}
-			
-			strtok = new StringTokenizer(b.readLine());
-			
-			for(int i=0;i<N;i++)
-			{
-				arr2[i] = Integer.parseInt(strtok.nextToken());
-			}
-			
-			char map1[][] = new char[N][N];
-			char map2[][] = new char[N][N];
-			
-			for(int i=0;i<N;i++)
-			{
-				map1[i] = binary_make(N, arr1[i]).clone();
-				map2[i] = binary_make(N, arr2[i]).clone();
-			}
-			
-			char map_all[][] = new char[N][N];
-			
-			for(int i=0;i<N;i++)
-			{
-				for(int j=0;j<N;j++)
-				{
-					if(map1[i][j] == '#' || map2[i][j] == '#')
-						System.out.print("#");
-					else
-						System.out.print(" ");
-				}
-				System.out.println();
-			}
+		for(int i=0;i<N;i++)
+		{
+			arr1[i] = Integer.parseInt(strtok.nextToken());
 		}
 		
-		static char[] binary_make(int N, int num)
+		strtok = new StringTokenizer(b.readLine());
+			
+		for(int i=0;i<N;i++)
 		{
-			//N비트로 표현
-			char[] result = new char[N];
-			
-			for(int i=0;i<N;i++)
-				result[i] = ' ';
-			
-			for(int i=N-1;i>=0;i--)
-			{
-				if(num == 1)
-				{	
-					result[i] = '#';
-					break;
-				}
-				int other = num % 2;
-				num/=2;
-				
-				if(other == 1)
-					result[i] ='#';
-				else
-					result[i] =' ';
-			}
-			
-			return result;
+			arr2[i] = Integer.parseInt(strtok.nextToken());
 		}
+			
+		char map1[][] = new char[N][N];
+		char map2[][] = new char[N][N];
+			
+		for(int i=0;i<N;i++)
+		{
+			map1[i] = binary_make(N, arr1[i]).clone();
+			map2[i] = binary_make(N, arr2[i]).clone();
+		}
+			
+		char map_all[][] = new char[N][N];
+			
+		for(int i=0;i<N;i++)
+		{
+			for(int j=0;j<N;j++)
+			{
+				if(map1[i][j] == '#' || map2[i][j] == '#')
+					System.out.print("#");
+				else
+					System.out.print(" ");
+			}
+			System.out.println();
+		}
+	}
+		
+	static char[] binary_make(int N, int num)
+	{
+		//N비트로 표현
+		char[] result = new char[N];
+			
+		for(int i=0;i<N;i++)
+			result[i] = ' ';
+			
+		for(int i=N-1;i>=0;i--)
+		{
+			if(num == 1)
+			{	
+				result[i] = '#';
+				break;
+			}
+			int other = num % 2;
+			num/=2;
+				
+			if(other == 1)
+				result[i] ='#';
+			else
+				result[i] =' ';
+		}
+			
+		return result;
+	}
 }
