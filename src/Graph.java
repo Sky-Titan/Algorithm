@@ -8,6 +8,7 @@ import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.Queue;
 import java.util.StringTokenizer;
+
 public class Graph {
 
 	public Graph() {
@@ -110,6 +111,255 @@ public class Graph {
 		public void setZ(int z) {
 			this.z = z;
 		}
+		
+	}
+	
+	static void bj2589() throws Exception
+	{
+		InputStreamReader is = new InputStreamReader(System.in);
+		BufferedReader b = new BufferedReader(is);
+		
+		StringTokenizer strtok = new StringTokenizer(b.readLine());
+		int N = Integer.parseInt(strtok.nextToken());
+		int M = Integer.parseInt(strtok.nextToken());
+		
+		char map[][] = new char[N][M];
+		boolean visited[][] = new boolean[N][M];
+		
+		for(int i=0;i<N;i++)
+		{
+			String str = b.readLine();
+			for(int j=0;j<M;j++)
+				map[i][j] = str.charAt(j);
+		}
+		
+		
+		ArrayList<Position> end_list = new ArrayList<>();
+		
+		for(int i=0;i<N;i++)
+		{
+			for(int j=0;j<M;j++)
+			{
+				if(map[i][j] == 'L' && !visited[i][j])//새로운 섬 발견
+				{
+					int max = Integer.MIN_VALUE;
+					Queue<Position> q = new LinkedList<>();
+					Position p = new Position(i, j);
+					visited[i][j] = true;
+					p.distance = 0;
+					q.offer(p);
+					
+					while(!q.isEmpty())
+					{
+						Position now = q.poll();
+						int x = now.x;
+						int y = now.y;
+						int distance = now.distance;
+					
+                        end_list.add(new Position(x, y));
+                        
+						
+						int x2=x;
+						int y2=y;
+						
+						if(x!=0)
+						{
+							x2 = x-1;
+							y2 = y;
+							if(map[x2][y2]=='L' && !visited[x2][y2])
+							{
+								
+								visited[x2][y2] = true;
+								Position next = new Position(x2, y2);
+								next.distance = distance+1;
+								q.offer(next);
+							}
+						}
+						if(x!=N-1)
+						{
+							x2 = x+1;
+							y2 = y;
+							if(map[x2][y2]=='L' && !visited[x2][y2])
+							{
+								
+								visited[x2][y2] = true;
+								Position next = new Position(x2, y2);
+								next.distance = distance+1;
+								q.offer(next);
+							}
+						}
+						if(y!=0)
+						{
+							x2 = x;
+							y2 = y-1;
+							if(map[x2][y2]=='L' && !visited[x2][y2])
+							{
+								
+								visited[x2][y2] = true;
+								Position next = new Position(x2, y2);
+								next.distance = distance+1;
+								q.offer(next);
+							}
+						}
+						if(y!=M-1)
+						{
+							x2 = x;
+							y2 = y+1;
+							if(map[x2][y2]=='L' && !visited[x2][y2])
+							{
+								
+								visited[x2][y2] = true;
+								Position next = new Position(x2, y2);
+								next.distance = distance+1;
+								q.offer(next);
+							}
+						}
+						
+					}
+					
+				}
+			}
+		}
+
+		int max = Integer.MIN_VALUE;
+		for(int i=0;i<end_list.size();i++)
+		{
+			Position start = new Position(end_list.get(i).x, end_list.get(i).y);
+			start.distance = 0;
+					
+			Queue<Position> q = new LinkedList<>();
+			visited = new boolean[N][M];
+			visited[start.x][start.y] = true;
+			q.offer(start);
+					
+			while(!q.isEmpty())
+			{
+				Position now = q.poll();
+				int x = now.x;
+				int y = now.y;
+				int distance = now.distance;
+						
+				max = Math.max(max, distance);
+				
+				int x2=x;
+				int y2=y;
+						
+				if(x!=0)
+				{
+					x2 = x-1;
+					y2 = y;
+					if(map[x2][y2]== 'L' && !visited[x2][y2])
+					{
+						
+						visited[x2][y2] = true;
+						Position next = new Position(x2, y2);
+						next.distance = distance+1;
+						q.offer(next);
+					}
+				}
+				if(x!=N-1)
+				{
+					x2 = x+1;
+					y2 = y;
+					if(map[x2][y2]== 'L' && !visited[x2][y2])
+					{
+						visited[x2][y2] = true;
+						Position next = new Position(x2, y2);
+						next.distance = distance+1;
+						q.offer(next);
+					}
+				}
+				if(y!=0)
+				{
+					x2 = x;
+					y2 = y-1;
+					if(map[x2][y2]== 'L' && !visited[x2][y2])
+					{
+						visited[x2][y2] = true;
+						Position next = new Position(x2, y2);
+						next.distance = distance+1;
+						q.offer(next);
+					}
+				}
+				if(y!=M-1)
+				{
+					x2 = x;
+					y2 = y+1;
+					if(map[x2][y2]== 'L' && !visited[x2][y2])
+					{
+						visited[x2][y2] = true;
+						Position next = new Position(x2, y2);
+						next.distance = distance+1;
+						q.offer(next);
+					}
+				}
+						
+				
+				
+			}
+		}
+		System.out.println(max);
+	}
+	
+	static void bj5014() throws Exception
+	{
+		InputStreamReader is = new InputStreamReader(System.in);
+		BufferedReader b = new BufferedReader(is);
+		
+		StringTokenizer strtok = new StringTokenizer(b.readLine());
+		
+		int F = Integer.parseInt(strtok.nextToken());//건물의 총 층 개
+		int S = Integer.parseInt(strtok.nextToken());//지금 있는 층(현재위치)
+		int G = Integer.parseInt(strtok.nextToken());//스타트링크 위치(목표)
+		int U = Integer.parseInt(strtok.nextToken());//한 번에 위로 가는 층 개수
+		int D = Integer.parseInt(strtok.nextToken());//한 번에 밑으로 가는 층 개수
+		
+		boolean visited[] = new boolean[F+1];
+		Queue<Position> q = new LinkedList<>();
+		visited[S] = true;
+		Position p = new Position(S);
+		p.distance = 0;
+		q.offer(p);
+		
+		while(!q.isEmpty())
+		{
+			Position now = q.poll();
+			int level = now.x;
+			int distance = now.distance;
+			
+			if(level == G)//목표 도달
+			{
+				System.out.println(distance);
+				return;
+			}
+			
+			//위로가기
+			if(level + U <= F)
+			{
+				if(!visited[level + U])
+				{
+					visited[level + U] = true;
+					Position next = new Position(level + U);
+					next.distance = distance + 1;
+					q.offer(next);
+				}
+				
+			}
+			
+			//밑으로가기
+			if(level - D > 0)
+			{
+				if(!visited[level - D])
+				{
+					visited[level - D] = true;
+					Position next = new Position(level - D);
+					next.distance = distance + 1;
+					q.offer(next);
+				}
+				
+			}
+		}
+		System.out.println("use the stairs");
 		
 	}
 	

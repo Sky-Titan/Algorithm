@@ -20,7 +20,7 @@ public class Main {
 		Graph graph = new Graph();
 		try
 		{
-			graph.bj2251();
+			graph.bj2589();
 		}
 		catch (Exception e) {
 			// TODO: handle exception
