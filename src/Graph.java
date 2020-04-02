@@ -1,12 +1,13 @@
+import java.awt.List;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.Queue;
 import java.util.StringTokenizer;
-
 public class Graph {
 
 	public Graph() {
@@ -24,7 +25,8 @@ public class Graph {
 		int dir = 0;
 		private int max, min;
 		private ArrayList<Integer> path;
-		private ArrayList<Position> graph_path;
+		private ArrayList<Position> graph_path = new ArrayList<>();
+		HashSet set = new HashSet<>();
 		
 		public Position() {
 			
@@ -111,6 +113,273 @@ public class Graph {
 		
 	}
 	
+	static void bj2251() throws Exception
+	{
+		InputStreamReader is = new InputStreamReader(System.in);
+		BufferedReader b = new BufferedReader(is);
+		
+		StringTokenizer strtok = new StringTokenizer(b.readLine());
+		
+		int A = Integer.parseInt(strtok.nextToken());
+		int B = Integer.parseInt(strtok.nextToken());
+		int C = Integer.parseInt(strtok.nextToken());
+	
+		boolean visited[][][] = new boolean[A+1][B+1][C+1];
+		
+		Queue<Position> q = new LinkedList<>();
+		
+		visited[0][0][C] = true;
+		q.offer(new Position(0, 0, C));
+		
+		HashSet result = new HashSet<>();
+		
+		while(!q.isEmpty())
+		{
+			Position now = q.poll();
+			int A_now = now.x;
+			int B_now = now.y;
+			int C_now = now.z;
+			
+			if(A_now==0)
+				result.add(C_now);
+			
+			int A_next = 0;
+			int B_next = 0;
+			int C_next = 0;
+		
+			
+			if(A_now!=0)
+			{
+				//A->B로
+				if(A_now + B_now > B)//넘치면
+				{
+					A_next = A_now + B_now - B;
+					B_next = B;
+					C_next = C_now;
+				}
+				else//안넘치는 경우 
+				{
+					A_next = 0;
+					B_next = A_now + B_now;
+					C_next = C_now;
+				}
+				
+				if(!visited[A_next][B_next][C_next])
+				{
+					visited[A_next][B_next][C_next] = true;
+					q.offer(new Position(A_next, B_next, C_next));
+				}
+				
+				//A->C로
+				if(A_now + C_now > C)//넘치면
+				{
+					A_next = A_now + C_now - C;
+					B_next = B_now;
+					C_next = C;
+				}
+				else//안넘치는 경우 
+				{
+					A_next = 0;
+					B_next = B_now;
+					C_next = A_now + C_now;
+				}
+				
+				if(!visited[A_next][B_next][C_next])
+				{
+					visited[A_next][B_next][C_next] = true;
+					q.offer(new Position(A_next, B_next, C_next));
+				}
+			}
+			if(B_now!=0)
+			{
+				//B->A로
+				if(B_now + A_now > A)//넘치면
+				{
+					A_next = A;
+					B_next = B_now + A_now - A;
+					C_next = C_now;
+				}
+				else//안넘치는 경우 
+				{
+					A_next = B_now + A_now;
+					B_next = 0;
+					C_next = C_now;
+				}
+				
+				if(!visited[A_next][B_next][C_next])
+				{
+					visited[A_next][B_next][C_next] = true;
+					q.offer(new Position(A_next, B_next, C_next));
+				}
+				
+				//B->C로
+				if(B_now + C_now > C)//넘치면
+				{
+					A_next = A_now;
+					B_next = B_now + C_now - C;
+					C_next = C;
+				}
+				else//안넘치는 경우 
+				{
+					A_next = A_now;
+					B_next = 0;
+					C_next = B_now + C_now;
+				}
+				
+				if(!visited[A_next][B_next][C_next])
+				{
+					visited[A_next][B_next][C_next] = true;
+					q.offer(new Position(A_next, B_next, C_next));
+				}
+			}
+			if(C_now!=0)
+			{
+				//C->A로
+				if(C_now + A_now > A)//넘치면
+				{
+					A_next = A;
+					B_next = B_now;
+					C_next = C_now + A_now - A;
+				}
+				else//안넘치는 경우 
+				{
+					A_next = C_now + A_now;
+					B_next = B_now;
+					C_next = 0;
+				}
+				
+				if(!visited[A_next][B_next][C_next])
+				{
+					visited[A_next][B_next][C_next] = true;
+					q.offer(new Position(A_next, B_next, C_next));
+				}
+				
+				//C->B로
+				if(C_now + B_now > B)//넘치면
+				{
+					A_next = A_now;
+					B_next = B;
+					C_next = C_now + B_now - B;
+				}
+				else//안넘치는 경우 
+				{
+					A_next = A_now;
+					B_next = C_now + B_now;
+					C_next = 0;
+				}
+				
+				if(!visited[A_next][B_next][C_next])
+				{
+					visited[A_next][B_next][C_next] = true;
+					q.offer(new Position(A_next, B_next, C_next));
+				}
+			}
+		}
+		
+		
+		Object o[] = result.toArray();
+		Arrays.sort(o);
+		for(int i=0;i<o.length;i++)
+		System.out.print((int)o[i]+" ");
+	}
+	
+	static void bj9372() throws Exception
+	{
+		InputStreamReader is = new InputStreamReader(System.in);
+		BufferedReader b = new BufferedReader(is);
+		
+		int T = Integer.parseInt(b.readLine());
+		
+		for(int t=0;t<T;t++)
+		{
+			StringTokenizer strtok = new StringTokenizer(b.readLine());
+			int N = Integer.parseInt(strtok.nextToken());//도시 개수
+			int M = Integer.parseInt(strtok.nextToken());//비행기 개수
+			
+			
+			ArrayList<ArrayList<Integer>> airplane = new ArrayList<>();
+			
+			for(int i=0;i<=N;i++)
+				airplane.add(new ArrayList<>());
+			
+			int A=0;
+			int B=0;
+			for(int i=0;i<M;i++)
+			{
+				strtok = new StringTokenizer(b.readLine());
+				A = Integer.parseInt(strtok.nextToken());
+				B = Integer.parseInt(strtok.nextToken());
+				
+				airplane.get(A).add(B);
+				airplane.get(B).add(A);
+			}
+			
+		
+				Queue<Position> q = new LinkedList<>();
+				boolean visited[][] = new boolean[N+1][N+1];//해당 비행기 탑승여부
+				
+				for(int i=0;i<airplane.get(A).size();i++)
+				{
+					B = airplane.get(A).get(i);
+					visited[A][B] = true;
+					Position p = new Position(A,B);
+					p.distance = 1;
+					p.graph_path.add(new Position(A, B));
+					p.set.add(A);
+					p.set.add(B);
+					q.offer(p);
+				}
+				
+				
+				
+				while(!q.isEmpty())
+				{
+					Position now = q.poll();
+					int country = now.y;
+					int distance = now.distance;
+					HashSet set = now.set;
+					
+					if(set.size()==N)//모든 국가 방문햇을 경우
+					{
+						System.out.println(distance);
+						for(int i=0;i<now.graph_path.size();i++)
+						{
+							System.out.println(now.graph_path.get(i).x+" to "+now.graph_path.get(i).y);
+						}
+						break;
+					}
+					
+					for(int j=0;j<airplane.get(country).size();j++)
+					{
+						int next_country = airplane.get(country).get(j);
+						
+						if(!visited[country][next_country])//탑승 안한 비행기인 경우
+						{
+							
+							//visited[next_country][country] = true;
+							Position next = new Position(country,next_country);
+							if(!visited[next_country][country])
+							{	
+								next.distance = distance+1;
+								System.out.println("count : "+country+" to "+next_country); 
+							}
+							else
+								next.distance = distance;
+							visited[country][next_country] = true;
+							next.graph_path.addAll(now.graph_path);
+							next.graph_path.add(new Position(country, next_country));
+							next.set.addAll(now.set);
+							next.set.add(country);
+							next.set.add(next_country);
+							q.offer(next);
+						}
+					}
+				}	
+		
+		}
+		
+	}
+	
 	static void bj1726() throws Exception
 	{
 		InputStreamReader is = new InputStreamReader(System.in);
@@ -121,7 +390,7 @@ public class Graph {
 		int M = Integer.parseInt(strtok.nextToken());
 		
 		int map[][] = new int[N+1][M+1];
-		boolean visited[][] = new boolean[N+1][M+1];
+		boolean visited[][][] = new boolean[N+1][M+1][5]; //동서남북 방향도 따로 방문여부체크
 		
 		for(int i=1;i<=N;i++)
 		{
@@ -143,83 +412,157 @@ public class Graph {
 		finish.dir = Integer.parseInt(strtok.nextToken());
 		
 		Queue<Position> q = new LinkedList<>();
-		visited[start.x][start.y] = true;
+		visited[start.x][start.y][start.dir] = true;
 		q.offer(start);
 		
 		//1234 동서남북
 		while(!q.isEmpty())
 		{
 			Position now = q.poll();
+			int distance = now.distance;
 			int dir = now.dir;
 			int x = now.x;
 			int y = now.y;
 			
-			if(x==finish.x && y == finish.y)
+			if(x==finish.x && y == finish.y && now.dir == finish.dir)
 			{
-				//끝
+				System.out.println(now.distance);
+				return;
 			}
 			
+			for(int i=1;i<=4;i++)
+			{
+				int order = order_count(dir, i);
+				if(!visited[x][y][i] && order == 1)//방향 바꿀 때마다 방문여부 체크
+				{
+					Position next = new Position(x, y);
+					next.distance = distance + order;
+					next.dir = i;
+					visited[next.x][next.y][next.dir] = true;
+					q.offer(next);
+				}
+					
+			}
 			
+			//해당 방향으로 거리 이동 여부
+			for(int j=1;j<=3;j++)
+			{
+				Position next = go_k(now, j, N, M, visited, map);
+				if(next != null)
+				{
+					visited[next.x][next.y][next.dir] = true;
+					q.offer(next);
+				}
+			}
 		}
 	}
 	
-	static Position go_k (Position now, int k)
+	static int order_count(int origin, int change)
+	{
+		if(change==origin)//같음
+			return 0;
+		else if(change + origin == 3 || change + origin == 7)
+			return 2;
+		else
+			return 1;
+		
+	}
+	
+	static Position go_k (Position now, int k, int N, int M,boolean[][][] visited, int[][] map)
 	{
 		if(now.dir == 1)//동
 		{
-			Position p = new Position(now.x, now.y+k);
-			p.dir = now.dir;
-			p.distance = now.dir+1;
-			return p;
+			if(now.y + k <= M)
+			{
+				if(!visited[now.x][now.y+k][now.dir])
+				{
+					//중간에 벽있는 지 검사
+					for(int i=1;i<=k;i++)
+					{
+						if(map[now.x][now.y+i]==1)
+							return null;
+					}
+					Position p = new Position(now.x, now.y+k);
+					p.dir = now.dir;
+					p.distance = now.distance+1;
+					return p;
+				}
+				else
+					return null;
+			}
+			else
+				return null;
+			
 		}
 		else if(now.dir == 2)//서
 		{
-			Position p = new Position(now.x, now.y-k);
-			p.dir = now.dir;
-			p.distance = now.dir+1;
-			return p;
+			if(now.y - k > 0)
+			{
+				if(!visited[now.x][now.y-k][now.dir])
+				{
+					for(int i=1;i<=k;i++)
+					{
+						if(map[now.x][now.y-i]==1)
+							return null;
+					}
+					Position p = new Position(now.x, now.y-k);
+					p.dir = now.dir;
+					p.distance = now.distance+1;
+					return p;
+				}
+				else
+					return null;
+			}
+			else
+				return null;
 		}
 		else if(now.dir == 3)//남
 		{
-			Position p = new Position(now.x+k, now.y);
-			p.dir = now.dir;
-			p.distance = now.dir+1;
-			return p;
+			if(now.x + k <= N)
+			{
+				if(!visited[now.x+k][now.y][now.dir])
+				{
+					for(int i=1;i<=k;i++)
+					{
+						if(map[now.x+i][now.y]==1)
+							return null;
+					}
+					Position p = new Position(now.x+k, now.y);
+					p.dir = now.dir;
+					p.distance = now.distance+1;
+					return p;
+				}
+				else
+					return null;
+			}
+			else
+				return null;
 		}
-		else
+		else//북
 		{
-			Position p = new Position(now.x-k, now.y);
-			p.dir = now.dir;
-			p.distance = now.dir+1;
-			return p;
+			if(now.x - k > 0)
+			{
+				if(!visited[now.x-k][now.y][now.dir])
+				{
+					for(int i=1;i<=k;i++)
+					{
+						if(map[now.x-i][now.y]==1)
+							return null;
+					}
+					Position p = new Position(now.x-k, now.y);
+					p.dir = now.dir;
+					p.distance = now.distance+1;
+					return p;
+				}
+				else
+					return null;
+			}
+			else
+				return null;
 		}
 	}
 	
-	static int turn_dir(int origin,char direction)
-	{
-		if(direction == 'L')
-		{
-			if(origin == 1)//동
-				return 4;
-			else if(origin == 2)//서
-				return 3;
-			else if(origin == 3)//남
-				return 1;
-			else//북
-				return 2;
-		}
-		else
-		{
-			if(origin == 1)//동
-				return 3;
-			else if(origin == 2)//서
-				return 4;
-			else if(origin == 3)//남
-				return 2;
-			else//북
-				return 1;
-		}
-	}
+	
 	
 	static void bj1939() throws Exception
 	{

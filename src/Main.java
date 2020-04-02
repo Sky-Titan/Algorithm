@@ -6,7 +6,10 @@ import java.util.LinkedList;
 import java.util.Queue;
 import java.util.Scanner;
 import java.util.Stack;
-
+import java.awt.List;
+import java.lang.reflect.Array;
+import java.util.Arrays;
+import java.util.HashSet;
 
 public class Main {
 
@@ -17,7 +20,7 @@ public class Main {
 		Graph graph = new Graph();
 		try
 		{
-			graph.bj1939();
+			graph.bj2251();
 		}
 		catch (Exception e) {
 			// TODO: handle exception
