@@ -125,7 +125,7 @@ public class Graph {
 		
 		char map[][] = new char[N][M];
 		boolean visited[][] = new boolean[N][M];
-		
+
 		for(int i=0;i<N;i++)
 		{
 			String str = b.readLine();
@@ -134,17 +134,18 @@ public class Graph {
 		}
 		
 		
-		ArrayList<Position> end_list = new ArrayList<>();
+		int result_max = Integer.MIN_VALUE;
 		
 		for(int i=0;i<N;i++)
 		{
 			for(int j=0;j<M;j++)
 			{
-				if(map[i][j] == 'L' && !visited[i][j])//货肺款 级 惯斑
+				if(map[i][j] == 'L')//货肺款 级 惯斑
 				{
 					int max = Integer.MIN_VALUE;
 					Queue<Position> q = new LinkedList<>();
 					Position p = new Position(i, j);
+					visited = new boolean[N][M];
 					visited[i][j] = true;
 					p.distance = 0;
 					q.offer(p);
@@ -156,9 +157,8 @@ public class Graph {
 						int y = now.y;
 						int distance = now.distance;
 					
-                        end_list.add(new Position(x, y));
-                        
-						
+                        max = Math.max(max, distance);
+ 		
 						int x2=x;
 						int y2=y;
 						
@@ -216,89 +216,14 @@ public class Graph {
 						}
 						
 					}
+					result_max = Math.max(result_max, max);
 					
 				}
 			}
 		}
 
-		int max = Integer.MIN_VALUE;
-		for(int i=0;i<end_list.size();i++)
-		{
-			Position start = new Position(end_list.get(i).x, end_list.get(i).y);
-			start.distance = 0;
-					
-			Queue<Position> q = new LinkedList<>();
-			visited = new boolean[N][M];
-			visited[start.x][start.y] = true;
-			q.offer(start);
-					
-			while(!q.isEmpty())
-			{
-				Position now = q.poll();
-				int x = now.x;
-				int y = now.y;
-				int distance = now.distance;
-						
-				max = Math.max(max, distance);
-				
-				int x2=x;
-				int y2=y;
-						
-				if(x!=0)
-				{
-					x2 = x-1;
-					y2 = y;
-					if(map[x2][y2]== 'L' && !visited[x2][y2])
-					{
-						
-						visited[x2][y2] = true;
-						Position next = new Position(x2, y2);
-						next.distance = distance+1;
-						q.offer(next);
-					}
-				}
-				if(x!=N-1)
-				{
-					x2 = x+1;
-					y2 = y;
-					if(map[x2][y2]== 'L' && !visited[x2][y2])
-					{
-						visited[x2][y2] = true;
-						Position next = new Position(x2, y2);
-						next.distance = distance+1;
-						q.offer(next);
-					}
-				}
-				if(y!=0)
-				{
-					x2 = x;
-					y2 = y-1;
-					if(map[x2][y2]== 'L' && !visited[x2][y2])
-					{
-						visited[x2][y2] = true;
-						Position next = new Position(x2, y2);
-						next.distance = distance+1;
-						q.offer(next);
-					}
-				}
-				if(y!=M-1)
-				{
-					x2 = x;
-					y2 = y+1;
-					if(map[x2][y2]== 'L' && !visited[x2][y2])
-					{
-						visited[x2][y2] = true;
-						Position next = new Position(x2, y2);
-						next.distance = distance+1;
-						q.offer(next);
-					}
-				}
-						
-				
-				
-			}
-		}
-		System.out.println(max);
+		
+		System.out.println(result_max);
 	}
 	
 	static void bj5014() throws Exception
