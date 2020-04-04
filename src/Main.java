@@ -17,7 +17,7 @@ public class Main {
 	
 	public static void main(String[] args) {
 		
-		Graph graph = new Graph();
+	/*	Graph graph = new Graph();
 		try
 		{
 			graph.bj2589();
@@ -25,7 +25,16 @@ public class Main {
 		catch (Exception e) {
 			// TODO: handle exception
 		}
-	
+	*/
+		
+		Knapsack k = new Knapsack();
+		try
+		{
+			k.bj1943();
+		}
+		catch (Exception e) {
+			// TODO: handle exception
+		}
 	}
 	
 }
