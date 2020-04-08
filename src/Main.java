@@ -27,13 +27,14 @@ public class Main {
 		}
 	*/
 		
-		Knapsack k = new Knapsack();
+		Samsung s = new Samsung();
 		try
 		{
-			k.bj1943();
+			s.s5656();
 		}
-		catch (Exception e) {
-			// TODO: handle exception
+		catch(Exception e)
+		{
+			
 		}
 	}
 	
