@@ -30,7 +30,7 @@ public class Main {
 		Samsung s = new Samsung();
 		try
 		{
-			s.s5656();
+			s.s5650();
 		}
 		catch(Exception e)
 		{
