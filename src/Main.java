@@ -17,25 +17,27 @@ public class Main {
 	
 	public static void main(String[] args) {
 		
-	/*	Graph graph = new Graph();
+		/*Graph graph = new Graph();
 		try
 		{
-			graph.bj2589();
+			graph.bj14502_2();
 		}
 		catch (Exception e) {
 			// TODO: handle exception
 		}
-	*/
-		
+	
+		*/
 		Samsung s = new Samsung();
 		try
 		{
-			s.s5650();
+			s.s5648();
 		}
 		catch(Exception e)
 		{
 			
 		}
+		
+		
 	}
 	
 }

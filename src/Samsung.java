@@ -1,4 +1,3 @@
-import java.awt.HeadlessException;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
@@ -16,6 +15,361 @@ public class Samsung {
 		
 	}
 	
+	static void s5648() throws Exception
+	{
+		InputStreamReader is = new InputStreamReader(System.in);
+		BufferedReader b = new BufferedReader(is);
+		
+		int  T = Integer.parseInt(b.readLine());
+		
+		for(int t=1;t<=T;t++)
+		{
+			int N = Integer.parseInt(b.readLine());
+			
+			ArrayList<Atomic> atomics = new ArrayList<>();
+			
+			for(int i=0;i<N;i++)
+			{
+				StringTokenizer strtok = new StringTokenizer(b.readLine());
+				
+				int y = Integer.parseInt(strtok.nextToken()) * 2;
+				int x = Integer.parseInt(strtok.nextToken()) * 2;
+				int dir = Integer.parseInt(strtok.nextToken());
+				int energy = Integer.parseInt(strtok.nextToken());
+				
+				atomics.add(new Atomic(getX(x), getY(y), 1, energy, dir,i));
+			}
+
+			ArrayList<Atomic> crushes = new ArrayList<>();
+			
+			for(int i=0;i<atomics.size();i++)
+			{
+				Atomic first = atomics.get(i);
+				
+				for(int j=i+1;j<atomics.size();j++)
+				{
+					Atomic second = atomics.get(j);
+					
+					//2개가 충돌 가능
+					if(isCrushed(first, second))
+					{
+						int time = whenCrushed(first, second);
+						crushes.add(new Atomic(first.num, second.num, time));
+					}
+				}
+			}
+			
+			Object[] o = crushes.toArray();
+			
+			mergeSort(o, 0, o.length-1);
+			
+			boolean isFinished[] = new boolean[N];
+			
+			int finishTime[] = new int[N];
+			
+			int sum = 0;
+			for(int i=0;i<o.length;i++)
+			{
+				Atomic first = atomics.get(((Atomic)o[i]).x);
+				Atomic second = atomics.get(((Atomic)o[i]).y);
+				int time = ((Atomic)o[i]).time;
+				
+				if(!isFinished[first.num] && !isFinished[second.num])
+				{
+					isFinished[first.num] = true;
+					sum += first.energy;
+					
+					isFinished[second.num] = true;
+					sum += second.energy;
+					
+					finishTime[first.num] = time;
+					finishTime[second.num] = time;
+				}
+				else if(isFinished[first.num] && !isFinished[second.num])//first는 이미 터진 상태
+				{
+					//동시에 터진거면 추가
+					if(finishTime[first.num] == time)
+					{
+						isFinished[second.num] = true;
+						sum += second.energy;
+						finishTime[second.num] = time;
+					}
+				}
+				else if(!isFinished[first.num] && isFinished[second.num])//second는 이미 터진 상태
+				{
+					//동시에 터진거면 추가
+					if(finishTime[second.num] == time)
+					{
+						isFinished[first.num] = true;
+						sum += first.energy;
+						finishTime[first.num] = time;
+					}
+				}
+			}
+			
+			System.out.println("#"+t+" "+sum);
+		}
+	}
+	static void mergeSort(Object[] o, int left, int right)
+	{
+		if(left<right)
+		{
+			int mid = (left + right)/2;
+			
+			mergeSort(o, left, mid);
+			mergeSort(o, mid+1, right);
+			merge(o, left, right);
+		}
+	}
+	static void merge(Object[] o, int left, int right)
+	{
+		Object[] list = new Object[o.length];
+		
+		int mid = (left + right)/2;
+		int i = left;
+		int j = mid+1;
+		int k = left;
+		
+		while(i <= mid && j <= right)
+		{
+			if(((Atomic)o[i]).time <  ((Atomic)o[j]).time)
+			{
+				list[k++] =  o[i++];
+			}
+			else
+			{
+				list[k++] =  o[j++];
+			}
+		}
+		
+		for(;i<=mid;)
+		{
+			list[k++] = o[i++];
+		}
+		for(;j<=right;)
+		{
+			list[k++] = o[j++];
+		}
+		
+		for(k=left;k<=right;k++)
+		{
+			o[k] = list[k];
+		}
+	}
+	
+	static int whenCrushed(Atomic first, Atomic second)
+	{
+		//같은 축 반대 반향 으로 움직이는 경우들
+		if(first.dir==0 && second.dir==1)//상하
+			return Math.abs((second.x - first.x) / 2);
+		if(first.dir==1 && second.dir==0)//하상
+			return Math.abs((second.x - first.x) / 2);
+		if(first.dir==2 && second.dir==3)//좌우
+			return Math.abs((second.y - first.y) / 2);
+		if(first.dir==3 && second.dir==2)//우좌
+			return Math.abs((second.y - first.y) / 2);
+				
+		//다른 축방향으로 움직이는 경우들
+		if(first.dir==0 && second.dir==2)//상좌
+			return Math.abs(first.x - second.x);
+		if(first.dir==2 && second.dir==0)//좌상
+			return Math.abs(first.x - second.x);
+		if(first.dir==0 && second.dir==3)//상우
+			return Math.abs(first.x - second.x);
+		if(first.dir==3 && second.dir==0)//우상
+			return Math.abs(first.x - second.x);
+		if(first.dir==1 && second.dir==2)//하좌
+			return Math.abs(first.x - second.x);
+		if(first.dir==2 && second.dir==1)//좌하
+			return Math.abs(first.x - second.x);
+		if(first.dir==1 && second.dir==3)//하우
+			return Math.abs(first.x - second.x);
+		if(first.dir==3 && second.dir==1)//우하
+			return Math.abs(first.x - second.x);
+		
+		return 0;
+	}
+	
+	//두 원자가 충돌하는가
+	static boolean isCrushed(Atomic first, Atomic second)
+	{
+		//같은 축 같은 방향
+		if(first.dir == second.dir)
+			return false;
+		//같은 축 반대 반향 으로 움직이는 경우들
+		if(first.dir==0 && second.dir==1)//상하
+		{
+			if(first.x < second.x)
+				return false;
+			else
+			{
+				if(first.y != second.y)
+					return false;
+			}
+		}
+		if(first.dir==1 && second.dir==0)//하상
+		{
+			if(first.x > second.x)
+				return false;
+			else
+			{
+				if(first.y != second.y)
+					return false;
+			}
+		}
+		if(first.dir==2 && second.dir==3)//좌우
+		{
+			if(first.y < second.y)
+				return false;
+			else
+			{
+				if(first.x != second.x)
+					return false;
+			}
+		}
+		if(first.dir==3 && second.dir==2)//우좌
+		{
+			if(first.y > second.y)
+				return false;
+			else
+			{
+				if(first.x != second.x)
+					return false;
+			}
+		}
+		
+		//다른 축방향으로 움직이는 경우들
+		if(first.dir==0 && second.dir==2)//상좌
+		{
+			if(first.x <= second.x || first.y >= second.y)
+				return false;
+			else
+			{
+				if(Math.abs(first.x - second.x) != Math.abs(first.y - second.y))
+					return false;
+			}
+		}
+		if(first.dir==2 && second.dir==0)//좌상
+		{
+			if(first.x >= second.x || first.y <= second.y)
+				return false;
+			else
+			{
+				if(Math.abs(first.x - second.x) != Math.abs(first.y - second.y))
+					return false;
+			}
+		}
+		if(first.dir==0 && second.dir==3)//상우
+		{
+			if(first.x <= second.x || first.y <= second.y)
+				return false;
+			else
+			{
+				if(Math.abs(first.x - second.x) != Math.abs(first.y - second.y))
+					return false;
+			}
+		}
+		if(first.dir==3 && second.dir==0)//우상
+		{
+			if(first.x >= second.x || first.y >= second.y)
+				return false;
+			else
+			{
+				if(Math.abs(first.x - second.x) != Math.abs(first.y - second.y))
+					return false;
+			}
+		}
+		//
+		if(first.dir==1 && second.dir==2)//하좌
+		{
+			if(first.x >= second.x || first.y >= second.y)
+				return false;
+			else
+			{
+				if(Math.abs(first.x - second.x) != Math.abs(first.y - second.y))
+					return false;
+			}
+		}
+		if(first.dir==2 && second.dir==1)//좌하
+		{
+			if(first.x <= second.x || first.y <= second.y)
+				return false;
+			else
+			{
+				
+				if(Math.abs(first.x - second.x) != Math.abs(first.y - second.y))
+					return false;
+			}
+		}
+		if(first.dir==1 && second.dir==3)//하우
+		{
+			
+			if(first.x >= second.x || first.y <= second.y)
+			{
+				return false;
+			}
+			else
+			{
+				if(Math.abs(first.x - second.x) != Math.abs(first.y - second.y))
+					return false;
+			}
+		}
+		if(first.dir==3 && second.dir==1)//우하
+		{
+			if(first.x <= second.x || first.y >= second.y)
+				return false;
+			else
+			{
+				if(Math.abs(first.x - second.x) != Math.abs(first.y - second.y))
+					return false;
+			}
+		}
+		return true;
+	}
+	
+
+	
+	static int getX(int x)
+	{
+		return 2000 - x;
+	}
+	static int getY(int y)
+	{
+		return 2000 + y;
+	}
+	
+	static class Atomic
+	{
+		int x, y;
+		int time;
+		int energy;
+		int dir;
+		int num;
+		
+		public Atomic(int x, int y)
+		{
+			this.x = x;
+			this.y = y;
+		}
+		public Atomic(int x, int y, int time)
+		{
+			this.x = x;
+			this.y = y;
+			this.time = time;
+		}
+		public Atomic(int x, int y, int time, int energy, int dir, int num) {
+			
+			this.x = x;
+			this.y = y;
+			this.time = time;
+			this.energy = energy;
+			this.dir = dir;
+			this.num = num;
+		}
+
+	}
+	
+	//핀볼
 	static void s5650() throws Exception
 	{
 		InputStreamReader is = new InputStreamReader(System.in);
@@ -28,6 +382,7 @@ public class Samsung {
 			int N = Integer.parseInt(b.readLine());
 			
 			int map[][] = new int[N][N];
+		
 			PinBall[][] wormhole = new PinBall[11][2];//6~10, 2개
 			
 			
@@ -43,11 +398,7 @@ public class Samsung {
 					//출발점
 					if(map[i][j] == 0)
 					{
-						for(int k=0;k<4;k++)//동서남북
-						{
-							start_q.offer(new PinBall(i, j, k, 0));
-						}
-						
+						start_q.offer(new PinBall(i, j));
 					}
 					else if(map[i][j] >= 6)//웜홀
 					{
@@ -62,19 +413,18 @@ public class Samsung {
 			
 			
 			int max = 0;
-			int count=0;
+			
 			while(!start_q.isEmpty())
 			{
-				boolean visited[][][] = new boolean[N][N][4];//맵 위치 + 동서남북
 				Queue<PinBall> q = new LinkedList<>();
 				
 				PinBall p = start_q.poll();
 				int start_x = p.x;
 				int start_y = p.y;
-				//visited[p.x][p.y][p.dir] = true; 시작 위치는 다시 돌아올수 있음
-				q.offer(p);
-				//System.out.println("start x : "+start_x +" start y : "+start_y + " start dir : "+p.dir);
-				count++;
+	
+				for(int i=0;i<4;i++)
+					q.offer(new PinBall(p.x, p.y, i, 0, 0));
+				
 				while(!q.isEmpty())
 				{
 					 p = q.poll();
@@ -82,90 +432,104 @@ public class Samsung {
 					 int y = p.y;
 					 int dir = p.dir;//0123 동서남북
 					 int score = p.score;
-					 //System.out.println("x : "+x+" y : "+y +" dir : "+dir);
-					 if(visited[x][y][dir] && x == start_x && y == start_y )//시작 위치로 돌아옴
+					 int depth = p.depth;
+	
+					 if(x == start_x && y == start_y)
 					 {
-						 //System.out.println("score : "+score);
-						 max = Math.max(max, score);
-						 break;
+						 if(p.depth!=0)//시작 위치로 돌아옴
+						 {
+							max = Math.max(max, score);
+							continue;
+						 }
 					 }
+						 
 					 if(map[x][y] == -1)//블랙홀
 					 {
-						 //System.out.println("score : "+score);
 						 max = Math.max(max, score);
-						 break;
+						 continue;
 					 }
 					 
+			
 					 int x2=0,y2=0;
-					 if(dir == 0 && y != N-1)//동쪽
+					 
+					 if(dir == 0)//동쪽
 					 {
 						 x2 = x;
 						 y2 = y+1;
 						 
-						 processVisit(visited, map, wormhole, x2, y2, dir, score, q);
-					 }
-					 else if(dir == 0 && y == N-1)
-					 {
-						 if(!visited[x][y][1])
+						 if(y != N-1)
 						 {
-							 PinBall ball = new PinBall(x, y, 1, score+1);
-							 //System.out.println("스코어 추가 : "+x+" "+y);
-							 visited[x][y][1] = true;
-							 q.offer(ball);
+							 if(isReverse(dir, map[x2][y2]))
+							 {
+								max = Math.max(max, 2 * score +1 );
+								continue;
+							}
+							 processVisit(map, wormhole, x2, y2, dir, score, depth ,q);
+						 }
+						 else//벽만나서 되돌아감
+						 {
+							 max = Math.max(max, 2 * score +1 );
+							 continue;
 						 }
 					 }
-					 
-					 if(dir == 1 && y != 0)//서쪽
+					 else if(dir == 1)//서쪽
 					 {
 						 x2 = x;
 						 y2 = y-1;
 						 
-						 processVisit(visited, map, wormhole, x2, y2, dir, score, q);
-					 }
-					 else if(dir == 1 && y==0)
-					 {
-						 if(!visited[x][y][0])
+						 if(y != 0)
 						 {
-							 PinBall ball = new PinBall(x, y, 0, score+1);
-							 //System.out.println("스코어 추가 : "+x+" "+y);
-							 visited[x][y][0] = true;
-							 q.offer(ball);
+							if(isReverse(dir, map[x2][y2]))
+							{
+								max = Math.max(max, 2 * score +1 );
+								continue;
+							}
+							processVisit(map, wormhole, x2, y2, dir, score, depth ,q);
+						 }
+						 else//벽만나서 되돌아감
+						 {
+							 max = Math.max(max, 2 * score +1 );
+							 continue;
 						 }
 					 }
-					 
-					 if(dir == 2 && x != N-1)//남쪽
+					 else if(dir == 2)//남쪽
 					 {
 						 x2 = x+1;
 						 y2 = y;
 						 
-						 processVisit(visited, map, wormhole, x2, y2, dir, score, q);
-					 }
-					 else if(dir==2 && x==N-1)
-					 {
-						 if(!visited[x][y][3])
+						 if(x != N-1)
 						 {
-							 PinBall ball = new PinBall(x, y, 3, score+1);
-							// System.out.println("스코어 추가 : "+x+" "+y);
-							 visited[x][y][3] = true;
-							 q.offer(ball);
+							if(isReverse(dir, map[x2][y2]))
+							{
+								max = Math.max(max, 2 * score +1 );
+								continue;
+							}
+							processVisit(map, wormhole, x2, y2, dir, score, depth ,q);
+						 }
+						 else//벽만나서 되돌아감
+						 {
+							 max = Math.max(max, 2 * score +1 );
+							 continue;
 						 }
 					 }
-					 
-					 if(dir == 3 && x != 0)//북쪽
+					 else if(dir == 3)//북쪽
 					 {
 						 x2 = x-1;
 						 y2 = y;
 						 
-						 processVisit(visited, map, wormhole, x2, y2, dir, score, q);
-					 }
-					 else if(dir == 3 && x==0)
-					 {
-						 if(!visited[x][y][2])
+						 if(x != 0)
 						 {
-							 PinBall ball = new PinBall(x, y, 2, score+1);
-							// System.out.println("스코어 추가 : "+x+" "+y);
-							 visited[x][y][2] = true;
-							 q.offer(ball);
+							if(isReverse(dir, map[x2][y2]))
+							{
+								max = Math.max(max, 2 * score +1 );
+								continue;
+							}
+							processVisit(map, wormhole, x2, y2, dir, score, depth ,q);
+						 }
+						 else//벽만나서 되돌아감
+						 {
+							 max = Math.max(max, 2 * score +1 );
+							 continue;
 						 }
 					 }
 				}
@@ -175,31 +539,67 @@ public class Samsung {
 			System.out.println("#"+t+" "+max);
 		}
 	}
-	static void processVisit(boolean[][][] visited,int [][] map,PinBall[][] wormhole,int x2, int y2, int dir, int score ,Queue<PinBall> q)
+	
+	static boolean isBlock(int map_num)
 	{
-		if(!visited[x2][y2][dir])
-		 {
-			 PinBall ball = new PinBall(x2, y2, dir, score);
-			 visited[x2][y2][dir] = true;
-			 
-			 if(0 < map[x2][y2] && map[x2][y2] < 6)//block 인 경우 방향 변경
-			 {
-				 ball.dir = processBlock(ball.dir, map[x2][y2]);
-				 //System.out.println("스코어 추가 : "+x2+" "+y2);
-				 ball.score++;
-			 }
-			 else if(6 <= map[x2][y2])//웜홀
-			 {
-				 //위치변경
-				 int[] pos = processWormhole(map[x2][y2], x2, y2, wormhole);
-				 ball.x = pos[0];
-				 ball.y = pos[1];
-			 }
-			 
-			 visited[ball.x][ball.y][ball.dir] = true;
-			 q.offer(ball);
-		 }
+		if(0 < map_num && map_num < 6)
+			return true;
+		else
+			return false;
 	}
+	static boolean isWormhole(int map_num)
+	{
+		if(map_num >= 6)
+			return true;
+		else
+			return false;
+	}
+	
+	static void processVisit(int [][] map,PinBall[][] wormhole,int x, int y, int dir, int score,int depth ,Queue<PinBall> q)
+	{
+		
+			PinBall ball = new PinBall(x, y, dir, score, depth+1);
+				
+			if(isBlock(map[ball.x][ball.y]))//block 인 경우 방향 변경
+			{
+				ball.dir = processBlock(ball.dir, map[ball.x][ball.y]);
+				ball.score++;
+			}
+			if(isWormhole(map[ball.x][ball.y]))//웜홀
+			{
+				//위치변경
+				int[] pos = processWormhole(map[ball.x][ball.y], ball.x, ball.y, wormhole);
+				ball.x = pos[0];
+				ball.y = pos[1];
+			}
+				
+			q.offer(ball);
+	}
+	static boolean isReverse(int dir, int block)
+	{
+		if(dir==0)//동
+		{
+			if(block == 1 || block == 2 || block == 5)//벽
+				return true;
+		}
+		else if(dir==1)//서
+		{
+			if(block == 3 || block == 4 || block == 5)//벽
+				return true;
+		}
+		else if(dir==2)//남
+		{
+			if(block == 2 || block == 3 || block == 5)//벽
+				return true;
+		}
+		else//북
+		{
+			if(block == 1 || block == 4 || block == 5)//벽
+				return true;
+		}
+		return false;
+	}
+	
 	static int[] processWormhole(int hole_num,int x2, int y2, PinBall wormhole[][])
 	{
 		int[] pos = new int[2];
@@ -216,10 +616,9 @@ public class Samsung {
 		}
 		return pos;
 	}
+	
 	static int processBlock(int dir, int block)
 	{
-		int n_dir = 0;
-		
 		if(dir==0)//동
 		{
 			if(block == 1 || block == 2 || block == 5)//벽
@@ -258,10 +657,12 @@ public class Samsung {
 				return 1;
 		}
 	}
+	
 	static class PinBall{
 		int x,y;
 		int dir;
 		int score;
+		int depth;
 		public PinBall(int x, int y)
 		{
 			this.x = x;
@@ -279,6 +680,14 @@ public class Samsung {
 			this.y = y;
 			this.dir = dir;
 			this.score = score;
+		}
+		public PinBall(int x, int y, int dir, int score, int depth)
+		{
+			this.x = x;
+			this.y = y;
+			this.dir = dir;
+			this.score = score;
+			this.depth = depth;
 		}
 	}
 	

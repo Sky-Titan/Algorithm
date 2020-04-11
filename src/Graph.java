@@ -113,6 +113,151 @@ public class Graph {
 		}
 		
 	}
+	static void bj14502_2() throws Exception
+	{
+		InputStreamReader is = new InputStreamReader(System.in);
+		BufferedReader b = new BufferedReader(is);
+		
+		StringTokenizer strtok = new StringTokenizer(b.readLine()," ");
+		int N = Integer.parseInt(strtok.nextToken());
+		int M = Integer.parseInt(strtok.nextToken());
+		
+		int map[][] = new int[N][M];
+		
+		ArrayList<Position> zeros = new ArrayList<>();
+		ArrayList<Position> starts = new ArrayList<>();
+		
+		for(int i=0;i<N;i++)
+		{
+			strtok = new StringTokenizer(b.readLine()," ");
+			for(int j=0;j<M;j++)
+			{
+				map[i][j] = Integer.parseInt(strtok.nextToken());
+				
+				if(map[i][j] == 2)//바이러스 위치
+				{
+					starts.add(new Position(i,j));
+				}
+				else if(map[i][j] == 0)//벽 세울 수 있는 공간 위치
+				{
+					zeros.add(new Position(i, j));
+				}
+					
+			}
+		}
+		int[] max = {Integer.MIN_VALUE};
+		
+		A_bj14502(0, 0, map, N, M, starts, zeros, max);
+		
+		System.out.println(max[0]);
+		
+		
+	}
+	
+	static void A_bj14502(int depth, int index, int map[][], int N, int M,ArrayList<Position> starts, ArrayList<Position> zeros ,int[] max)
+	{
+		//벽 위치 선정 완료 -> bfs 탐색으로 바이러스 퍼뜨림
+		if(depth == 3)
+		{
+			boolean visited[][] = new boolean[N][M];
+			
+			Queue<Position> q = new LinkedList<>(starts);
+			
+			for(int i=0;i<starts.size();i++)
+				visited[starts.get(i).x][starts.get(i).y] = true;
+			
+			while(!q.isEmpty())
+			{
+				Position p = q.poll();
+				int x = p.x;
+				int y = p.y;
+				
+				int x2 = 0;
+				int y2 = 0;
+				
+				if(x!=0)
+				{
+					x2 = x-1;
+					y2 = y;
+					
+					if(!visited[x2][y2] && map[x2][y2] == 0)
+					{
+						map[x2][y2] = 2;
+						visited[x2][y2] = true;
+						Position next = new Position(x2, y2);
+						q.offer(next);
+					}
+				}
+				if(x!=N-1)
+				{
+					x2 = x+1;
+					y2 = y;
+					
+					if(!visited[x2][y2] && map[x2][y2] == 0)
+					{
+						map[x2][y2] = 2;
+						visited[x2][y2] = true;
+						Position next = new Position(x2, y2);
+						q.offer(next);
+					}
+				}
+				if(y!=0)
+				{
+					x2 = x;
+					y2 = y-1;
+					
+					if(!visited[x2][y2] && map[x2][y2] == 0)
+					{
+						map[x2][y2] = 2;
+						visited[x2][y2] = true;
+						Position next = new Position(x2, y2);
+						q.offer(next);
+					}
+				}
+				if(y!=M-1)
+				{
+					x2 = x;
+					y2 = y+1;
+					
+					if(!visited[x2][y2] && map[x2][y2] == 0)
+					{
+						map[x2][y2] = 2;
+						visited[x2][y2] = true;
+						Position next = new Position(x2, y2);
+						q.offer(next);
+					}
+				}
+			}
+			
+			max[0] = Math.max(max[0], countSafeArea(map, N, M));
+			
+		}
+		else
+		{
+			//벽 3개 위치 선정
+			for(int k=index;k<zeros.size();k++)
+			{
+				int map2[][] = new int[N][M];
+				for(int i=0;i<N;i++)
+					map2[i] = map[i].clone();
+				
+				map2[zeros.get(k).x][zeros.get(k).y] = 1;
+				A_bj14502(depth+1, k+1, map2, N, M, starts, zeros, max);
+			}
+		}
+	}
+	
+	static int countSafeArea(int map[][],int N,int M)
+	{
+		int count=0;
+		for(int i=0;i<N;i++)
+			for(int j=0;j<M;j++)
+			{
+				if(map[i][j] == 0)
+					count++;
+			}
+		return count;
+	}
 	
 	static void bj2589() throws Exception
 	{
