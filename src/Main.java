@@ -27,7 +27,7 @@ public class Main {
 		}
 	
 		*/
-		Samsung s = new Samsung();
+	/*	Samsung s = new Samsung();
 		try
 		{
 			s.s5648();
@@ -36,7 +36,16 @@ public class Main {
 		{
 			
 		}
+		*/
 		
+		DynamicProgramming dp = new DynamicProgramming();
+		try
+		{
+			dp.bj1520();
+		}
+		catch (Exception e) {
+			// TODO: handle exception
+		}
 		
 	}
 	
