@@ -113,6 +113,110 @@ public class Graph {
 		}
 		
 	}
+	
+	static void bj9205() throws Exception
+	{
+		InputStreamReader is = new InputStreamReader(System.in);
+		BufferedReader b = new BufferedReader(is);
+		
+		int T = Integer.parseInt(b.readLine());
+		
+		for(int t=0;t<T;t++)
+		{
+			int N = Integer.parseInt(b.readLine());//편의점 개수
+			
+			StringTokenizer strtok = new StringTokenizer(b.readLine());
+			int x = Integer.parseInt(strtok.nextToken());
+			int y = Integer.parseInt(strtok.nextToken());
+			
+			//처음엔 맥주 20병, 1병당 50m => 20병 1000m
+			
+			ArrayList<Festival> map = new ArrayList<>();
+			
+			Queue<Festival> q = new LinkedList<>();
+			
+			//상근이네 집
+			map.add(new Festival(x, y, 20));
+			q.offer(map.get(0));
+			
+			for(int i=0;i<N;i++)
+			{
+				strtok = new StringTokenizer(b.readLine());
+				x = Integer.parseInt(strtok.nextToken());
+				y = Integer.parseInt(strtok.nextToken());
+				map.add(new Festival(x, y));
+			}
+			
+			strtok = new StringTokenizer(b.readLine());
+			x = Integer.parseInt(strtok.nextToken());
+			y = Integer.parseInt(strtok.nextToken());
+			Festival festival = new Festival(x, y);
+			map.add(festival);
+			
+			boolean visited[] = new boolean[map.size()];
+			
+			visited[0] = true;
+			boolean isHappy = false;
+			
+			while(!q.isEmpty())
+			{
+				Festival now = q.poll();
+				x = now.x;
+				y = now.y;
+				int beer = now.beer;
+				
+				if(x==festival.x && y==festival.y)
+				{
+					System.out.println("happy");
+					isHappy = true;
+					break;
+				}
+				
+				for(int i=0;i<map.size();i++)
+				{
+					Festival next = map.get(i);
+
+					if(!visited[i])
+					{
+						int go_distance = beer * 50;//현재 갈 수 있는 거리
+						int distance = Math.abs(x - next.x) + Math.abs(y - next.y);
+						
+						if(distance <= go_distance)//현재 맥주로 갈 수있으면
+						{
+							visited[i] = true;
+							next.beer = 20;//맥주 삼
+							q.offer(next);
+						}
+					}
+				}
+			}
+			if(!isHappy)
+				System.out.println("sad");
+		}
+	}
+	
+	static class Festival{
+		int x, y;
+		int beer;
+		
+		public Festival()
+		{
+			
+		}
+		public Festival(int x, int y)
+		{
+			this.x = x;
+			this.y = y;
+			
+		}
+		public Festival(int x, int y, int beer)
+		{
+			this.x = x;
+			this.y = y;
+			this.beer = beer;
+		}
+	}
+	
 	static void bj14502_2() throws Exception
 	{
 		InputStreamReader is = new InputStreamReader(System.in);

@@ -88,8 +88,8 @@ public class DynamicProgramming {
 		int M = Integer.parseInt(strtok.nextToken());
 		
 		int map[][] = new int[N][M];
-		int ways[][] = new int[N][M];
-		boolean visited[][][][] = new boolean[N][M][N][M];
+		boolean visited[][] = new boolean[N][M];
+		int output[][] = new int[N][M];
 		
 		for(int i=0;i<N;i++)
 		{
@@ -99,209 +99,57 @@ public class DynamicProgramming {
 				map[i][j] = Integer.parseInt(strtok.nextToken());
 			}
 		}
-		Queue<Position> q = new LinkedList<>();
-		visited[0][0][0][0] = true;
-		q.offer(new Position(0, 0));
 		
-		while(!q.isEmpty())
-		{
-			Position now = q.poll();
-			int x = now.x;
-			int y = now.y;
-			
-			if(x!=0)
-			{
-				int x2 = x-1;
-				int y2 = y;
-				
-				if(!visited[x][y][x2][y2] && map[x2][y2] < map[x][y])
-				{
-					visited[x][y][x2][y2] = true;
-					ways[x2][y2] ++;
-					q.offer(new Position(x2, y2));
-				}
-			}
-			if(x!=N-1)
-			{
-				int x2 = x+1;
-				int y2 = y;
-				
-				if(!visited[x][y][x2][y2] && map[x2][y2] < map[x][y])
-				{
-					visited[x][y][x2][y2] = true;
-					ways[x2][y2] ++;
-					q.offer(new Position(x2, y2));
-				}
-			}
-			if(y!=0)
-			{
-				int x2 = x;
-				int y2 = y-1;
-				
-				if(!visited[x][y][x2][y2] && map[x2][y2] < map[x][y])
-				{
-					visited[x][y][x2][y2] = true;
-					ways[x2][y2] ++;
-					q.offer(new Position(x2, y2));
-				}
-			}
-			if(y!=M-1)
-			{
-				int x2 = x;
-				int y2 = y+1;
-				
-				if(!visited[x][y][x2][y2] && map[x2][y2] < map[x][y])
-				{
-					visited[x][y][x2][y2] = true;
-					ways[x2][y2] ++;
-					q.offer(new Position(x2, y2));
-				}
-				
-			}
-		}
-		
-		
-
-		for(int i=0;i<N;i++)
-		{
-			for(int j=0;j<M;j++)
-				System.out.print(ways[i][j]);
-			System.out.println();
-		}
-		System.out.println();
-		for(int i=0;i<N;i++)
-		{
-			for(int j=0;j<M;j++)
-			{
-				int i3=i;
-				int j3=j;
-				if(i!=0)
-				{
-					int i2=i-1;
-					int j2=j;
-					if(map[i2][j2] > map[i][j])
-					{
-						if(ways[i][j] < ways[i2][j2])
-						{
-							ways[i][j] = ways[i2][j2];
-							i3=i2;
-							j3=j2;
-						}
-					}
-				}
-				if(i!=N-1)
-				{
-					int i2=i+1;
-					int j2=j;
-					if(map[i2][j2] > map[i][j])
-					{
-						if(ways[i][j] < ways[i2][j2])
-						{
-							ways[i][j] = ways[i2][j2];
-							i3=i2;
-							j3=j2;
-						}
-					}
-				}
-				if(j!=0)
-				{
-					int i2=i;
-					int j2=j-1;
-					if(map[i2][j2] > map[i][j])
-					{
-						if(ways[i][j] < ways[i2][j2])
-						{
-							ways[i][j] = ways[i2][j2];
-							i3=i2;
-							j3=j2;
-						}
-					}
-				}
-				if(j!=M-1)
-				{
-					int i2=i;
-					int j2=j+1;
-					if(map[i2][j2] > map[i][j])
-					{
-						if(ways[i][j] < ways[i2][j2])
-						{
-							ways[i][j] = ways[i2][j2];
-							i3=i2;
-							j3=j2;
-						}
-					}
-				}
-				//
-				if(i!=0)
-				{
-					int i2=i-1;
-					int j2=j;
-					if(i2!=i3 || j2!=j3)
-					{
-						if(map[i2][j2] > map[i][j])
-						{
-							
-							ways[i][j] += ways[i2][j2];
-				
-						}
-					}
-				}
-				if(i!=N-1)
-				{
-					int i2=i+1;
-					int j2=j;
-					if(i2!=i3 || j2!=j3)
-					{
-						if(map[i2][j2] > map[i][j])
-						{
-							
-							ways[i][j] += ways[i2][j2];
-				
-						}
-					}
-				}
-				if(j!=0)
-				{
-					int i2=i;
-					int j2=j-1;
-					if(i2!=i3 || j2!=j3)
-					{
-						if(map[i2][j2] > map[i][j])
-						{
-							
-							ways[i][j] += ways[i2][j2];
-				
-						}
-					}
-				}
-				if(j!=M-1)
-				{
-					int i2=i;
-					int j2=j+1;
-					if(i2!=i3 || j2!=j3)
-					{
-						if(map[i2][j2] > map[i][j])
-						{
-							
-							ways[i][j] += ways[i2][j2];
-				
-						}
-					}
-					
-				}
-			}
-		}
-		
-		for(int i=0;i<N;i++)
-		{
-			for(int j=0;j<M;j++)
-				System.out.print(ways[i][j]);
-			System.out.println();
-		}
-		
-		System.out.println(ways[N-1][M-1]);
+		A_bj1520(0, 0, N, M, map, output,visited);
+		System.out.println(output[0][0]);
 	}
 	
+	static int A_bj1520(int x,int y,int N, int M, int map[][], int output[][],boolean visited[][])
+	{
+		if(x==N-1 && y==M-1)//³¡
+			return 1;
+		if(visited[x][y])
+			return output[x][y];
+		
+		visited[x][y] = true;
+		if(x!=0)
+		{
+			int x2 = x-1;
+			int y2 = y;
+			if(map[x2][y2] < map[x][y])
+			{
+				output[x][y] += A_bj1520(x2, y2, N, M, map, output,visited);
+			}
+		}
+		if(x!=N-1)
+		{
+			int x2 = x+1;
+			int y2 = y;
+			if(map[x2][y2] < map[x][y])
+			{
+				output[x][y] += A_bj1520(x2, y2, N, M, map, output,visited);
+			}
+		}
+		if(y!=0)
+		{
+			int x2 = x;
+			int y2 = y-1;
+			if(map[x2][y2] < map[x][y])
+			{
+				output[x][y] += A_bj1520(x2, y2, N, M, map, output,visited);
+			}
+		}
+		if(y!=M-1)
+		{
+			int x2 = x;
+			int y2 = y+1;
+			if(map[x2][y2] < map[x][y])
+			{
+				output[x][y] += A_bj1520(x2, y2, N, M, map, output,visited);
+			}
+		}
+		return output[x][y];
+	}
 	
 	
 	static void bj11054() throws Exception

@@ -17,36 +17,16 @@ public class Main {
 	
 	public static void main(String[] args) {
 		
-		/*Graph graph = new Graph();
+		Graph graph = new Graph();
 		try
 		{
-			graph.bj14502_2();
+			graph.bj9205();
 		}
 		catch (Exception e) {
 			// TODO: handle exception
 		}
 	
-		*/
-	/*	Samsung s = new Samsung();
-		try
-		{
-			s.s5648();
-		}
-		catch(Exception e)
-		{
-			
-		}
-		*/
-		
-		DynamicProgramming dp = new DynamicProgramming();
-		try
-		{
-			dp.bj1520();
-		}
-		catch (Exception e) {
-			// TODO: handle exception
-		}
-		
+	
 	}
 	
 }
