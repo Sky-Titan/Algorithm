@@ -17,10 +17,11 @@ public class Main {
 	
 	public static void main(String[] args) {
 		
-		Graph graph = new Graph();
+		Simulation s = new Simulation();
+		
 		try
 		{
-			graph.bj9205();
+			s.bj15650();
 		}
 		catch (Exception e) {
 			// TODO: handle exception

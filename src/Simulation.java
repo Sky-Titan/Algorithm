@@ -47,8 +47,90 @@ public class Simulation {
 		
 	}
 	
+	static void bj15650() throws Exception
+	{
+		InputStreamReader is = new InputStreamReader(System.in);
+		BufferedReader b = new BufferedReader(is);
+		
+		StringTokenizer strtok = new StringTokenizer(b.readLine());
+		
+		int N = Integer.parseInt(strtok.nextToken());
+		int M = Integer.parseInt(strtok.nextToken());
+		
+		int list[] = new int[M];
+		
+		for(int i=1;i<=N;i++)
+		{
+			list[0] = i;
+			A_bj15650(1, N, M, list);
+		}
+	}
+	
+	static void A_bj15650(int depth,int N, int M, int[] list)
+	{
+		if(depth == M)
+		{
+			for(int i=0;i<M;i++)
+				System.out.print(list[i]+" ");
+			System.out.println();
+		}
+		else
+		{
+			for(int i = list[depth - 1]+1;i<=N - (M - depth) + 1;i++)
+			{
+				list[depth] = i;
+				A_bj15650(depth+1, N, M, list);
+			}
+		}
+	}
 	
 	
+	static void bj13560() throws Exception
+	{
+		InputStreamReader is = new InputStreamReader(System.in);
+		BufferedReader b = new BufferedReader(is);
+		
+		int N = Integer.parseInt(b.readLine());//∆¿∞≥ºˆ
+		int team_win[] = new int[N];
+		int team_lose[] = new int[N];
+		
+		int total_match = 0;//√— ∞Ê±‚ ºˆ¿Ã¿⁄ √— Ω¬∏Æ «’ºˆ, √— ∆–πË «‘ºˆ
+		
+		for(int i=1;i<N;i++)
+			total_match += i;
+		
+		StringTokenizer strtok = new StringTokenizer(b.readLine());
+		
+		for(int i=0;i<N;i++)
+		{
+			team_win[i] = Integer.parseInt(strtok.nextToken());
+			team_lose[i] = N - 1 - team_win[i];
+		}
+		
+		for(int i=0;i<N;i++)
+		{
+			
+			for(int j=0;j<N;j++)
+			{
+				if(team_win[i]==0)
+					break;
+				if(i!=j)//¿⁄±‚ ¿⁄Ω≈ ¡¶ø‹
+				{
+					if(team_lose[j] > 0)
+					{
+						team_lose[j] --;
+						team_win[i]--;
+					}
+				}
+			}
+			if(team_win[i] != 0)
+			{
+				System.out.println(-1);
+				return;
+			}
+		}
+		System.out.println(1);
+	}
 	
 	//ªÔº∫ ±‚√‚
 	static void bj14500() throws Exception
