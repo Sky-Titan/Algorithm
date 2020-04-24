@@ -36,6 +36,117 @@ public class DynamicProgramming {
 		}
 	}
 	
+	static void bj2225() throws Exception
+	{
+		InputStreamReader is = new InputStreamReader(System.in);
+		BufferedReader b = new BufferedReader(is);
+		
+		StringTokenizer strtok = new StringTokenizer(b.readLine());
+		int N = Integer.parseInt(strtok.nextToken());
+		int K = Integer.parseInt(strtok.nextToken());
+		
+		int dp[][] = new int[N+1][K+1];
+		
+		for(int i=1;i<=K;i++)
+			dp[0][i] = 1;
+	}
+	
+	static void bj1890() throws Exception
+	{
+		InputStreamReader is = new InputStreamReader(System.in);
+		BufferedReader b = new BufferedReader(is);
+		
+		int N = Integer.parseInt(b.readLine());
+		
+		int map[][] = new int[N][N];
+		long dp[][] = new long[N][N];
+		boolean visited[][] = new boolean[N][N];
+		
+		for(int i=0;i<N;i++)
+		{
+			StringTokenizer strtok = new StringTokenizer(b.readLine());
+			
+			for(int j=0;j<N;j++)
+			{
+				map[i][j] = Integer.parseInt(strtok.nextToken());
+			}
+		}
+		
+		dfs_bj1890(0, 0, dp, map, visited, N);
+		
+	
+		System.out.println(dp[0][0]);
+	}
+	
+	static long dfs_bj1890(int x, int y, long[][] dp, int[][] map, boolean[][] visited,int N)
+	{
+		int distance = map[x][y];//점프해서 갈 수 있는 거리
+		visited[x][y] = true;
+		
+		if(x==N-1 && y==N-1)
+		{
+			dp[x][y] = 1;
+			return 1;
+		}
+		
+		int r[] = {x, x + distance};
+		int c[] = {y + distance, y};
+		
+		for(int i=0;i<2;i++)
+		{
+			if(r[i] < N && c[i] < N)
+			{
+				if(!visited[r[i]][c[i]])
+				{
+					dp[x][y] += dfs_bj1890(r[i], c[i], dp, map, visited, N);
+				}
+				else
+				{
+					dp[x][y] += dp[r[i]][c[i]];
+				}
+			}
+		}
+		return dp[x][y];
+		
+	}
+	
+	static void bj2294() throws Exception
+	{
+		InputStreamReader is = new InputStreamReader(System.in);
+		BufferedReader b = new BufferedReader(is);
+		
+		StringTokenizer strtok = new StringTokenizer(b.readLine());
+		int N = Integer.parseInt(strtok.nextToken());
+		int K = Integer.parseInt(strtok.nextToken());
+		
+		int dp[] = new int[100001];
+		for(int i=0;i<=100000;i++)
+			dp[i] = 100001;
+		
+		for(int i=0;i<N;i++)
+		{	
+			int coin = Integer.parseInt(b.readLine());
+			dp[coin] = 1;
+		
+		}
+		
+		for(int i=1;i<=K;i++)
+		{
+			if(dp[i] != 1)
+			{
+				for(int j=1;j<=i/2;j++)
+				{
+					dp[i] = Math.min(dp[i], dp[i-j] + dp[j]);
+				}
+			}
+			
+		}
+		if(dp[K]==100001)
+			System.out.println(-1);
+		else
+		System.out.println(dp[K]);
+	}
+	
 	static void bj2493() throws Exception
 	{
 		InputStreamReader is = new InputStreamReader(System.in);
@@ -674,31 +785,32 @@ public class DynamicProgramming {
 		
 		for(int t=0;t<T;t++)
 		{
-			StringTokenizer strtok = new StringTokenizer(b.readLine()," ");
+			StringTokenizer strtok = new StringTokenizer(b.readLine());
 			
 			int N = Integer.parseInt(strtok.nextToken());
 			int M = Integer.parseInt(strtok.nextToken());
 			
-			int dp[][] = new int[N+1][M+1];
-			
-			for(int i=1;i<=N;i++)
+			int dp[][] = new int[N][M];
+
+			for(int i=0;i<N;i++)
 			{
-				for(int j=1;j<i;j++)
-					dp[i][j] = dp[i-1][j];
 				for(int j=i;j<=M-N+i;j++)
 				{
-					dp[i][j] = dp[i-1][j]+1;
+					dp[i][j] = 1;
+					if(j!=0)
+					{
+						if(i!=0)
+							dp[i][j] *= dp[i-1][j-1];
+						
+						dp[i][j] += dp[i][j-1];
+						
+						
+					}
+					
+				
 				}
 			}
-			
-			long mat = 1;
-			for(int j=1;j<=M/2;j++)
-			{
-				mat *= dp[N][j];
-				System.out.println(dp[N][j]);
-			}
-			System.out.println("곱 : "+mat);
-			
+			System.out.println(dp[N-1][M-1]);
 		}
 	}
 	

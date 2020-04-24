@@ -17,14 +17,14 @@ public class Main {
 	
 	public static void main(String[] args) {
 		
-		Simulation s = new Simulation();
 		
 		try
 		{
-			s.bj15650();
+			DynamicProgramming.bj1890();
 		}
-		catch (Exception e) {
-			// TODO: handle exception
+		catch(Exception e)
+		{
+			e.printStackTrace();
 		}
 	
 	
