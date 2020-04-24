@@ -1185,185 +1185,147 @@ public class DynamicProgramming {
 		InputStreamReader k = new InputStreamReader(System.in);
 		BufferedReader b = new BufferedReader(k);
 		
-		int n = Integer.parseInt(b.readLine());
-		int r = Integer.parseInt(b.readLine());
+		int N = Integer.parseInt(b.readLine());
+		int W = Integer.parseInt(b.readLine());
 		
-		int[][] event = new int[r][2];
+		int[][] event = new int[W][2];
 		
-		for(int i=0;i<r;i++)
+		for(int i=0;i<W;i++)
 		{
 			StringTokenizer strtok = new StringTokenizer(b.readLine()," ");
 			event[i][0] = Integer.parseInt(strtok.nextToken());
 			event[i][1] = Integer.parseInt(strtok.nextToken());
 		}
 		
-		int[][] pos = new int[r][2];//경찰차 1의 위치 - 1
-		int[][] pos2 = new int[r][2];//경찰차 2의 위치 - 1
+		int dp[][][] = new int[W][2][5];//2대의 경찰차, 경찰차 1 : (1,1), 경찰차 2 : (N,N)
+		boolean isSame[]= new boolean[W];//같은 경우
+		ArrayList<Integer> police[][] = new ArrayList[W][2];
 		
-		int[][] pos3 = new int[r][2];//경찰차 1의 위치 - 2
-		int[][] pos4 = new int[r][2];//경찰차 2의 위치 - 2
-		
-		int sum=0;
-		int[][] min = new int[r][2];
-		boolean[][] police = new boolean[r][2];
-		boolean[][] police2 = new boolean[r][2];
-		
-		for(int i=0;i<r;i++)
+		for(int i=0;i<W;i++)
 		{
 			if(i==0)
 			{
-				min[i][0] = Math.abs(event[i][0] - 1) + Math.abs(event[i][1] - 1);//경찰차1 해결
-				min[i][1] = Math.abs(event[i][0] - n) + Math.abs(event[i][1] - n);//경찰차2 해결
+				dp[0][0][0] = distance_bj2618(1, 1, event[i][0], event[i][1]);//1번 경찰차 해결
+				dp[0][0][1] = event[i][0];
+				dp[0][0][2] = event[i][1];
+				dp[0][0][3] = N;
+				dp[0][0][4] = N;
+				police[0][0] = new ArrayList<>();
+				police[0][0].add(1);
 				
-				pos[i][0] = 1;//1의 x좌표
-				pos[i][1] = 1;//1의 y좌표
-				pos2[i][0] = n;//2의 x좌표
-				pos2[i][1] = n;//2의 y좌표
-				
-				pos3[i][0] = 1;//1의 x좌표
-				pos3[i][1] = 1;//1의 y좌표
-				pos4[i][0] = n;//2의 x좌표
-				pos4[i][1] = n;//2의 y좌표
+				dp[0][1][0] = distance_bj2618(N, N, event[i][0], event[i][1]);//2번 경찰차 해결
+				dp[0][1][1] = 1;
+				dp[0][1][2] = 1;
+				dp[0][1][3] = event[i][0];
+				dp[0][1][4] = event[i][1];
+				police[0][1] = new ArrayList<>();
+				police[0][1].add(2);
+
 			}
 			else
 			{
-				//i 를 1이 해결 할 때
-				if(min[i-1][0] + Math.abs(event[i][0] - event[i-1][0]) + Math.abs(event[i][1] - event[i-1][1]) 
-				< min[i-1][1] + Math.abs(event[i][0] - pos[i-1][0]) + Math.abs(event[i][1] - pos[i-1][1]))//i - 1 을 1이 해결했을때 더 적으면 
-				{
-					min[i][0] = min[i-1][0] + Math.abs(event[i][0] - event[i-1][0]) + Math.abs(event[i][1] - event[i-1][1]);
-					pos[i-1][0] = event[i-1][0];
-					pos[i-1][1] = event[i-1][1];
-					
-					
-					
-					police[i-1][0] = true;
-					police[i-1][1] = false;
-					if(i!=1)
-					{
-						pos2[i-1][0] = pos2[i-2][0];
-						pos2[i-1][1] = pos2[i-2][1];
-						
-					}
-					else 
-					{
-						pos2[i-1][0] = n;
-						pos2[i-1][1] = n;
-					}
-				}
-				else//i-1을 2가 해결한게 더 나을때
-				{
-					min[i][0] = min[i-1][1] + Math.abs(event[i][0] - pos[i-1][0]) + Math.abs(event[i][1] - pos[i-1][1]);
-					pos2[i-1][0] = event[i-1][0];
-					pos2[i-1][1] = event[i-1][1];
-					
-					police[i-1][0] = false;
-					police[i-1][1] = true;
-					if(i!=1)
-					{
-						pos[i-1][0] = pos[i-2][0];
-						pos[i-1][1] = pos[i-2][1];
-						
-						
-					}
-					else 
-					{
-						pos[i-1][0] = 1;
-						pos[i-1][1] = 1;
-					}
-					
-					
-				}
-				
-				pos[i][0] = event[i][0];
-				pos[i][1] = event[i][1];
-				pos2[i][0] = pos2[i-1][0];
-				pos2[i][1] = pos2[i-1][1];
-				
-				//i 를 2이 해결 할 때
-				if(min[i-1][0] + Math.abs(event[i][0] - pos4[i-1][0]) + Math.abs(event[i][1] - pos4[i-1][1]) 
-				< min[i-1][1] + Math.abs(event[i][0] - event[i-1][0]) + Math.abs(event[i][1] - event[i-1][1]))//i - 1 을 1이 해결했을때 더 적으면 
-				{
-					min[i][1] = min[i-1][0] + Math.abs(event[i][0] - pos4[i-1][0]) + Math.abs(event[i][1] - pos4[i-1][1]);
-					pos3[i-1][0] = event[i-1][0];
-					pos3[i-1][1] = event[i-1][1];
-					
-					police2[i-1][0] = true;
-					police2[i-1][1] = false;
-					if(i!=1)
-					{
-						pos4[i-1][0] = pos4[i-2][0];
-						pos4[i-1][1] = pos4[i-2][1];
-					}
-					else
-					{
-						pos4[i-1][0] = n;
-						pos4[i-1][1] = n;
-					}
-				}
-				else//i-1을 2가 해결한게 더 나을때
-				{
-					min[i][1] = min[i-1][1] + Math.abs(event[i][0] - event[i-1][0]) + Math.abs(event[i][1] - event[i-1][1]);
-					pos4[i-1][0] = event[i-1][0];
-					pos4[i-1][1] = event[i-1][1];
-					
-					police2[i-1][0] = false;
-					police2[i-1][1] = true;
-					if(i!=1)
-					{
-						pos3[i-1][0] = pos3[i-2][0];
-						pos3[i-1][1] = pos3[i-2][1];
-					}
-					else
-					{
-						pos3[i-1][0] = 1;
-						pos3[i-1][1] = 1;
-					}
-				}
-				pos3[i][0] = pos3[i-1][0];
-				pos3[i][1] = pos3[i-1][1];
-				pos4[i][0] = event[i][0];
-				pos4[i][1] = event[i][1];
-				
-			}
-		}
-		
-		if(min[r-1][0] < min[r-1][1])//1이 해결한게 나을때
-		{
-			System.out.println(min[r-1][0]);
-			police[r-1][0] = true;
-			police[r-1][1] = false;
+				police[i][0] = new ArrayList<>();
+				police[i][1] = new ArrayList<>();
 
-			for(int i=0;i<r;i++)
-			{
-				if(police[i][0] == true)
+				if(isSame[i-1])//현재 2-1인 상태 (현재 경찰차 1번 : event[i-1], 경찰차2번 event[i-2]) => 1번 위치는 냅두고 2번 위치만 바꾸기
 				{
-					System.out.println(1);
+					System.out.println("1같음");
+					//1-1 때 2의 거리가 더 가깝
+					if(distance_bj2618(dp[i-2][0][3], dp[i-2][0][4], event[i][0], event[i][1]) < distance_bj2618(dp[i-2][1][3], dp[i-2][1][4], event[i][0], event[i][1]))
+					{
+						dp[i-1][0][3] = dp[i-2][0][3];
+						dp[i-1][0][4] = dp[i-2][0][4];
+						police[i-1][0] = new ArrayList<>(police[i-2][0]);
+						police[i-1][0].add(1);
+					}
+				}
+				
+				
+				
+				//현재 문제 1번 경찰차가 해결할 경우
+				if(dp[i-1][0][0] + distance_bj2618(dp[i-1][0][1], dp[i-1][0][2], event[i][0], event[i][1]) < dp[i-1][1][0] + distance_bj2618(dp[i-1][1][1], dp[i-1][1][2], event[i][0], event[i][1]))
+				{
+					dp[i][0][0] = dp[i-1][0][0] + distance_bj2618(dp[i-1][0][1], dp[i-1][0][2], event[i][0], event[i][1]);//전 문제 : 1번 해결, 현재 문제 1번 해결
+					dp[i][0][1] = event[i][0];//1의 x위치
+					dp[i][0][2] = event[i][1];//1의 y위치
+					dp[i][0][3] = dp[i-1][0][3];//2의 x위치
+					dp[i][0][4] = dp[i-1][0][4];//2의 y위치
+					police[i][0].addAll(police[i-1][0]);
+					police[i][0].add(1);
+					
+					
 				}
 				else
-					System.out.println(2);
+				{
+					if(dp[i-1][0][0] + distance_bj2618(dp[i-1][0][1], dp[i-1][0][2], event[i][0], event[i][1]) == dp[i-1][1][0] + distance_bj2618(dp[i-1][1][1], dp[i-1][1][2], event[i][0], event[i][1]))
+					{
+						System.out.println("같다고");
+						isSame[i][0] = true;
+					}
+					dp[i][0][0] = dp[i-1][1][0] + distance_bj2618(dp[i-1][1][1], dp[i-1][1][2], event[i][0], event[i][1]);//전 문제 : 2번 해결, 현재 문제 1번 해결
+					dp[i][0][1] = event[i][0];
+					dp[i][0][2] = event[i][1];
+					dp[i][0][3] = dp[i-1][1][3];
+					dp[i][0][4] = dp[i-1][1][4];
+					police[i][0].addAll(police[i-1][1]);
+					police[i][0].add(1);
+				}
+				
+				
+				//현재 문제 2번 경찰차가 해결할 경우
+				if(dp[i-1][1][0] + distance_bj2618(dp[i-1][1][3], dp[i-1][1][4], event[i][0], event[i][1]) < dp[i-1][0][0] + distance_bj2618(dp[i-1][0][3], dp[i-1][0][4], event[i][0], event[i][1]))
+				{
+					System.out.println(dp[i-1][1][0] + distance_bj2618(dp[i-1][1][3], dp[i-1][1][4], event[i][0], event[i][1])+" "+(dp[i-1][0][0] + distance_bj2618(dp[i-1][0][3], dp[i-1][0][4], event[i][0], event[i][1])));
+					dp[i][1][0] = dp[i-1][1][0] + distance_bj2618(dp[i-1][1][3], dp[i-1][1][4], event[i][0], event[i][1]);//전 문제 : 2번 해결, 현재 문제 2번 해결
+					dp[i][1][1] = dp[i-1][1][1];
+					dp[i][1][2] = dp[i-1][1][2];
+					dp[i][1][3] = event[i][0];
+					dp[i][1][4] = event[i][1];
+					
+					police[i][1].addAll(police[i-1][1]);
+					police[i][1].add(2);
+				}
+				else
+				{
+					if(dp[i-1][1][0] + distance_bj2618(dp[i-1][1][3], dp[i-1][1][4], event[i][0], event[i][1]) == dp[i-1][0][0] + distance_bj2618(dp[i-1][0][3], dp[i-1][0][4], event[i][0], event[i][1]))
+					{
+						System.out.println("같다니까");
+						isSame[i][1] = true;
+					}
+					
+					dp[i][1][0] = dp[i-1][0][0] + distance_bj2618(dp[i-1][0][3], dp[i-1][0][4], event[i][0], event[i][1]);//전 문제 : 1번 해결, 현재 문제 2번 해결
+					dp[i][1][1] = dp[i-1][0][1];
+					dp[i][1][2] = dp[i-1][0][2];
+					dp[i][1][3] = event[i][0];
+					dp[i][1][4] = event[i][1];
+					police[i][1].addAll(police[i-1][0]);
+					police[i][1].add(2);
+					
+				}
+				System.out.println("확인 "+ dp[i][0][0]+" "+dp[i][1][0]);
+				
 			}
 		}
-		else//2가 해결한게 나을때
+		
+		
+		
+		if(dp[W-1][0][0] < dp[W-1][1][0])
+		{	
+			System.out.println(dp[W-1][0][0]);
+			for(int i=0;i<police[W-1][0].size();i++)
+				System.out.println(police[W-1][0].get(i));
+		}
+		else
 		{
-			System.out.println(min[r-1][1]);
-			police2[r-1][0] = false;
-			police2[r-1][1] = true;
-		
-			for(int i=0;i<r;i++)
-			{
-				if(police2[i][0] == true)
-				{
-					System.out.println(1);
-				}
-				else
-					System.out.println(2);
-			}
+			System.out.println(dp[W-1][1][0]);
+			for(int i=0;i<police[W-1][1].size();i++)
+				System.out.println(police[W-1][1].get(i));
 		}
-		
-		
-		
-		
+	}
+	
+	static int distance_bj2618(int x, int y, int x2, int y2)
+	{
+		return Math.abs(x-x2) + Math.abs(y-y2);
 	}
 	
 	static void bj1932() throws Exception//정수 삼각형
