@@ -45,22 +45,28 @@ public class DynamicProgramming {
 		int N = Integer.parseInt(strtok.nextToken());
 		int K = Integer.parseInt(strtok.nextToken());
 		
-		int dp[][] = new int[N+1][K+1];
+		long dp[][] = new long[N+1][K+1];
 		
-		for(int i=1;i<=K;i++)
-			dp[0][i] = 1;
-		for(int i=0;i<=N;i++)
-			dp[i][1] = 1;
-		
-		for(int i=1;i<=N;i++)
-		{
-			for(int j=2;j<=K;j++)
-			{
-				
-			}
-		}
+		System.out.println(count_2225(N, K, dp)%1000000000);
 	}
 	
+	static long count_2225(int n,int k,long dp[][])
+	{
+		if(n==0 || k==1)
+		{	
+			dp[n][k] = 1;
+			return 1;
+		}
+		
+		for(int i=0;i<=n;i++)
+		{
+			if(dp[n-i][k-1] == 0)
+				dp[n][k] += count_2225(n-i, k-1, dp) % 1000000000;
+			else
+				dp[n][k] += dp[n-i][k-1] % 1000000000;
+		}
+		return dp[n][k] % 1000000000;
+	}
 	
 	
 	static void bj1890() throws Exception
@@ -1194,34 +1200,97 @@ public class DynamicProgramming {
 	
 	static void bj2618() throws Exception//°æÂûÂ÷
 	{
-		InputStreamReader k = new InputStreamReader(System.in);
-		BufferedReader b = new BufferedReader(k);
+		InputStreamReader is = new InputStreamReader(System.in);
+		BufferedReader b = new BufferedReader(is);
 		
 		int N = Integer.parseInt(b.readLine());
 		int W = Integer.parseInt(b.readLine());
 		
 		int[][] event = new int[W+1][2];
+		int[][] event2 = new int[W+1][2];
+		
+		event[0][0] = 1;
+		event[0][1] = 1;
+		
+		event2[0][0] = N;
+		event2[0][1] = N;
 		
 		for(int i=1;i<=W;i++)
 		{
 			StringTokenizer strtok = new StringTokenizer(b.readLine()," ");
 			event[i][0] = Integer.parseInt(strtok.nextToken());
 			event[i][1] = Integer.parseInt(strtok.nextToken());
+			event2[i][0] = event[i][0];
+			event2[i][1] = event[i][1];
 		}
 		
 		int dp[][] = new int[W+1][W+1];//2´ëÀÇ °æÂûÂ÷, °æÂûÂ÷ 1 : (1,1), °æÂûÂ÷ 2 : (N,N)
 		
-		for(int i=0;i<=W;i++)
+		
+		for(int i=0;i<W;i++)
 		{
 			
-			for(int j=0;j<=W;j++)
+			for(int j=0;j<W;j++)
 			{
-					
+				dp[i][j] = -1;
+
 			}
 			
 		}
+
+		System.out.println(find(0, 0, W, dp, event, event2));
+	
+		
+		tracking(0, 0, W, dp, event, event2);
+	}
+	static int find(int c1, int c2, int W,int dp[][],int event[][], int event2[][])
+	{
+		if(c1 == W || c2 == W)
+			return 0;
+		
+		if(dp[c1][c2] != -1)
+		{
+			return dp[c1][c2];
+		}
+		
+		int np = Math.max(c1, c2) + 1;
+		int n1 = distance_bj2618(event[c1][0], event[c1][1], event[np][0], event[np][1]);
+		int n2 = find(np, c2, W, dp, event, event2) + n1;
+		
+		int m1 = distance_bj2618(event2[c2][0], event2[c2][1], event2[np][0], event2[np][1]);
+		int m2 = find(c1, np, W, dp, event, event2) + m1;
+		
+		dp[c1][c2] = Math.min(n2, m2);
+		return dp[c1][c2];
+	}
+	static void tracking(int c1,int c2,int W,int dp[][],int event[][], int event2[][])
+	{
+		if(c1 == W || c2 == W)
+			return;
+		
+		int np = Math.max(c1, c2) + 1;
+		int n1 = distance_bj2618(event[c1][0], event[c1][1], event[np][0], event[np][1]);
+		int n2 = dp[np][c2] + n1;
+		
+		int m1 = distance_bj2618(event2[c2][0], event2[c2][1], event2[np][0], event2[np][1]);
+		int m2 = dp[c1][np] + m1;
+		
+		if(n2 > m2)
+		{
+			System.out.println(2);
+			tracking(c1, np, W, dp, event, event2);
+		}
+		else
+		{
+			System.out.println(1);
+			tracking(np, c2, W, dp, event, event2);
+		}
+			
+		
 		
 	}
+	
+	
 	
 	static int distance_bj2618(int x, int y, int x2, int y2)
 	{
