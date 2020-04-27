@@ -24,9 +24,9 @@ public class Graph {
 		int x,y,z,distance;
 		
 		int dir = 0;
-		private int max, min;
-		private ArrayList<Integer> path;
-		private ArrayList<Position> graph_path = new ArrayList<>();
+		int max, min;
+		ArrayList<Integer> path;
+		ArrayList<Position> graph_path = new ArrayList<>();
 		HashSet set = new HashSet<>();
 		
 		public Position() {
@@ -2777,123 +2777,133 @@ public class Graph {
 		InputStreamReader is = new InputStreamReader(System.in);
 		BufferedReader b = new BufferedReader(is);
 		
-		int n = Integer.parseInt(b.readLine());
+		int N = Integer.parseInt(b.readLine());
 		
-		int graph[][] = new int[n+1][n+1];
-		boolean visited[][] = new boolean[n+1][n+1];
+		int map[][] = new int[N+1][N+1];
+			
+		int max = Integer.MIN_VALUE;
+		int min = Integer.MAX_VALUE;
 		
-		
-		for(int i=1;i<=n;i++)
+		for(int i=1;i<=N;i++)
 		{
 			StringTokenizer strtok = new StringTokenizer(b.readLine()," ");
-			for(int j=1;j<=n;j++)
+			for(int j=1;j<=N;j++)
 			{
-				visited[i][j] = false;
-				graph[i][j] = Integer.parseInt(strtok.nextToken());
+				map[i][j] = Integer.parseInt(strtok.nextToken());
+				max = Math.max(map[i][j], max);
+				min = Math.min(map[i][j], min);
 			}
 		}
 		
-		Queue<Position> q = new LinkedList<>();
+		int max_subtract = max - min;
 		
-		Position p = new Position(1,1);
-		p.setPath(new ArrayList<>());
-		p.getPath().add(graph[1][1]);
-		p.setMax(graph[1][1]);
-		p.setMin(graph[1][1]);
-		visited[1][1] = true;
-		q.offer(p);
+		int left = 0;
+		int right = max_subtract;
+
+		int result = Integer.MAX_VALUE;
 		
-		Position[][] p_graph = new Position[n+1][n+1];
-		
-		p_graph[1][1] = p;
-		
-		int subtract[][] = new int [n+1][n+1];
-		subtract[1][1] = 0;
-		
-		while(!q.isEmpty())
+		while(left < right) 
 		{
-			Position pos = q.poll();
+			int mid = (left + right) / 2;
+			//System.out.println(mid);
 			
-			int sub = 200;
-			
-			if(pos.getX()!=1)//상
+			for(int down = min;down <=mid+min;down++)
 			{
-				int up_min = p_graph[pos.getX()-1][pos.getY()].getMin();
-				int up_max = p_graph[pos.getX()-1][pos.getY()].getMax();
-				int v = graph[pos.getX()][pos.getY()];
-				
-				if(v < up_min)
-					up_min = v;
-				if(v > up_max)
-					up_max = v;
-				
-				pos.setMax(up_max);
-				pos.setMin(up_min);
-				
-				p_graph[pos.getX()][pos.getY()] = pos;
-				subtract[pos.getX()][pos.getY()] =  pos.getMax() - pos.getMin();
-				sub =  pos.getMax() - pos.getMin();
+				int up = mid + min + down;
 			}
 			
-			if(pos.getY()!=1)//좌
+			Queue<Position> q = new LinkedList<>();
+			boolean visited[][] = new boolean[N+1][N+1];
+			
+			Position p = new Position(1, 1);
+			p.max = Math.max(map[1][1], map[N][N]);
+			p.min = Math.min(map[1][1], map[N][N]);
+			
+			q.offer(p);
+			visited[1][1] = true;
+			
+			boolean isPass = false;//pass가 트루면 왼쪽으로, pass가 false면 오른쪽으로
+			
+			while(!q.isEmpty())
 			{
-				int left_min = p_graph[pos.getX()][pos.getY()-1].getMin();
-				int left_max = p_graph[pos.getX()][pos.getY()-1].getMax();
-				int v = graph[pos.getX()][pos.getY()];
+				Position now = q.poll();
+				int x = now.x;
+				int y = now.y;
+				max = now.max;
+				min = now.min;
+				int subtract = max - min;
 				
-				if(v < left_min)
-					left_min = v;
-				if(v > left_max)
-					left_max = v;
-				
-				if(sub > left_max - left_min)
-				{
-					pos.setMax(left_max);
-					pos.setMin(left_min);
+				//System.out.println("mid : "+mid +" ("+x+", "+y+") "+map[x][y]+" max : "+max +" min : "+min);
+				if(x==N && y==N)
+				{	
+					if(subtract <= mid)
+						isPass = true;
+					break;
 				}
 				
-				p_graph[pos.getX()][pos.getY()] = pos;
-				subtract[pos.getX()][pos.getY()] = pos.getMax() - pos.getMin();
-			}
-			
-			if(pos.getX()!=n)//하
-			{
-				if(!visited[pos.getX()+1][pos.getY()])
+				int r[] = {x - 1, x + 1, x, x};
+				int c[] = {y, y, y - 1, y + 1};
+				
+				for(int i=0;i<4;i++)
 				{
-					q.offer(new Position(pos.getX()+1,pos.getY()));
-					visited[pos.getX()+1][pos.getY()] = true;
+					if(r[i] > 0 && r[i] < N + 1 && c[i] > 0 && c[i] < N + 1)
+					{
+						if(!visited[r[i]][c[i]])
+						{
+							if(max < map[r[i]][c[i]])//max보다 커서 새로운 max가 될경우
+							{
+								if(Math.abs(mid - subtract) >= Math.abs(mid - (map[r[i]][c[i]] - min)) )//현재 찾고 있는 수보다 차이가 더 작은 상황일 때만 추가
+								{
+									visited[r[i]][c[i]] = true;
+									Position next = new Position(r[i], c[i]);
+									next.max = map[r[i]][c[i]];
+									next.min = min;
+									q.offer(next);
+								}
+							}
+							else if(min > map[r[i]][c[i]])//min보다 작아서 새로운 min 될 경우
+							{
+								if(Math.abs(mid - subtract) >= Math.abs(mid - (max - map[r[i]][c[i]])) )//mid에 더 가까이 갈 수 있는 경우
+								{
+									visited[r[i]][c[i]] = true;
+									Position next = new Position(r[i], c[i]);
+									next.max = max;
+									next.min = map[r[i]][c[i]];
+									q.offer(next);
+								}
+							}
+							else//max랑 min 사이의 수인 경우 그냥 추가
+							{
+								visited[r[i]][c[i]] = true;
+								Position next = new Position(r[i], c[i]);
+								next.max = max;
+								next.min = min;
+								q.offer(next);
+							}
+							
+							
+						}
+					}
 				}
+				
 			}
 			
-			if(pos.getY()!=n)//우
+			//더 작은값 넣어보기
+			if(isPass)
 			{
-				if(!visited[pos.getX()][pos.getY()+1])
-				{
-					q.offer(new Position(pos.getX(),pos.getY()+1));
-					visited[pos.getX()][pos.getY()+1] = true;
-				}
+				right = mid - 1;
+				//System.out.println("pass: "+mid);
+				result = Math.min(mid, result);
 			}
-			
-			
+			else
+			{
+				left = mid + 1;
+			}
 		}
 		
-		for(int i=1;i<=n;i++)
-		{
-			for(int j=1;j<=n;j++)
-				System.out.print(subtract[i][j]+" ");
-			System.out.println();
-		}
-		System.out.println();
-		for(int i=1;i<=n ;i++)
-		{
-			for(int j=1;j<=n;j++)
-			{
-				System.out.print("("+p_graph[i][j].getMin()+", "+p_graph[i][j].getMax()+")");
-			}
-			System.out.println();
-		}
+		System.out.println(result);
 		
-		System.out.println(subtract[n][n]);
+		
 	}
 	
 	static void bj3197() throws Exception//백조

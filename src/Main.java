@@ -20,7 +20,7 @@ public class Main {
 		
 		try
 		{
-			DynamicProgramming.bj2225();
+			Graph.bj1981();
 		}
 		catch(Exception e)
 		{
