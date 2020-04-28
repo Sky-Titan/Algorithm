@@ -2781,8 +2781,8 @@ public class Graph {
 		
 		int map[][] = new int[N+1][N+1];
 			
-		int max = Integer.MIN_VALUE;
-		int min = Integer.MAX_VALUE;
+		int max_num = Integer.MIN_VALUE;
+		int min_num = Integer.MAX_VALUE;
 		
 		for(int i=1;i<=N;i++)
 		{
@@ -2790,106 +2790,116 @@ public class Graph {
 			for(int j=1;j<=N;j++)
 			{
 				map[i][j] = Integer.parseInt(strtok.nextToken());
-				max = Math.max(map[i][j], max);
-				min = Math.min(map[i][j], min);
+				max_num = Math.max(map[i][j], max_num);
+				min_num = Math.min(map[i][j], min_num);
 			}
 		}
 		
-		int max_subtract = max - min;
+		int max_subtract = max_num - min_num;
 		
 		int left = 0;
 		int right = max_subtract;
 
 		int result = Integer.MAX_VALUE;
 		
-		while(left < right) 
+		while(left <= right) 
 		{
 			int mid = (left + right) / 2;
 			//System.out.println(mid);
 			
-			for(int down = min;down <=mid+min;down++)
+			boolean isPossible = false;
+			
+			for(int up = max_num;up >= mid + min_num; up--)
 			{
-				int up = mid + min + down;
-			}
-			
-			Queue<Position> q = new LinkedList<>();
-			boolean visited[][] = new boolean[N+1][N+1];
-			
-			Position p = new Position(1, 1);
-			p.max = Math.max(map[1][1], map[N][N]);
-			p.min = Math.min(map[1][1], map[N][N]);
-			
-			q.offer(p);
-			visited[1][1] = true;
-			
-			boolean isPass = false;//pass가 트루면 왼쪽으로, pass가 false면 오른쪽으로
-			
-			while(!q.isEmpty())
-			{
-				Position now = q.poll();
-				int x = now.x;
-				int y = now.y;
-				max = now.max;
-				min = now.min;
-				int subtract = max - min;
+				int down = up - mid;
 				
-				//System.out.println("mid : "+mid +" ("+x+", "+y+") "+map[x][y]+" max : "+max +" min : "+min);
-				if(x==N && y==N)
-				{	
-					if(subtract <= mid)
-						isPass = true;
-					break;
-				}
+				Queue<Position> q = new LinkedList<>();
+				boolean visited[][] = new boolean[N+1][N+1];
 				
-				int r[] = {x - 1, x + 1, x, x};
-				int c[] = {y, y, y - 1, y + 1};
+				Position p = new Position(1, 1);
+				p.max = map[1][1];
+				p.min = map[1][1];
 				
-				for(int i=0;i<4;i++)
+				if(p.max <=up && p.min >= down)
+					q.offer(p);
+				visited[1][1] = true;
+				
+				boolean isPass = false;//pass가 트루면 왼쪽으로, pass가 false면 오른쪽으로
+				
+				while(!q.isEmpty())
 				{
-					if(r[i] > 0 && r[i] < N + 1 && c[i] > 0 && c[i] < N + 1)
+					Position now = q.poll();
+					int x = now.x;
+					int y = now.y;
+					int max = now.max;
+					int min = now.min;
+					int subtract = max - min;
+					
+					//System.out.println("mid : "+mid +" ("+x+", "+y+") "+map[x][y]+" max : "+max +" min : "+min);
+					if(x==N && y==N)
+					{	
+						isPass = true;
+						break;
+					}
+					
+					int r[] = {x - 1, x + 1, x, x};
+					int c[] = {y, y, y - 1, y + 1};
+					
+					for(int i=0;i<4;i++)
 					{
-						if(!visited[r[i]][c[i]])
+						if(r[i] > 0 && r[i] < N + 1 && c[i] > 0 && c[i] < N + 1)
 						{
-							if(max < map[r[i]][c[i]])//max보다 커서 새로운 max가 될경우
+							if(!visited[r[i]][c[i]])
 							{
-								if(Math.abs(mid - subtract) >= Math.abs(mid - (map[r[i]][c[i]] - min)) )//현재 찾고 있는 수보다 차이가 더 작은 상황일 때만 추가
+								if(max < map[r[i]][c[i]])//max보다 커서 새로운 max가 될경우
 								{
-									visited[r[i]][c[i]] = true;
-									Position next = new Position(r[i], c[i]);
-									next.max = map[r[i]][c[i]];
-									next.min = min;
-									q.offer(next);
+									if(map[r[i]][c[i]] <= up )//현재 찾고 있는 수보다 차이가 더 작은 상황일 때만 추가
+									{
+										visited[r[i]][c[i]] = true;
+										Position next = new Position(r[i], c[i]);
+										next.max = map[r[i]][c[i]];
+										next.min = min;
+										q.offer(next);
+									}
 								}
-							}
-							else if(min > map[r[i]][c[i]])//min보다 작아서 새로운 min 될 경우
-							{
-								if(Math.abs(mid - subtract) >= Math.abs(mid - (max - map[r[i]][c[i]])) )//mid에 더 가까이 갈 수 있는 경우
+								else if(min > map[r[i]][c[i]])//min보다 작아서 새로운 min 될 경우
+								{
+									if(map[r[i]][c[i]] >= down )//mid에 더 가까이 갈 수 있는 경우
+									{
+										visited[r[i]][c[i]] = true;
+										Position next = new Position(r[i], c[i]);
+										next.max = max;
+										next.min = map[r[i]][c[i]];
+										q.offer(next);
+									}
+								}
+								else//max랑 min 사이의 수인 경우 그냥 추가
 								{
 									visited[r[i]][c[i]] = true;
 									Position next = new Position(r[i], c[i]);
 									next.max = max;
-									next.min = map[r[i]][c[i]];
+									next.min = min;
 									q.offer(next);
 								}
+								
+								
 							}
-							else//max랑 min 사이의 수인 경우 그냥 추가
-							{
-								visited[r[i]][c[i]] = true;
-								Position next = new Position(r[i], c[i]);
-								next.max = max;
-								next.min = min;
-								q.offer(next);
-							}
-							
-							
 						}
 					}
+					
+				}
+				
+				//더 작은값 넣어보기
+				if(isPass)
+				{
+					isPossible = true;
+					break;
 				}
 				
 			}
 			
 			//더 작은값 넣어보기
-			if(isPass)
+			if(isPossible)
 			{
 				right = mid - 1;
 				//System.out.println("pass: "+mid);

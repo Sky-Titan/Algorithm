@@ -13,14 +13,15 @@ import java.util.HashSet;
 
 public class Main {
 
+
+	
 	
 	
 	public static void main(String[] args) {
 		
-		
 		try
 		{
-			Graph.bj1981();
+			DynamicProgramming.bj1937();
 		}
 		catch(Exception e)
 		{

@@ -36,6 +36,131 @@ public class DynamicProgramming {
 		}
 	}
 	
+	static void bj1937() throws Exception
+	{
+		InputStreamReader is = new InputStreamReader(System.in);
+		BufferedReader b = new BufferedReader(is);
+		
+		int N = Integer.parseInt(b.readLine());
+		
+		int map[][] = new int[N][N];
+		int dp[][] = new int[N][N];
+		
+		boolean visited[][] = new boolean[N][N];
+		
+		for(int i=0;i<N;i++)
+		{
+			StringTokenizer strtok = new StringTokenizer(b.readLine());
+			
+			for(int j=0;j<N;j++)
+			{
+				map[i][j] = Integer.parseInt(strtok.nextToken());
+				dp[i][j] = 1;
+			}
+		}
+		
+		for(int i=0;i<N;i++)
+		{
+			for(int j=0;j<N;j++)
+			{
+				if(!visited[i][j])
+				{
+					dfs_1937(i, j, 1, map, dp, N, visited);
+				}
+			}
+		}
+		
+		int max = Integer.MIN_VALUE;
+		
+		for(int i=0;i<N;i++)
+		{
+			for(int j=0;j<N;j++)
+			{
+				max = Math.max(max, dp[i][j]);
+		//		System.out.print(dp[i][j]+ " ");
+			}
+		//	System.out.println();
+		}
+		System.out.println(max);
+	}
+	
+	static int dfs_1937(int x, int y,int count ,int map[][], int dp[][], int N, boolean visited[][])
+	{
+		visited[x][y] = true;
+		
+		int r[] = {x - 1, x + 1, x, x};
+		int c[] = {y, y, y - 1, y + 1};
+		
+		dp[x][y] += count;
+		for(int i=0;i<4;i++)
+		{
+			if(r[i] < N && r[i] >= 0 && c[i] >= 0 && c[i] < N)
+			{
+				if(map[x][y] < map[r[i]][c[i]])
+				{
+					if(!visited[r[i]][c[i]])
+					{
+						dp[x][y] = Math.max(dp[x][y], dfs_1937(r[i], c[i], count + 1, map, dp, N, visited) + count + 1);
+					}
+					else
+					{
+						dp[x][y] = Math.max(dp[x][y], dp[r[i]][c[i]] + count + 1);
+					}
+				}
+			}
+			
+		}
+		dp[x][y] -= count;
+		return dp[x][y];
+	}
+	
+	static void bj1309() throws Exception
+	{
+		InputStreamReader is = new InputStreamReader(System.in);
+		BufferedReader b = new BufferedReader(is);
+		
+		int N = Integer.parseInt(b.readLine());
+		
+		int dp[][][] = new int[N+1][2][2];
+		int dp2[][] = new int[N+1][3];
+		
+		for(int i=1;i<=N;i++)
+		{
+			if(i==1)
+			{
+				dp[i][0][0] = 2;//왼쪽에 사자가 안들어가 있는 경우
+				dp[i][0][1] = 1;//왼쪽에 사자가 들어가 있는 경우
+				dp[i][1][0] = 2;//오른쪽에 사자가 안들어가 있는 경우
+				dp[i][1][1] = 1;//오른쪽에 사자가 들어가 있는 경우
+			}
+			else
+			{
+				dp[i][0][0] = (dp[i-1][1][0] % 9901) * 2 + dp[i-1][1][1] % 9901 ;//왼쪽에 사자가 안들어가 있는 경우
+				dp[i][0][1] = dp[i-1][0][0] % 9901;//왼쪽에 사자가 들어가 있는 경우
+				dp[i][1][0] = (dp[i-1][0][0] % 9901) * 2 + dp[i-1][0][1] % 9901;//오른쪽에 사자가 안들어가 있는 경우
+				dp[i][1][1] = dp[i-1][1][0] % 9901;//오른쪽에 사자가 들어가 있는 경우
+			}
+		}
+		
+		for(int i=1;i<=N;i++)
+		{
+			if(i==1)
+			{
+				dp2[i][0] = 1;//01
+				dp2[i][1] = 1;//10
+				dp2[i][2] = 1;//00
+			}
+			else
+			{
+				dp2[i][0] = (dp2[i-1][1] + dp2[i-1][2]) % 9901;
+				dp2[i][1] = (dp2[i-1][0] + dp2[i-1][2]) % 9901;
+				dp2[i][2] = (dp2[i-1][0] + dp2[i-1][1] + dp2[i-1][2]) % 9901;
+			}
+		}
+		System.out.println((dp[N][1][0] + dp[N][1][1]) % 9901 );
+		System.out.println((dp2[N][0] + dp2[N][1] + dp2[N][2]) % 9901);
+	}
+	
 	static void bj2225() throws Exception
 	{
 		InputStreamReader is = new InputStreamReader(System.in);
