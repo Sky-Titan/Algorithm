@@ -5,6 +5,7 @@ import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.Queue;
 import java.util.StringTokenizer;
@@ -112,6 +113,117 @@ public class Graph {
 			this.z = z;
 		}
 		
+	}
+	
+	static void bj4179() throws Exception
+	{
+		InputStreamReader is = new InputStreamReader(System.in);
+		BufferedReader b = new BufferedReader(is);
+		
+		StringTokenizer strtok = new StringTokenizer(b.readLine());
+		
+		int N = Integer.parseInt(strtok.nextToken());
+		int M = Integer.parseInt(strtok.nextToken());
+		
+		char map[][] = new char[N][M];
+		
+		int fire_time[][] = new int[N][M];
+		Position start = new Position();
+		
+		Queue<Position> q = new LinkedList<>();
+		
+		boolean visited[][] = new boolean[N][M];
+		for(int i=0;i<N;i++)
+		{
+			String str = b.readLine();
+			for(int j=0;j<M;j++)
+			{
+				map[i][j] = str.charAt(j);
+				fire_time[i][j] = Integer.MAX_VALUE;
+				if(map[i][j] == 'J')
+				{
+					start.x = i;
+					start.y = j;
+					start.distance = 0;
+				}
+				else if(map[i][j] == 'F')
+				{
+					Position p = new Position(i, j);
+					p.distance = 0;
+					visited[i][j] = true;
+					q.offer(p);
+				}
+			}
+		}
+		
+		
+		
+		while(!q.isEmpty())
+		{
+			Position now = q.poll();
+			int x = now.x;
+			int y = now.y;
+			int time = now.distance;
+			
+			fire_time[x][y] = time;
+			
+			int r[] = {x - 1, x + 1, x, x};
+			int c[] = {y, y, y - 1, y + 1};
+			
+			for(int i = 0;i<4;i++)
+			{
+				if(r[i] >= 0 && r[i] < N && c[i] >= 0 && c[i] < M)
+				{
+					if(!visited[r[i]][c[i]] && map[r[i]][c[i]] == '.')
+					{
+						Position next = new Position(r[i], c[i]);
+						next.distance = time + 1;
+						visited[r[i]][c[i]] = true;
+						q.offer(next);
+					}
+				}
+			}
+		}
+
+		visited = new boolean[N][M];
+		
+		q.offer(start);
+		visited[start.x][start.y] = true;
+		
+		while(!q.isEmpty())
+		{
+			Position now = q.poll();
+			int x = now.x;
+			int y = now.y;
+			int time = now.distance;
+			
+			if(x == N-1 || x == 0 || y == M -1|| y == 0)
+			{
+				System.out.println(time + 1);
+				return;
+			}
+			
+			int r[] = {x - 1, x + 1, x, x};
+			int c[] = {y, y, y - 1, y + 1};
+			
+			for(int i = 0;i<4;i++)
+			{
+				if(r[i] >= 0 && r[i] < N && c[i] >= 0 && c[i] < M)
+				{
+					if(!visited[r[i]][c[i]] && map[r[i]][c[i]] == '.')
+					{
+						if(fire_time[r[i]][c[i]] > time + 1)
+						{
+							Position next = new Position(r[i], c[i]);
+							next.distance = time + 1;
+							visited[r[i]][c[i]] = true;
+							q.offer(next);
+						}
+					}
+				}
+			}
+		}
+		System.out.println("IMPOSSIBLE");
 	}
 	
 	static void bj9205() throws Exception
@@ -1538,6 +1650,93 @@ public class Graph {
 			}
 		}
 	}
+	
+	static void bj1325_2() throws Exception
+	{
+		InputStreamReader is = new InputStreamReader(System.in);
+		BufferedReader b = new BufferedReader(is);
+		
+		StringTokenizer strtok = new StringTokenizer(b.readLine());
+		int N = Integer.parseInt(strtok.nextToken());
+		int M = Integer.parseInt(strtok.nextToken());
+		
+		ArrayList<ArrayList<Integer>> graph = new ArrayList<>();
+		
+		
+		int dp[] = new int [N+1];
+		
+		for(int i=0;i<=N;i++)
+		{
+			graph.add(new ArrayList<>());
+			dp[i] = 1;
+		}
+		
+		for(int i=0;i<M;i++)
+		{
+			strtok = new StringTokenizer(b.readLine());
+			
+			int A = Integer.parseInt(strtok.nextToken());
+			int B = Integer.parseInt(strtok.nextToken());
+			
+			graph.get(A).add(B);//B를 해킹하면 A도 해킹
+		}
+		
+		int max = Integer.MIN_VALUE;
+		
+		Queue<Integer> q = new LinkedList<>();
+		
+		for(int i=1;i<=N;i++)
+		{
+			boolean visited[] = new boolean[N+1];
+				q.offer(i);
+				
+				visited[i] = true;
+				
+				while(!q.isEmpty())
+				{
+					int now = q.poll();
+					
+					for(int k=0;k<graph.get(now).size();k++)
+					{
+						int next = graph.get(now).get(k);
+						
+						if(!visited[next])
+						{
+							visited[next] = true;
+							dp[next] ++;
+							q.offer(next);
+						}
+					}
+				}
+			
+		}
+		
+		
+		for(int i=1;i<=N;i++)
+		{
+			max = Math.max(max, dp[i]);
+
+		}
+		
+		for(int i=1;i<=N;i++)
+		{
+			if(max == dp[i])
+			System.out.print(i+" ");
+		}
+	}
+	
+	static class Computer
+	{
+		int num;
+		HashSet<Integer> set = new HashSet<>();
+		
+		public Computer(int num)
+		{
+			this.num=num;
+		}
+	
+	}
+	
 	
 	static void bj1325() throws Exception
 	{

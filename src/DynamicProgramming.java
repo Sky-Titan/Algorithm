@@ -36,6 +36,48 @@ public class DynamicProgramming {
 		}
 	}
 	
+	static void bj1965() throws Exception
+	{
+		InputStreamReader is = new InputStreamReader(System.in);
+		BufferedReader b = new BufferedReader(is);
+		
+		int N = Integer.parseInt(b.readLine());
+		int input[] = new int[N];
+		int dp[] = new int[N];
+		
+		StringTokenizer strtok = new StringTokenizer(b.readLine());
+		
+		for(int i=0;i<N;i++)
+		{
+			input[i] = Integer.parseInt(strtok.nextToken());
+		}
+		
+		int max = Integer.MIN_VALUE;
+		
+		for(int i=0;i<N;i++)
+		{
+			if(i==0)
+			{
+				dp[i] = 1;
+			}
+			else
+			{
+				dp[i] = 1;
+				
+				for(int j=i-1;j>=0;j--)
+				{
+					if(input[j] < input[i] && dp[j] + 1 > dp[i])
+					{
+						dp[i] = dp[j] + 1;
+					}
+				}
+			}
+			max = Math.max(max, dp[i]);
+		}
+		System.out.println(max);
+		
+	}
+	
 	static void bj1937() throws Exception
 	{
 		InputStreamReader is = new InputStreamReader(System.in);
