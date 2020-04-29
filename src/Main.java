@@ -20,7 +20,7 @@ public class Main {
 		try
 		{
 
-			Graph.bj4179();
+			Samsung.bj15684();
 		}
 		catch(Exception e)
 		{

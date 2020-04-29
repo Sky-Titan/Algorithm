@@ -15,6 +15,462 @@ public class Samsung {
 		
 	}
 	
+	static class Position{
+		int x, y;
+		public Position()
+		{
+			
+		}
+		
+		public Position(int x, int y)
+		{
+			this.x = x;
+			this.y = y;
+		}
+	}
+	
+	static void bj15684() throws Exception
+	{
+		InputStreamReader is = new InputStreamReader(System.in);
+		BufferedReader b = new BufferedReader(is);
+		
+		StringTokenizer strtok = new StringTokenizer(b.readLine());
+		
+		int N = Integer.parseInt(strtok.nextToken());//세로선 개수
+		int M = Integer.parseInt(strtok.nextToken());//가로선 개수
+		int H = Integer.parseInt(strtok.nextToken());//가로선 위치 개수
+		
+		char map[][] = new char[H+1][N+1];
+		
+		ArrayList<Position> pos_list = new ArrayList<>();
+		
+		for(int i=1;i<=H;i++)
+		{
+			for(int j=1;j<=N;j++)
+			{	
+				map[i][j] = 'D';
+				if(j<N)
+					pos_list.add(new Position(i, j));
+			}
+		}
+		
+		for(int i=0;i<M;i++)
+		{
+			strtok = new StringTokenizer(b.readLine());
+			int A = Integer.parseInt(strtok.nextToken());
+			int B = Integer.parseInt(strtok.nextToken());
+			//(A,B)
+			
+			map[A][B] = 'R';
+			map[A][B+1] = 'L';
+			
+		}
+		
+		
+		for(int add_num=0;add_num<=3;add_num++)
+		{
+			boolean isPass = add_line(0, 0, add_num, H, N, map, pos_list);
+			if(isPass)
+			{
+				System.out.println(add_num);
+				return;
+			}
+		}
+		System.out.println(-1);
+	}
+	
+	static boolean add_line(int index, int depth, int add_num, int H,int N, char map[][], ArrayList<Position> pos_list)
+	{
+		boolean isPass = false;
+		if(depth == add_num)
+		{
+		/*	if(depth == 2)
+			{
+				for(int i=1;i<=H;i++)
+				{
+					for(int j=1;j<=N;j++)
+					{
+						System.out.print(map[i][j]+" ");
+					}
+					System.out.println();
+				}
+				System.out.println();
+			}*/
+			isPass = true;
+			isPass = canPass(H, N, map);
+		}
+		else
+		{
+			for(int i=index;i<pos_list.size();i++)
+			{
+				int x = pos_list.get(i).x;
+				int y = pos_list.get(i).y;
+				
+				if(map[x][y] == 'D' && map[x][y+1] == 'D')
+				{
+					char map2[][] = new char[H+1][N+1];
+					
+					for(int j=0;j<=H;j++)
+						map2[j] = map[j].clone();
+					map2[x][y] = 'R';
+					map2[x][y+1] = 'L';
+					
+					isPass = add_line(index+1, depth+1, add_num, H, N, map2, pos_list);
+					if(isPass)
+						break;
+				}
+				
+			}
+		}
+		return isPass;
+	}
+	static boolean canPass(int H,int N, char map[][])
+	{
+		boolean isPass = true;
+		for(int i=1;i<=N;i++)
+		{
+			int output = output_line(i, H, N, map);
+			if(output != i)
+			{
+				isPass = false;
+				break;
+			}
+		}
+		return isPass;
+	}
+	static int output_line(int line,int H, int N, char map[][])
+	{
+		int i = 1;
+		int j = line;
+		
+		while(i <= H)
+		{
+			if(map[i][j] =='L')
+			{
+				j--;
+			}
+			else if(map[i][j] == 'R')//오른쪽
+			{
+				j++;
+			}
+			i++;
+		}
+		return j;
+	}
+	
+	static void bj5373() throws Exception
+	{
+		InputStreamReader is = new InputStreamReader(System.in);
+		BufferedReader b = new BufferedReader(is);
+		
+		int T = Integer.parseInt(b.readLine());
+		
+		//윗면 : U (3,3)~(5,5), 아랫면 : D (9,3)~(11,5), 앞면 : F (6,3)~(8,5), 뒷면 : B (0,3)~(2,5), 왼쪽면 : L (3,0)~(5,2), 오른쪽면 : R (3,6)~(5,8)
+		
+		for(int i=0;i<T;i++)
+		{
+			char cube[][] = {
+					//0   1   2   3   4   5   6   7   8
+					{'.','.','.','o','o','o','.','.','.'},//0
+					{'.','.','.','o','o','o','.','.','.'},//1
+					{'.','.','.','o','o','o','.','.','.'},//2
+					{'g','g','g','w','w','w','b','b','b'},//3
+					{'g','g','g','w','w','w','b','b','b'},//4
+					{'g','g','g','w','w','w','b','b','b'},//5
+					{'.','.','.','r','r','r','.','.','.'},//6
+					{'.','.','.','r','r','r','.','.','.'},//7
+					{'.','.','.','r','r','r','.','.','.'},//8
+					{'.','.','.','y','y','y','.','.','.'},//9
+					{'.','.','.','y','y','y','.','.','.'},//10
+					{'.','.','.','y','y','y','.','.','.'}//11
+			};
+			
+			int N = Integer.parseInt(b.readLine());
+			
+			StringTokenizer strtok = new StringTokenizer(b.readLine());
+			
+			for(int j=0;j<N;j++)
+			{
+				String order = strtok.nextToken();//명령
+				turn_cube(cube, order);
+				
+			}
+			
+			//윗면 결과 출력
+			for(int n=3;n<6;n++)
+			{
+				for(int m=3;m<6;m++)
+				{
+					System.out.print(cube[n][m]);
+				}
+				System.out.println();
+			}
+		}
+	}
+	
+	static void turn_cube(char[][] cube, String order)
+	{
+		char side = order.charAt(0);
+		char dir = order.charAt(1);
+		
+		if(side == 'U')//윗면
+		{
+			char line[] = {cube[2][3],cube[2][4],cube[2][5], //상
+					cube[3][6],cube[4][6],cube[5][6],//우
+					cube[6][5],cube[6][4],cube[6][3],//하
+					cube[5][2],cube[4][2],cube[3][2]};//좌
+			
+			char line2[] = {cube[3][3],cube[3][4],cube[3][5], 
+					cube[4][5],cube[5][5],cube[5][4],
+					cube[5][3],cube[4][3]};
+			
+			change_dir(dir, line, line2);
+			
+			cube[3][3] = line2[0];
+			cube[3][4] = line2[1];
+			cube[3][5] = line2[2];
+			cube[4][5] = line2[3];
+			cube[5][5] = line2[4];
+			cube[5][4] = line2[5];
+			cube[5][3] = line2[6];
+			cube[4][3] = line2[7];
+			
+			cube[2][3] = line[0];
+			cube[2][4] = line[1];
+			cube[2][5] = line[2];
+			cube[3][6] = line[3];
+			cube[4][6] = line[4];
+			cube[5][6] = line[5];
+			cube[6][5] = line[6];
+			cube[6][4] = line[7];
+			cube[6][3] = line[8];
+			cube[5][2] = line[9];
+			cube[4][2] = line[10];
+			cube[3][2] = line[11];
+		}
+		else if(side == 'D')//아랫면
+		{
+			char line[] = {cube[8][3],cube[8][4],cube[8][5], //상
+					cube[5][8],cube[4][8],cube[3][8],//우
+					cube[0][5],cube[0][4],cube[0][3],//하
+					cube[3][0],cube[4][0],cube[5][0]};//좌
+			
+			char line2[] = {cube[9][3],cube[9][4],cube[9][5], 
+					cube[10][5],cube[11][5],cube[11][4],
+					cube[11][3],cube[10][3]};
+			
+			change_dir(dir, line, line2);
+			
+			cube[9][3] = line2[0];
+			cube[9][4] = line2[1];
+			cube[9][5] = line2[2];
+			cube[10][5] = line2[3];
+			cube[11][5] = line2[4];
+			cube[11][4] = line2[5];
+			cube[11][3] = line2[6];
+			cube[10][3] = line2[7];
+			
+			cube[8][3] = line[0];
+			cube[8][4] = line[1];
+			cube[8][5] = line[2];
+			cube[5][8] = line[3];
+			cube[4][8] = line[4];
+			cube[3][8] = line[5];
+			cube[0][5] = line[6];
+			cube[0][4] = line[7];
+			cube[0][3] = line[8];
+			cube[3][0] = line[9];
+			cube[4][0] = line[10];
+			cube[5][0] = line[11];
+		}
+		else if(side == 'F')//앞면
+		{
+			char line[] = {cube[5][3],cube[5][4],cube[5][5], //상
+					cube[5][6],cube[5][7],cube[5][8],//우
+					cube[9][5],cube[9][4],cube[9][3],//하
+					cube[5][0],cube[5][1],cube[5][2]};//좌
+			
+			char line2[] = {cube[6][3],cube[6][4],cube[6][5], 
+					cube[7][5],cube[8][5],cube[8][4],
+					cube[8][3],cube[7][3]};
+			
+			change_dir(dir, line, line2);
+			
+			cube[6][3] = line2[0];
+			cube[6][4] = line2[1];
+			cube[6][5] = line2[2];
+			cube[7][5] = line2[3];
+			cube[8][5] = line2[4];
+			cube[8][4] = line2[5];
+			cube[8][3] = line2[6];
+			cube[7][3] = line2[7];
+			
+			cube[5][3] = line[0];
+			cube[5][4] = line[1];
+			cube[5][5] = line[2];
+			cube[5][6] = line[3];
+			cube[5][7] = line[4];
+			cube[5][8] = line[5];
+			cube[9][5] = line[6];
+			cube[9][4] = line[7];
+			cube[9][3] = line[8];
+			cube[5][0] = line[9];
+			cube[5][1] = line[10];
+			cube[5][2] = line[11];
+		}
+		else if(side == 'B')//뒷면
+		{
+			char line[] = {cube[3][5],cube[3][4],cube[3][3], //상
+					cube[3][2],cube[3][1],cube[3][0],//우
+					cube[11][3],cube[11][4],cube[11][5],//하
+					cube[3][8],cube[3][7],cube[3][6]};//좌
+			
+			char line2[] = {cube[2][5],cube[2][4],cube[2][3], 
+					cube[1][3],cube[0][3],cube[0][4],
+					cube[0][5],cube[1][5]};
+			
+			change_dir(dir, line, line2);
+			
+			cube[2][5] = line2[0];
+			cube[2][4] = line2[1];
+			cube[2][3] = line2[2];
+			cube[1][3] = line2[3];
+			cube[0][3] = line2[4];
+			cube[0][4] = line2[5];
+			cube[0][5] = line2[6];
+			cube[1][5] = line2[7];
+			
+			cube[3][5] = line[0];
+			cube[3][4] = line[1];
+			cube[3][3] = line[2];
+			cube[3][2] = line[3];
+			cube[3][1] = line[4];
+			cube[3][0] = line[5];
+			cube[11][3] = line[6];
+			cube[11][4] = line[7];
+			cube[11][5] = line[8];
+			cube[3][8] = line[9];
+			cube[3][7] = line[10];
+			cube[3][6] = line[11];
+		}
+		else if(side == 'L')//왼쪽면
+		{
+			char line[] = {cube[3][3],cube[4][3],cube[5][3], //상
+					cube[6][3],cube[7][3],cube[8][3],//우
+					cube[9][3],cube[10][3],cube[11][3],//하
+					cube[0][3],cube[1][3],cube[2][3]};//좌
+			
+			char line2[] = {cube[3][2],cube[4][2],cube[5][2], 
+					cube[5][1],cube[5][0],cube[4][0],
+					cube[3][0],cube[3][1]};
+			
+			change_dir(dir, line, line2);
+			
+			cube[3][2] = line2[0];
+			cube[4][2] = line2[1];
+			cube[5][2] = line2[2];
+			cube[5][1] = line2[3];
+			cube[5][0] = line2[4];
+			cube[4][0] = line2[5];
+			cube[3][0] = line2[6];
+			cube[3][1] = line2[7];
+			
+			cube[3][3] = line[0];
+			cube[4][3] = line[1];
+			cube[5][3] = line[2];
+			cube[6][3] = line[3];
+			cube[7][3] = line[4];
+			cube[8][3] = line[5];
+			cube[9][3] = line[6];
+			cube[10][3] = line[7];
+			cube[11][3] = line[8];
+			cube[0][3] = line[9];
+			cube[1][3] = line[10];
+			cube[2][3] = line[11];
+		}
+		else//오른쪽면
+		{
+			char line[] = {cube[5][5],cube[4][5],cube[3][5], //상
+					cube[2][5],cube[1][5],cube[0][5],//우
+					cube[11][5],cube[10][5],cube[9][5],//하
+					cube[8][5],cube[7][5],cube[6][5]};//좌
+			
+			char line2[] = {cube[5][6],cube[4][6],cube[3][6], 
+					cube[3][7],cube[3][8],cube[4][8],
+					cube[5][8],cube[5][7]};
+			
+			change_dir(dir, line, line2);
+			
+			cube[5][6] = line2[0];
+			cube[4][6] = line2[1];
+			cube[3][6] = line2[2];
+			cube[3][7] = line2[3];
+			cube[3][8] = line2[4];
+			cube[4][8] = line2[5];
+			cube[5][8] = line2[6];
+			cube[5][7] = line2[7];
+			
+			cube[5][5] = line[0];
+			cube[4][5] = line[1];
+			cube[3][5] = line[2];
+			cube[2][5] = line[3];
+			cube[1][5] = line[4];
+			cube[0][5] = line[5];
+			cube[11][5] = line[6];
+			cube[10][5] = line[7];
+			cube[9][5] = line[8];
+			cube[8][5] = line[9];
+			cube[7][5] = line[10];
+			cube[6][5] = line[11];
+		}
+	}
+	
+	static void change_dir(char dir, char[] line, char[] line2)
+	{
+		if(dir == '+')//시계방향
+		{
+			for(int k=0;k<3;k++)
+			{
+				char last = line[line.length-1];
+				for(int i=line.length-1;i>0;i--)
+				{
+					line[i] = line[i-1];
+				}
+				line[0] = last;	
+			}
+			for(int k=0;k<2;k++)
+			{
+				char last = line2[line2.length-1];
+				for(int i=line2.length-1;i>0;i--)
+				{
+					line2[i] = line2[i-1];
+				}
+				line2[0] = last;	
+			}
+		}
+		else//반시계방향
+		{
+			for(int k=0;k<3;k++)
+			{
+				char first = line[0];
+				for(int i=0;i<line.length-1;i++)
+				{
+					line[i] = line[i+1];
+				}
+				line[line.length-1] = first;	
+			}
+			for(int k=0;k<2;k++)
+			{
+				char first = line2[0];
+				for(int i=0;i<line2.length-1;i++)
+				{
+					line2[i] = line2[i+1];
+				}
+				line2[line2.length-1] = first;	
+			}
+		}
+	}
+	
 	static void s5648() throws Exception
 	{
 		InputStreamReader is = new InputStreamReader(System.in);
