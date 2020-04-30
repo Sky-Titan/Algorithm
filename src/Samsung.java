@@ -36,9 +36,9 @@ public class Samsung {
 		
 		StringTokenizer strtok = new StringTokenizer(b.readLine());
 		
-		int N = Integer.parseInt(strtok.nextToken());//세로선 개수
+		int N = Integer.parseInt(strtok.nextToken());//열
 		int M = Integer.parseInt(strtok.nextToken());//가로선 개수
-		int H = Integer.parseInt(strtok.nextToken());//가로선 위치 개수
+		int H = Integer.parseInt(strtok.nextToken());//행
 		
 		char map[][] = new char[H+1][N+1];
 		
@@ -49,8 +49,6 @@ public class Samsung {
 			for(int j=1;j<=N;j++)
 			{	
 				map[i][j] = 'D';
-				if(j<N)
-					pos_list.add(new Position(i, j));
 			}
 		}
 		
@@ -62,68 +60,80 @@ public class Samsung {
 			//(A,B)
 			
 			map[A][B] = 'R';
-			map[A][B+1] = 'L';
-			
+			map[A][B+1] = 'L';	
 		}
 		
-		
-		for(int add_num=0;add_num<=3;add_num++)
+		if(canPass(H, N, map))
 		{
-			boolean isPass = add_line(0, 0, add_num, H, N, map, pos_list);
-			if(isPass)
-			{
-				System.out.println(add_num);
-				return;
-			}
-		}
-		System.out.println(-1);
-	}
-	
-	static boolean add_line(int index, int depth, int add_num, int H,int N, char map[][], ArrayList<Position> pos_list)
-	{
-		boolean isPass = false;
-		if(depth == add_num)
-		{
-		/*	if(depth == 2)
-			{
-				for(int i=1;i<=H;i++)
-				{
-					for(int j=1;j<=N;j++)
-					{
-						System.out.print(map[i][j]+" ");
-					}
-					System.out.println();
-				}
-				System.out.println();
-			}*/
-			isPass = true;
-			isPass = canPass(H, N, map);
+			System.out.println(0);
 		}
 		else
 		{
-			for(int i=index;i<pos_list.size();i++)
+			for(int i=1;i<=H;i++)
 			{
-				int x = pos_list.get(i).x;
-				int y = pos_list.get(i).y;
-				
-				if(map[x][y] == 'D' && map[x][y+1] == 'D')
-				{
-					char map2[][] = new char[H+1][N+1];
-					
-					for(int j=0;j<=H;j++)
-						map2[j] = map[j].clone();
-					map2[x][y] = 'R';
-					map2[x][y+1] = 'L';
-					
-					isPass = add_line(index+1, depth+1, add_num, H, N, map2, pos_list);
-					if(isPass)
-						break;
+				for(int j=1;j<N;j++)
+				{	
+					if(map[i][j] == 'D' && map[i][j+1] == 'D')
+					{
+						pos_list.add(new Position(i, j));
+					}
 				}
+			}
+			
+			if(pos_list.isEmpty())
+			{
+				System.out.println(-1);
+			}
+			else
+			{
+				int[] min = {Integer.MAX_VALUE};
+				add_line(0, 3, H, N, map, pos_list, min);
 				
+				if(min[0] == Integer.MAX_VALUE)
+					System.out.println(-1);
+				else
+					System.out.println(min[0]);
 			}
 		}
-		return isPass;
+		
 	}
+	
+	static void add_line(int index, int depth, int H,int N, char map[][], ArrayList<Position> pos_list, int[] min)
+	{
+		for(int i=index;i<pos_list.size();i++)
+		{
+			int x = pos_list.get(i).x;
+			int y = pos_list.get(i).y;
+			
+			if(map[x][y] == 'D' && map[x][y+1] == 'D')
+			{	
+				map[x][y] = 'R';
+				map[x][y+1] = 'L';
+
+				if(canPass(H, N, map))
+				{
+					min[0] = Math.min(min[0], 3-depth + 1);
+					
+					map[x][y] = 'D';
+					map[x][y+1] = 'D';
+					break;
+				}
+				else
+				{
+					if(depth > 1)
+						add_line(index+1, depth-1, H, N, map, pos_list, min);
+					
+					map[x][y] = 'D';
+					map[x][y+1] = 'D';
+				}
+				
+				
+			}
+			
+		}
+	
+	}
+	
 	static boolean canPass(int H,int N, char map[][])
 	{
 		boolean isPass = true;
@@ -138,6 +148,7 @@ public class Samsung {
 		}
 		return isPass;
 	}
+	
 	static int output_line(int line,int H, int N, char map[][])
 	{
 		int i = 1;
