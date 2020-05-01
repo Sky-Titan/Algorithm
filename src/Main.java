@@ -20,7 +20,7 @@ public class Main {
 		try
 		{
 
-			Samsung.bj15684();
+			Samsung.bj14889();
 		}
 		catch(Exception e)
 		{

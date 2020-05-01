@@ -29,6 +29,514 @@ public class Samsung {
 		}
 	}
 	
+	static void bj16235() throws Exception
+	{
+		InputStreamReader is = new InputStreamReader(System.in);
+		BufferedReader b = new BufferedReader(is);
+		
+		StringTokenizer strtok = new StringTokenizer(b.readLine());
+		
+		int N = Integer.parseInt(strtok.nextToken());
+		int M = Integer.parseInt(strtok.nextToken());
+		int K = Integer.parseInt(strtok.nextToken());
+		
+		int map[][][] = new int[N+1][N+1][2];
+		
+		int nutrition[][] = new int[N+1][N+1];
+		for(int i=1;i<=N;i++)
+		{
+			strtok = new StringTokenizer(b.readLine());
+			
+			for(int j=1;j<=N;j++)
+			{
+				nutrition[i][j] = Integer.parseInt(strtok.nextToken());
+				map[i][j][0] = 5;
+			}
+			
+		}
+		
+		boolean isDead[][] = new boolean[N+1][N+1];
+		
+		for(int i=1;i<=M;i++)
+		{
+			int x = Integer.parseInt(strtok.nextToken());
+			int y = Integer.parseInt(strtok.nextToken());
+			int age = Integer.parseInt(strtok.nextToken());
+			map[x][y][1] = age;
+		}
+		
+		
+		for(int k = 1;k<=K;k++)
+		{
+			for(int i=1;i<=N;i++)
+			{
+				for(int j=1;j<=N;j++)
+				{
+					/* 봄 */
+					if(isTree(map, i, j))//나무 심겨진 땅에
+					{
+						if(!isDead[i][j])//살아있는
+						{
+							if(map[i][j][0] >= map[i][j][1])//양분흡수가능
+							{
+								map[i][j][0] -= map[i][j][1];
+								map[i][j][1]++;
+							}
+							else//죽음
+							{
+								isDead[i][j] = true;
+								map[i][j][0] = 0;
+							}
+						}
+					}
+					
+						
+					/* 여름 */
+					if(isDead[i][j])//죽은 나무
+						map[i][j][0] += map[i][j][1]/2;
+					
+					/* 가을 */
+					if(!isDead[i][j] && isTree(map, i, j) && map[i][j][1] % 5 == 0)//번식가능
+					{
+						for(int r = -1;r <= 1; r++)
+						{
+							for(int c = -1; c <= 1; c++)
+							{
+								int x = i + r;
+								int y = j + c;
+								
+								if(x >= 1 && x <= N && y >= 1 && y <= N)
+								{
+									
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+		
+		
+	}
+	
+	static class Tree{
+		
+		int age=0, nutrition=0;
+		public Tree(int age, int nutrition)
+		{
+			this.age = age;
+			this.nutrition = nutrition;
+		}
+	}
+	
+	static boolean isTree(int[][][] map,int x, int y)
+	{
+		if(map[x][y][1] >= 1)
+			return true;
+		else
+			return false;
+	}
+	
+	static void bj14889() throws Exception
+	{
+		InputStreamReader is = new InputStreamReader(System.in);
+		BufferedReader b = new BufferedReader(is);
+		
+		int N = Integer.parseInt(b.readLine());
+		
+		int S[][] = new int[N+1][N+1];
+		
+		for(int i=1;i<=N;i++)
+		{
+			StringTokenizer strtok = new StringTokenizer(b.readLine());
+			
+			for(int j=1;j<=N;j++)
+			{
+				S[i][j] = Integer.parseInt(strtok.nextToken());
+			}
+		}
+		boolean isA[] = new boolean[N+1];
+		
+		int min[] = {Integer.MAX_VALUE};
+		recursive_14889(1, N/2, N, S, isA, min);
+		System.out.println(min[0]);
+	}
+	
+	static void recursive_14889(int index,int depth, int N, int S[][], boolean isA[], int[] min)
+	{
+		if(depth == 0)
+		{
+			int sum1 = 0;
+			int sum2 = 0;
+			
+			for(int i=1;i<=N;i++)
+			{
+				for(int j=i+1;j<=N;j++)
+				{
+					if(isA[i] && isA[j])
+					{
+						sum1 += S[i][j];
+						sum1 += S[j][i];
+					}
+					else if(!isA[i] && !isA[j])
+					{	
+						sum2 += S[i][j];
+						sum2 += S[j][i];
+					}
+				}
+			}
+			min[0] = Math.min(min[0], Math.abs(sum1 - sum2));
+			return;
+		}
+		
+		for(int i=index;i<=N-depth + 1;i++)
+		{
+			isA[i] = true;
+			recursive_14889(i+1, depth-1, N, S, isA, min);
+			isA[i] = false;
+		}
+	}
+	
+	static void bj14888() throws Exception
+	{
+		InputStreamReader is = new InputStreamReader(System.in);
+		BufferedReader b = new BufferedReader(is);
+		
+		int N = Integer.parseInt(b.readLine());
+		
+		int numbers[] = new int[N];
+		
+		StringTokenizer strtok = new StringTokenizer(b.readLine());
+		
+		for(int i=0;i<N;i++)
+			numbers[i] = Integer.parseInt(strtok.nextToken());
+		
+		int operators[] = new int[4];//+,-,*,/
+		
+		strtok = new StringTokenizer(b.readLine());
+		
+		for(int i=0;i<4;i++)
+			operators[i] = Integer.parseInt(strtok.nextToken());
+		
+		int max[] = {Integer.MIN_VALUE};
+		int min[] = {Integer.MAX_VALUE};
+		
+		recursive_14888(1, N, numbers, operators, max, min, numbers[0]);
+		System.out.println(max[0]+" "+min[0]);
+		
+	}
+	
+	static void recursive_14888(int index, int N,int numbers[], int operators[], int[] max, int[] min, int result)
+	{
+		
+		for(int i=0;i<4;i++)
+		{
+			if(operators[i] > 0)
+			{
+				int result2=result;
+				
+				if(i==0)//+
+					result2 += numbers[index];
+				else if(i==1)//-
+					result2 -= numbers[index];
+				else if(i==2)//*
+					result2 *= numbers[index];
+				else// /
+				{
+					if(result2 < 0)//음수
+					{	
+						result2 = Math.abs(result2) / numbers[index];
+						result2 = -result2;
+					}
+					else
+						result2 /= numbers[index];
+						
+				}
+					
+				operators[i]--;
+				if(index < N-1)
+				{
+					recursive_14888(index+1, N, numbers, operators, max, min, result2);
+				}
+				else
+				{
+					max[0] = Math.max(max[0], result2);
+					min[0] = Math.min(min[0], result2);
+				}
+				operators[i]++;
+			}
+			
+		}
+	}
+	
+	static void bj16234() throws Exception
+	{
+		InputStreamReader is = new InputStreamReader(System.in);
+		BufferedReader b = new BufferedReader(is);
+		
+		StringTokenizer strtok = new StringTokenizer(b.readLine());
+		
+		int N = Integer.parseInt(strtok.nextToken());
+		int L = Integer.parseInt(strtok.nextToken());
+		int R = Integer.parseInt(strtok.nextToken());
+		
+		int map[][] = new int[N+1][N+1];
+		
+		for(int i=1;i<=N;i++)
+		{	
+			strtok = new StringTokenizer(b.readLine());
+			
+			for(int j=1;j<=N;j++)
+			{
+				map[i][j] = Integer.parseInt(strtok.nextToken());
+			}
+		}
+		int r[] = {-1,1,0,0};
+		int c[] = {0,0,-1,1};
+		Queue<Position> list = new LinkedList<>();
+		
+		for(int count=0;count<=2000;count++)
+		{
+			boolean visited[][] = new boolean[N+1][N+1];
+			boolean isMoved = false;
+			
+			for(int i=1;i<=N;i++)
+			{
+				for(int j=1;j<=N;j++)
+				{
+					if(!visited[i][j])
+					{
+						int sum[] = {0};
+
+						
+						dfs_16234(i, j, N,L,R, map, visited, r, c, sum,list);
+						
+						if(list.size() > 1)
+						{	
+							move_human(N, list,sum[0]/list.size(), map);
+							isMoved = true;
+						}
+						list.clear();
+					}
+				}
+			}
+			
+			if(isMoved == false)
+			{
+				System.out.println(count);
+				return;
+			}
+		}
+			
+	}
+	
+	static void dfs_16234(int x, int y, int N,int L, int R ,int[][] map, boolean visited[][],int r[], int c[], int[] sum, Queue<Position> list)
+	{
+		visited[x][y] = true;
+
+		list.offer(new Position(x, y));
+		sum[0] += map[x][y];
+		
+		for(int i=0;i<4;i++)
+		{
+			int x2 = x + r[i];
+			int y2 = y + c[i];
+			if(x2 >= 1 && x2 <= N && y2 >= 1 && y2 <= N)
+			{
+				int subtract = Math.abs(map[x][y] - map[x2][y2]);
+				
+				if(!visited[x2][y2] && subtract >= L && subtract <= R)
+				{
+					dfs_16234(x2, y2, N,L,R, map, visited, r, c, sum, list);
+				}
+			}
+		}
+	}
+	static void move_human(int N, Queue<Position> list, int num, int map[][])
+	{
+		while(!list.isEmpty())
+		{
+			Position pos = list.poll();
+			map[pos.x][pos.y] = num;
+		}
+	}
+	
+	static void bj14500() throws Exception
+	{
+		InputStreamReader is = new InputStreamReader(System.in);
+		BufferedReader b = new BufferedReader(is);
+		
+		StringTokenizer strtok = new StringTokenizer(b.readLine());
+		
+		int N = Integer.parseInt(strtok.nextToken());//행
+		int M = Integer.parseInt(strtok.nextToken());//열
+		
+		int map[][] = new int[N][M];
+		
+		for(int i=0;i<N;i++)
+		{
+			strtok = new StringTokenizer(b.readLine());
+			
+			for(int j=0;j<M;j++)
+			{
+				map[i][j] = Integer.parseInt(strtok.nextToken());
+			}
+		}
+		
+		ArrayList<Position[]> shapes = new ArrayList<>();
+		
+		shapes.add(new Position[4]);
+		shapes.get(0)[0] = new Position(0,0);
+		shapes.get(0)[1] = new Position(1,0);
+		shapes.get(0)[2] = new Position(2,0);
+		shapes.get(0)[3] = new Position(3,0);
+		
+		shapes.add(new Position[4]);
+		shapes.get(1)[0] = new Position(0,0);
+		shapes.get(1)[1] = new Position(1,0);
+		shapes.get(1)[2] = new Position(2,0);
+		shapes.get(1)[3] = new Position(2,1);
+		
+		shapes.add(new Position[4]);
+		shapes.get(2)[0] = new Position(0,0);
+		shapes.get(2)[1] = new Position(0,1);
+		shapes.get(2)[2] = new Position(0,2);
+		shapes.get(2)[3] = new Position(0,3);
+		
+		shapes.add(new Position[4]);
+		shapes.get(3)[0] = new Position(0,0);
+		shapes.get(3)[1] = new Position(0,1);
+		shapes.get(3)[2] = new Position(0,2);
+		shapes.get(3)[3] = new Position(1,2);
+		
+		shapes.add(new Position[4]);
+		shapes.get(4)[0] = new Position(0,0);
+		shapes.get(4)[1] = new Position(1,0);
+		shapes.get(4)[2] = new Position(2,0);
+		shapes.get(4)[3] = new Position(2,-1);
+		
+		shapes.add(new Position[4]);
+		shapes.get(5)[0] = new Position(0,0);
+		shapes.get(5)[1] = new Position(0,1);
+		shapes.get(5)[2] = new Position(0,2);
+		shapes.get(5)[3] = new Position(1,0);
+		
+		shapes.add(new Position[4]);
+		shapes.get(6)[0] = new Position(0,0);
+		shapes.get(6)[1] = new Position(0,1);
+		shapes.get(6)[2] = new Position(1,1);
+		shapes.get(6)[3] = new Position(2,1);
+		
+		shapes.add(new Position[4]);
+		shapes.get(7)[0] = new Position(0,0);
+		shapes.get(7)[1] = new Position(1,0);
+		shapes.get(7)[2] = new Position(0,1);
+		shapes.get(7)[3] = new Position(2,0);
+		
+		shapes.add(new Position[4]);
+		shapes.get(8)[0] = new Position(0,0);
+		shapes.get(8)[1] = new Position(1,0);
+		shapes.get(8)[2] = new Position(1,-1);
+		shapes.get(8)[3] = new Position(1,-2);
+		
+		shapes.add(new Position[4]);
+		shapes.get(9)[0] = new Position(0,0);
+		shapes.get(9)[1] = new Position(1,0);
+		shapes.get(9)[2] = new Position(1,1);
+		shapes.get(9)[3] = new Position(1,2);
+		
+		shapes.add(new Position[4]);
+		shapes.get(10)[0] = new Position(0,0);
+		shapes.get(10)[1] = new Position(1,0);
+		shapes.get(10)[2] = new Position(1,1);
+		shapes.get(10)[3] = new Position(0,1);
+		
+		shapes.add(new Position[4]);
+		shapes.get(11)[0] = new Position(0,0);
+		shapes.get(11)[1] = new Position(0,1);
+		shapes.get(11)[2] = new Position(0,2);
+		shapes.get(11)[3] = new Position(1,1);
+		
+		shapes.add(new Position[4]);
+		shapes.get(12)[0] = new Position(0,0);
+		shapes.get(12)[1] = new Position(1,0);
+		shapes.get(12)[2] = new Position(1,-1);
+		shapes.get(12)[3] = new Position(1,1);
+		
+		shapes.add(new Position[4]);
+		shapes.get(13)[0] = new Position(0,0);
+		shapes.get(13)[1] = new Position(1,0);
+		shapes.get(13)[2] = new Position(2,0);
+		shapes.get(13)[3] = new Position(1,1);
+		
+		shapes.add(new Position[4]);
+		shapes.get(14)[0] = new Position(0,0);
+		shapes.get(14)[1] = new Position(1,0);
+		shapes.get(14)[2] = new Position(2,0);
+		shapes.get(14)[3] = new Position(1,-1);
+		
+		shapes.add(new Position[4]);
+		shapes.get(15)[0] = new Position(0,0);
+		shapes.get(15)[1] = new Position(0,1);
+		shapes.get(15)[2] = new Position(1,1);
+		shapes.get(15)[3] = new Position(1,2);
+		
+		shapes.add(new Position[4]);
+		shapes.get(16)[0] = new Position(0,0);
+		shapes.get(16)[1] = new Position(1,0);
+		shapes.get(16)[2] = new Position(1,1);
+		shapes.get(16)[3] = new Position(2,1);
+		
+		shapes.add(new Position[4]);
+		shapes.get(17)[0] = new Position(0,0);
+		shapes.get(17)[1] = new Position(1,0);
+		shapes.get(17)[2] = new Position(2,-1);
+		shapes.get(17)[3] = new Position(1,-1);
+		
+		shapes.add(new Position[4]);
+		shapes.get(18)[0] = new Position(0,0);
+		shapes.get(18)[1] = new Position(1,0);
+		shapes.get(18)[2] = new Position(1,-1);
+		shapes.get(18)[3] = new Position(0,1);
+		
+		int total = Integer.MIN_VALUE;
+		
+		for(int k=0;k<shapes.size();k++)
+		{
+			Position[] pos = shapes.get(k);
+			
+			for(int i=0;i<N;i++)
+			{
+				for(int j=0;j<M;j++)
+				{
+					int sum = 0;
+					
+					boolean isPass = true;
+					
+					for(int index = 0;index<4;index++)
+					{
+						int x = i + pos[index].x;
+						int y = j + pos[index].y;
+						
+						if(x >= 0 && x < N && y < M && y >= 0)
+							sum += map[x][y];
+						else
+						{
+							isPass = false;
+							break;
+						}
+					}
+					
+					if(isPass)
+					{
+						total = Math.max(total, sum);
+					}
+				}
+			}
+		}
+		System.out.println(total);
+	}
+	
 	static void bj15684() throws Exception
 	{
 		InputStreamReader is = new InputStreamReader(System.in);
