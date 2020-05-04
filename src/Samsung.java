@@ -67,6 +67,12 @@ public class Samsung {
 		int M = Integer.parseInt(strtok.nextToken());
 		int T = Integer.parseInt(strtok.nextToken());
 		
+		if(T==0)
+		{	
+			System.out.println(0);
+			return;
+		}
+		
 		int map[][] = new int[N+1][M+1];
 		
 		ArrayList<Shark17143> sharks = new ArrayList<>();
@@ -87,7 +93,7 @@ public class Samsung {
 			map[x][y] = t;//상어 고유번호
 			sharks.add(new Shark17143(x, y, size, velocity, direction));
 		}
-		
+	
 		int total = 0;
 		
 		//오른쪽으로 한 칸씩 이동
@@ -107,14 +113,6 @@ public class Samsung {
 			
 			//상어이동
 			moveSharks17143(N, M, map, sharks, isDead);
-			
-			for(int n=1;n<=N;n++)
-			{
-				for(int m=1;m<=M;m++)
-					System.out.print(map[n][m]+" ");
-				System.out.println();
-			}
-			System.out.println();
 		}
 		
 		System.out.println(total);
@@ -136,20 +134,10 @@ public class Samsung {
 				int x2 = shark.x - shark.velocity;
 				int y2 = shark.y;
 				
-				//경계넘어감
-				while(x2 > N || x2 < 1)
-				{
-					if(x2 > N)
-					{
-						x2 -= (x2 - N) * 2;
-						shark.direction = 1;
-					}
-					else if(x2 < 1)
-					{
-						x2 += (1 - x2) * 2;
-						shark.direction = 2;
-					}
-				}
+				int pos[] = {x2,y2};
+				checkBound(pos, N, M, shark);
+				x2 = pos[0];
+				y2 = pos[1];
 				
 				eatShark(i, map, x2, y2, shark, sharks, isDead);
 			}
@@ -158,66 +146,76 @@ public class Samsung {
 				int x2 = shark.x + shark.velocity;
 				int y2 = shark.y;
 				
-				//경계넘어감
-				while(x2 > N || x2 < 1)
-				{
-					if(x2 > N)
-					{
-						x2 -= (x2 - N) * 2;
-						shark.direction = 1;
-					}
-					else if(x2 < 1)
-					{
-						x2 += (1 - x2) * 2;
-						shark.direction = 2;
-					}
-				}
+				int pos[] = {x2,y2};
+				checkBound(pos, N, M, shark);
+				x2 = pos[0];
+				y2 = pos[1];
 				
 				eatShark(i, map, x2, y2, shark, sharks, isDead);
 			}
-			else if(shark.direction == 3)//좌
-			{
-				int x2 = shark.x;
-				int y2 = shark.y - shark.velocity;
-				
-				while(y2 < 1 || y2 > M)
-				{
-					if(y2 < 1)
-					{
-						y2 += (1 - y2) * 2;
-						shark.direction = 4;
-					}
-					else if(y2 > M)
-					{
-						y2 -= (y2 - M) * 2;
-						shark.direction = 3;
-					}	
-				}
-				
-				eatShark(i, map, x2, y2, shark, sharks, isDead);
-			}
-			else//우
+			else if(shark.direction == 3)//우
 			{
 				int x2 = shark.x;
 				int y2 = shark.y + shark.velocity;
 				
-				while(y2 < 1 || y2 > M)
-				{
-					if(y2 < 1)
-					{
-						y2 += (1 - y2) * 2;
-						shark.direction = 4;
-					}
-					else if(y2 > M)
-					{
-						y2 -= (y2 - M) * 2;
-						shark.direction = 3;
-					}	
-				}
+				int pos[] = {x2,y2};
+				checkBound(pos, N, M, shark);
+				x2 = pos[0];
+				y2 = pos[1];
+				
+				eatShark(i, map, x2, y2, shark, sharks, isDead);
+			}
+			else//좌
+			{
+				int x2 = shark.x;
+				int y2 = shark.y - shark.velocity;
+				
+				int pos[] = {x2,y2};
+				checkBound(pos, N, M, shark);
+				x2 = pos[0];
+				y2 = pos[1];
 				
 				eatShark(i, map, x2, y2, shark, sharks, isDead);
 			}
 		}
+	}
+	
+	static void checkBound(int pos[], int N, int M, Shark17143 shark)
+	{
+		int x2 = pos[0];
+		int y2 = pos[1];
+		
+		while(x2 > N || x2 < 1 || y2 < 1 || y2 > M)
+		{
+			if(x2 > N)
+			{
+				x2 -= (x2 - N) * 2;
+				if(shark.direction == 2)
+				shark.direction = 1;
+			}
+			else if(x2 < 1)
+			{
+				x2 += (1 - x2) * 2;
+				if(shark.direction == 1)
+				shark.direction = 2;
+			}
+			
+			if(y2 < 1)
+			{
+				y2 += (1 - y2) * 2;
+				if(shark.direction == 4)
+				shark.direction = 3;
+			}
+			else if(y2 > M)
+			{
+				y2 -= (y2 - M) * 2;
+				if(shark.direction == 3)
+				shark.direction = 4;
+			}	
+		}
+		
+		pos[0] = x2;
+		pos[1] = y2;
 	}
 	
 	static void eatShark(int i, int map[][],int x2, int y2, Shark17143 shark, ArrayList<Shark17143> sharks, boolean isDead[])
