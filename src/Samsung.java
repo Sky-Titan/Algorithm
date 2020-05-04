@@ -29,6 +29,606 @@ public class Samsung {
 		}
 	}
 	
+	static class Shark17143{
+		int x, y;
+		int size=0;
+		int velocity = 0;
+		int direction = 0;
+		public Shark17143()
+		{
+			
+		}
+		
+		public Shark17143(int x, int y)
+		{
+			this.x = x;
+			this.y = y;
+		}
+
+		public Shark17143(int x, int y, int size, int velocity, int direction) {
+			super();
+			this.x = x;
+			this.y = y;
+			this.size = size;
+			this.velocity = velocity;
+			this.direction = direction;
+		}
+		
+	}
+	
+	static void bj17143() throws Exception
+	{
+		InputStreamReader is = new InputStreamReader(System.in);
+		BufferedReader b = new BufferedReader(is);
+		
+		StringTokenizer strtok = new StringTokenizer(b.readLine());
+		
+		int N = Integer.parseInt(strtok.nextToken());
+		int M = Integer.parseInt(strtok.nextToken());
+		int T = Integer.parseInt(strtok.nextToken());
+		
+		int map[][] = new int[N+1][M+1];
+		
+		ArrayList<Shark17143> sharks = new ArrayList<>();
+		
+		sharks.add(new Shark17143());
+		
+		boolean isDead[] = new boolean[T+1];
+		
+		for(int t=1;t<=T;t++)
+		{
+			strtok = new StringTokenizer(b.readLine());
+			int x = Integer.parseInt(strtok.nextToken());
+			int y = Integer.parseInt(strtok.nextToken());
+			int velocity = Integer.parseInt(strtok.nextToken());
+			int direction = Integer.parseInt(strtok.nextToken());
+			int size = Integer.parseInt(strtok.nextToken());
+			
+			map[x][y] = t;//상어 고유번호
+			sharks.add(new Shark17143(x, y, size, velocity, direction));
+		}
+		
+		int total = 0;
+		
+		//오른쪽으로 한 칸씩 이동
+		for(int j=1;j<=M;j++)
+		{
+			//상어잡기
+			for(int i=1;i<=N;i++)
+			{
+				if(map[i][j] > 0)
+				{
+					total += sharks.get(map[i][j]).size;
+					isDead[map[i][j]] = true;//죽음
+					map[i][j] = 0;
+					break;
+				}
+			}
+			
+			//상어이동
+			moveSharks17143(N, M, map, sharks, isDead);
+			
+			for(int n=1;n<=N;n++)
+			{
+				for(int m=1;m<=M;m++)
+					System.out.print(map[n][m]+" ");
+				System.out.println();
+			}
+			System.out.println();
+		}
+		
+		System.out.println(total);
+	}
+	
+	static void moveSharks17143(int N, int M, int map[][], ArrayList<Shark17143> sharks, boolean isDead[])
+	{
+		for(int i=1;i<sharks.size();i++)
+		{
+			Shark17143 shark = sharks.get(i);
+			
+			//죽은애면 넘어감
+			if(isDead[i])
+				continue;
+			
+			//상
+			if(shark.direction == 1)
+			{
+				int x2 = shark.x - shark.velocity;
+				int y2 = shark.y;
+				
+				//경계넘어감
+				while(x2 > N || x2 < 1)
+				{
+					if(x2 > N)
+					{
+						x2 -= (x2 - N) * 2;
+						shark.direction = 1;
+					}
+					else if(x2 < 1)
+					{
+						x2 += (1 - x2) * 2;
+						shark.direction = 2;
+					}
+				}
+				
+				eatShark(i, map, x2, y2, shark, sharks, isDead);
+			}
+			else if(shark.direction == 2)//하
+			{
+				int x2 = shark.x + shark.velocity;
+				int y2 = shark.y;
+				
+				//경계넘어감
+				while(x2 > N || x2 < 1)
+				{
+					if(x2 > N)
+					{
+						x2 -= (x2 - N) * 2;
+						shark.direction = 1;
+					}
+					else if(x2 < 1)
+					{
+						x2 += (1 - x2) * 2;
+						shark.direction = 2;
+					}
+				}
+				
+				eatShark(i, map, x2, y2, shark, sharks, isDead);
+			}
+			else if(shark.direction == 3)//좌
+			{
+				int x2 = shark.x;
+				int y2 = shark.y - shark.velocity;
+				
+				while(y2 < 1 || y2 > M)
+				{
+					if(y2 < 1)
+					{
+						y2 += (1 - y2) * 2;
+						shark.direction = 4;
+					}
+					else if(y2 > M)
+					{
+						y2 -= (y2 - M) * 2;
+						shark.direction = 3;
+					}	
+				}
+				
+				eatShark(i, map, x2, y2, shark, sharks, isDead);
+			}
+			else//우
+			{
+				int x2 = shark.x;
+				int y2 = shark.y + shark.velocity;
+				
+				while(y2 < 1 || y2 > M)
+				{
+					if(y2 < 1)
+					{
+						y2 += (1 - y2) * 2;
+						shark.direction = 4;
+					}
+					else if(y2 > M)
+					{
+						y2 -= (y2 - M) * 2;
+						shark.direction = 3;
+					}	
+				}
+				
+				eatShark(i, map, x2, y2, shark, sharks, isDead);
+			}
+		}
+	}
+	
+	static void eatShark(int i, int map[][],int x2, int y2, Shark17143 shark, ArrayList<Shark17143> sharks, boolean isDead[])
+	{
+		if(map[x2][y2] !=0)//다른 상어 존재
+		{
+			if(map[x2][y2] < i)//이동 마친 상어
+			{
+				if(sharks.get(map[x2][y2]).size < shark.size)
+				{
+					isDead[map[x2][y2]] = true;
+					
+					if(map[shark.x][shark.y] == i)
+						map[shark.x][shark.y] = 0;
+					map[x2][y2] = i;//지금 상어가 잡아먹음
+					shark.x = x2;
+					shark.y = y2;
+				}
+				else
+				{
+					//지금 상어가 잡아먹힘
+					if(map[shark.x][shark.y] == i)
+						map[shark.x][shark.y] = 0;
+					isDead[i] = true;
+				}
+			}
+			else//이동 안한 상어
+			{
+				if(map[shark.x][shark.y] == i)
+					map[shark.x][shark.y] = 0;
+				map[x2][y2] = i;
+				shark.x = x2;
+				shark.y = y2;
+			}
+		}
+		else//다른 상어 없음
+		{
+			if(map[shark.x][shark.y] == i)
+				map[shark.x][shark.y] = 0;
+			map[x2][y2] = i;
+			shark.x = x2;
+			shark.y = y2;
+		}
+	}
+	
+	
+	static void bj17144() throws Exception
+	{
+		InputStreamReader is = new InputStreamReader(System.in);
+		BufferedReader b = new BufferedReader(is);
+		
+		StringTokenizer strtok = new StringTokenizer(b.readLine());
+		
+		int N = Integer.parseInt(strtok.nextToken());
+		int M = Integer.parseInt(strtok.nextToken());
+		int T = Integer.parseInt(strtok.nextToken());
+		
+		int map[][] = new int[N+1][M+1];
+		
+		ArrayList<Dust> air_refresher = new ArrayList<>();
+		
+		Queue<Dust> q = new LinkedList<>();
+
+		for(int i=1;i<=N;i++)
+		{
+			strtok = new StringTokenizer(b.readLine());
+			
+			for(int j=1;j<=M;j++)
+			{
+				map[i][j] = Integer.parseInt(strtok.nextToken());
+				
+				//공기청정기
+				if(map[i][j] == -1)
+				{
+					air_refresher.add(new Dust(i, j));
+				}
+				else if(map[i][j] > 0)//먼지
+				{
+					Dust d = new Dust(i, j);
+					d.volume = map[i][j];
+					q.offer(d);
+				}
+			}
+		}
+
+		int r[] = {-1,1,0,0};
+		int c[] = {0,0,-1,1};
+		
+		for(int t=1;t<=T;t++)
+		{
+			//미세먼지 확산
+			while(!q.isEmpty())
+			{
+				Dust now = q.poll();
+				int x = now.x;
+				int y = now.y;
+				int volumne = now.volume;
+				int divide_volume = volumne / 5;
+				
+				for(int i=0;i<4;i++)
+				{
+					int x2 = x + r[i];
+					int y2 = y + c[i];
+					
+					if(1 <= x2 && x2 <= N && 1 <= y2 && y2 <= M)
+					{
+						if(map[x2][y2] != -1)
+						{
+							map[x2][y2] += divide_volume;
+							map[x][y] -= divide_volume;
+						}
+					}
+				}
+				
+			}
+			
+			
+			//공기청정기 윗부분 이동
+			upDustMove(N, M, map, air_refresher.get(0).x, air_refresher.get(0).y);
+			//공기청정기 밑부분 이동
+			downDustMove(N, M, map, air_refresher.get(1).x, air_refresher.get(1).y);
+			//그 다음 작업할 애들추가
+			for(int i=1;i<=N;i++)
+			{
+				for(int j=1;j<=M;j++)
+				{
+					if(map[i][j] > 0)
+					{
+						Dust d = new Dust(i, j);
+						d.volume = map[i][j];
+						q.offer(d);
+					}
+				}
+			}
+		}
+		
+		int sum = 0;
+		
+		for(int i=1;i<=N;i++)
+		{	for(int j=1;j<=M;j++)
+			{
+				//System.out.print(map[i][j]+" ");
+				if(map[i][j] > 0)
+					sum += map[i][j];
+			}
+		//System.out.println();
+		}
+		System.out.println(sum);
+			
+	}
+	
+	static void upDustMove(int N, int M, int map[][], int x, int y)
+	{
+		int phase = 0;
+		int origin_x = x;
+		int origin_y = y;
+		x--;
+		
+		while(true)
+		{
+			if(phase == 0)
+			{
+				map[x][y] = map[x-1][y];
+				
+				x--;
+				if(x==1)
+					phase = 1;
+			}
+			else if(phase == 1)
+			{
+				map[x][y] = map[x][y+1];
+				y++;
+				if(y==M)
+					phase = 2;
+			}
+			else if(phase == 2)
+			{
+				map[x][y] = map[x+1][y];
+				x++;
+				if(x == origin_x)
+					phase = 3;
+			}
+			else
+			{
+				map[x][y] = map[x][y-1];
+				y--;
+				if(y==origin_y+1)
+				{
+					map[x][y] = 0;
+					break;
+				}
+			}
+		}
+		
+	}
+	
+	static void downDustMove(int N, int M, int map[][], int x, int y)
+	{
+		int phase = 0;
+		int origin_x = x;
+		int origin_y = y;
+		x++;
+		
+		while(true)
+		{
+			if(phase == 0)
+			{
+				map[x][y] = map[x+1][y];
+				
+				x++;
+				if(x==N)
+					phase = 1;
+			}
+			else if(phase == 1)
+			{
+				map[x][y] = map[x][y+1];
+				y++;
+				if(y==M)
+					phase = 2;
+			}
+			else if(phase == 2)
+			{
+				map[x][y] = map[x-1][y];
+				x--;
+				if(x == origin_x)
+					phase = 3;
+			}
+			else
+			{
+				map[x][y] = map[x][y-1];
+				y--;
+				if(y==origin_y+1)
+				{
+					map[x][y] = 0;
+					break;
+				}
+			}
+		}
+		
+	}
+	
+	static class Dust{
+		int x, y, volume = 0;
+		public Dust()
+		{
+			
+		}
+		
+		public Dust(int x, int y)
+		{
+			this.x = x;
+			this.y = y;
+		}
+	}
+	
+	static void bj16236() throws Exception
+	{
+		InputStreamReader is = new InputStreamReader(System.in);
+		BufferedReader b = new BufferedReader(is);
+		
+		int N = Integer.parseInt(b.readLine());
+		
+		int map[][] = new int[N][N];
+		
+		Queue<Shark> q = new LinkedList<>();
+		
+		boolean isFish = false;
+		
+		
+		boolean visited[][] = new boolean[N][N];
+		
+		for(int i=0;i<N;i++)
+		{
+			StringTokenizer strtok = new StringTokenizer(b.readLine());
+			for(int j=0;j<N;j++)
+			{
+				map[i][j] = Integer.parseInt(strtok.nextToken());
+				if(map[i][j] == 9)
+				{	
+					map[i][j] = 0;
+					q.offer(new Shark(i, j));
+					visited[i][j] = true;
+				}
+				else if(map[i][j] < 2 && map[i][j] > 0)
+					isFish = true;
+			}
+		}
+		
+		if(!isFish)
+		{
+			System.out.println(0);
+			return;
+		}
+		
+		int r[] = {-1,0,1,0};
+		int c[] = {0,-1,0,1};
+		
+		
+		int recent_time = 0;
+		
+		while(!q.isEmpty())
+		{
+			Shark shark = q.poll();
+			int x = shark.x;
+			int y = shark.y;
+			int size = shark.size;
+			int time = shark.time;
+			int fish = shark.fish;
+			
+			//먹을 수 있음
+			if(canEat16236(x, y, map, size))
+			{
+				while(!q.isEmpty())
+				{
+					Shark temp = q.poll();
+					
+					if(temp.time == time && canEat16236(temp.x, temp.y, map, temp.size))// 같은 거리에 먹을 수 있는 물고기가 여러개 있을 시
+					{
+						if(temp.x < x)//가장 위쪽에 있는 물고기 먹음
+						{
+							shark = temp;
+							x = shark.x;
+							y = shark.y;
+							size = shark.size;
+							time = shark.time;
+							fish = shark.fish;
+						}
+						else if(temp.x == x)//높이가 같으면 가장 왼쪽에 있는 물고기 먹음
+						{
+							if(temp.y < y)
+							{
+								shark = temp;
+								x = shark.x;
+								y = shark.y;
+								size = shark.size;
+								time = shark.time;
+								fish = shark.fish;
+							}
+						}
+					}
+				}
+				map[x][y] = 0;
+				
+				fish++;
+				
+				if(fish == size)//크기 커짐
+				{	
+					size ++;
+					fish = 0;
+				}
+
+				visited = new boolean[N][N];
+				visited[x][y] = true;
+				
+				recent_time = time;//가장 최근 물고기 먹은 시간 = 결과
+
+				q.clear();
+			}
+			
+			for(int i=0;i<4;i++)
+			{
+				int x2 = x + r[i];
+				int y2 = y + c[i];
+				
+				if(0 <= x2 && x2 < N && 0 <= y2 && y2 < N)
+				{
+					if(!visited[x2][y2] && map[x2][y2] <= size)
+					{
+						Shark next = new Shark(x2, y2);
+						next.time = time + 1;
+						next.fish = fish;
+						next.size = size;
+						
+						visited[x2][y2] = true;
+						
+						q.offer(next);
+					}
+				}
+			}
+			
+		}
+		
+		System.out.println(recent_time);
+	}
+	
+	static boolean canEat16236(int x, int y, int map[][], int size)
+	{
+		if(map[x][y] < size && map[x][y] > 0)
+			return true;
+		else
+			return false;
+	}
+	
+	static class Shark{
+		int x, y;
+		int size=2;
+		int time=0;
+		int fish = 0;
+		public Shark()
+		{
+			
+		}
+		
+		public Shark(int x, int y)
+		{
+			this.x = x;
+			this.y = y;
+		}
+	}
+	
+	/*
 	static void bj16235() throws Exception
 	{
 		InputStreamReader is = new InputStreamReader(System.in);
@@ -40,17 +640,24 @@ public class Samsung {
 		int M = Integer.parseInt(strtok.nextToken());
 		int K = Integer.parseInt(strtok.nextToken());
 		
-		int map[][][] = new int[N+1][N+1][2];
+		ArrayList<ArrayList<ArrayList<Tree>>> map = new ArrayList<>();
+		map.add(new ArrayList<>());
 		
 		int nutrition[][] = new int[N+1][N+1];
+		
 		for(int i=1;i<=N;i++)
 		{
 			strtok = new StringTokenizer(b.readLine());
+			map.add(new ArrayList<>());
+			map.get(i).add(new ArrayList<>());
 			
 			for(int j=1;j<=N;j++)
 			{
 				nutrition[i][j] = Integer.parseInt(strtok.nextToken());
-				map[i][j][0] = 5;
+				
+				map.get(i).add(new ArrayList<>());
+				map.get(i).get(j).add(new Tree(0, 5));
+				//map[i][j][0] = 5;
 			}
 			
 		}
@@ -72,7 +679,7 @@ public class Samsung {
 			{
 				for(int j=1;j<=N;j++)
 				{
-					/* 봄 */
+					// 봄 
 					if(isTree(map, i, j))//나무 심겨진 땅에
 					{
 						if(!isDead[i][j])//살아있는
@@ -91,11 +698,11 @@ public class Samsung {
 					}
 					
 						
-					/* 여름 */
+					// 여름 
 					if(isDead[i][j])//죽은 나무
 						map[i][j][0] += map[i][j][1]/2;
 					
-					/* 가을 */
+					// 가을 
 					if(!isDead[i][j] && isTree(map, i, j) && map[i][j][1] % 5 == 0)//번식가능
 					{
 						for(int r = -1;r <= 1; r++)
@@ -122,6 +729,7 @@ public class Samsung {
 	static class Tree{
 		
 		int age=0, nutrition=0;
+
 		public Tree(int age, int nutrition)
 		{
 			this.age = age;
@@ -136,7 +744,7 @@ public class Samsung {
 		else
 			return false;
 	}
-	
+	*/
 	static void bj14889() throws Exception
 	{
 		InputStreamReader is = new InputStreamReader(System.in);
