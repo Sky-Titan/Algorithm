@@ -29,6 +29,341 @@ public class Samsung {
 		}
 	}
 	
+	static class Virus{
+		int x,y,time=0;
+		public Virus()
+		{
+			
+		}
+		public Virus(int x, int y)
+		{
+			this.x = x;
+			this.y = y;
+		}
+		public Virus(int x, int y, int time)
+		{
+			this.x = x;
+			this.y = y;
+			this.time = time;
+		}
+	}
+	
+	static void bj17142() throws Exception
+	{
+		BufferedReader b = new BufferedReader(new InputStreamReader(System.in));
+		
+		StringTokenizer strtok = new StringTokenizer(b.readLine());
+		
+		int N = Integer.parseInt(strtok.nextToken());
+		int M = Integer.parseInt(strtok.nextToken());
+		
+		int map[][] = new int[N+1][N+1];
+		
+		ArrayList<Virus> viruses = new ArrayList<>();
+		
+		int pass_count = 0;
+		for(int i=1;i<=N;i++)
+		{
+			strtok = new StringTokenizer(b.readLine());
+			for(int j=1;j<=N;j++)
+			{
+				map[i][j] = Integer.parseInt(strtok.nextToken());
+				if(map[i][j] == 2)
+				{
+					viruses.add(new Virus(i, j));
+				}
+				else if(map[i][j] == 0)
+				{
+					pass_count++;
+				}
+			}
+		}
+		
+
+		ArrayList<Virus> pos = new ArrayList<>();
+		int min[] = {Integer.MAX_VALUE};
+		
+		recursive_17142(0, M, N, min, viruses, map, pos, pass_count);
+		
+		if(min[0] == Integer.MAX_VALUE || min[0] == Integer.MIN_VALUE)
+			System.out.println(-1);
+		else
+			System.out.println(min[0]);
+	}
+	
+	static void recursive_17142(int index, int depth, int N,int min[],ArrayList<Virus> viruses, int[][] map ,ArrayList<Virus> pos, int pass_count)
+	{
+		if(depth == 0)
+		{
+			Queue<Virus> q = new LinkedList<>(pos);
+			
+			boolean visited[][] = new boolean[N+1][N+1];
+			
+			for(int i=0;i<pos.size();i++)
+				visited[pos.get(i).x][pos.get(i).y] = true;
+			
+			int r[] = {-1,1,0,0};
+			int c[] = {0,0,-1,1};
+			
+			int finish_time = 0;
+			int count = 0;
+			
+			//바이러스 퍼뜨리기
+			while(!q.isEmpty())
+			{
+				Virus v = q.poll();
+				
+				if(map[v.x][v.y] == 0)
+				{	
+					finish_time = Math.max(finish_time, v.time);
+					count++;
+				}
+				
+				for(int i=0;i<4;i++)
+				{
+					int x2 = v.x + r[i];
+					int y2 = v.y + c[i];
+					
+					if(1 <= x2 && x2 <= N && 1 <= y2 && y2 <= N)
+					{
+						if(!visited[x2][y2])
+						{
+							if(map[x2][y2] == 0)
+							{
+								visited[x2][y2] = true;
+								q.offer(new Virus(x2, y2, v.time+1));
+							}
+							else if(map[x2][y2] == 2)//비활성바이러스
+							{
+								visited[x2][y2] = true;// -> 활성화 시킴
+								q.offer(new Virus(x2, y2, v.time+1));
+							}
+							
+						}
+					}
+				}
+			}
+			
+			if(count == pass_count)
+				min[0] = Math.min(min[0], finish_time);
+		}
+		else
+		{
+			for(int i = index;i <= viruses.size() - depth; i++)
+			{
+				Virus v = viruses.get(i);
+				
+				pos.add(v);
+				recursive_17142(i+1, depth-1, N,min,viruses, map,pos, pass_count);
+				pos.remove(pos.size()-1);
+			}
+		}
+	}
+	
+	static void bj17140() throws Exception
+	{
+		BufferedReader b = new BufferedReader(new InputStreamReader(System.in));
+		
+		int map[][] = new int[101][101];
+		
+		StringTokenizer strtok = new StringTokenizer(b.readLine());
+		
+		int R = Integer.parseInt(strtok.nextToken());
+		int C = Integer.parseInt(strtok.nextToken());
+		int K = Integer.parseInt(strtok.nextToken());
+		
+		for(int i=1;i<=3;i++)
+		{
+			strtok = new StringTokenizer(b.readLine());
+			for(int j=1;j<=3;j++)
+			{
+				map[i][j] = Integer.parseInt(strtok.nextToken());
+			}
+		}
+		
+		if(map[R][C] == K)
+		{
+			System.out.println(0);
+			return;
+		}
+		
+		for(int t=1;t<=100;t++)
+		{
+			//행 개수
+			int row = Integer.MIN_VALUE;
+			for(int j=1;j<=100;j++)
+			{
+				for(int i=1;i<=100;i++)
+				{
+					if(map[i][j] == 0)
+					{
+						row = Math.max(row, i-1);
+						break;
+					}
+				}
+			}
+			
+			//열 개수
+			int column = Integer.MIN_VALUE;
+			for(int i=1;i<=100;i++)
+			{
+				for(int j=1;j<=100;j++)
+				{
+					if(map[i][j] == 0)
+					{
+						column = Math.max(column, j-1);
+						break;
+					}
+				}
+			}
+			
+			
+			//R연산
+			if(row >= column)
+			{
+				int list[] = new int[column+1];
+				int count[] = new int[101];
+				count[0] = Integer.MAX_VALUE;
+				
+				for(int i=1;i<=row;i++)
+				{
+					int n = 1;
+					for(int j=1;j<=column;j++)
+					{
+						if(map[i][j] != 0)
+						{
+							count[map[i][j]]++;
+							if(count[map[i][j]]==1)
+								list[n++] = map[i][j];
+						}
+						map[i][j] = 0;
+					}
+					
+					//연산
+					int m = n;
+					
+					mergeSort(list,count, 1, n-1);
+					count[0]=0;
+	
+					n = 1;
+					int j = 1;
+					
+					while(n < m)
+					{
+						map[i][j++] = list[n];
+						map[i][j++] = count[list[n]];
+						count[list[n]] = 0;
+						n++;
+					}
+				}
+			}
+			else//C연산
+			{
+				int list[] = new int[row+1];
+				int count[] = new int[101];
+				count[0] = Integer.MAX_VALUE;
+				
+				for(int j=1;j<=column;j++)
+				{
+					int n = 1;
+					for(int i=1;i<=row;i++)
+					{
+						if(map[i][j] != 0)
+						{
+							count[map[i][j]]++;
+							if(count[map[i][j]]==1)
+								list[n++] = map[i][j];
+						}
+						map[i][j] = 0;
+					}
+					
+					//연산
+					int m = n;
+					
+					mergeSort(list, count, 1, n-1);
+					count[0]=0;
+					
+					n = 1;
+					int i = 1;
+					
+					while(n<m)
+					{
+						map[i++][j] = list[n];
+						map[i++][j] = count[list[n]];
+						count[list[n]] = 0;
+						n++;
+					}
+				}
+			}
+
+			//검사
+			if(map[R][C] == K)
+			{
+				System.out.println(t);
+				return;
+			}
+		}
+		System.out.println(-1);
+	}
+	
+	static void mergeSort(int list[], int count[], int left, int right)
+	{
+		if(left < right)
+		{
+			int mid = (left + right) / 2;
+			mergeSort(list, count, left, mid);
+			mergeSort(list, count, mid+1, right);
+			merge(list, count, left, right, mid);
+			
+		}
+	}
+	
+	static void merge(int list[], int count[] ,int left, int right, int mid)
+	{
+		int i = left;
+		int j = mid + 1;
+		int k = left;
+		int list2[] = new int[list.length];
+		
+		while(i <= mid && j <= right)
+		{
+			if(count[list[i]] < count[list[j]])
+			{
+				list2[k++] = list[i++];
+			}
+			else if(count[list[i]] > count[list[j]])
+			{
+				list2[k++] = list[j++];
+			}
+			else//수가 같은 경우
+			{
+				if(list[i] < list[j])
+				{
+					list2[k++] = list[i++];
+				}
+				else
+				{
+					list2[k++] = list[j++];
+				}
+			}
+		}
+		
+		while(i<=mid)
+		{
+			list2[k++] = list[i++];
+		}
+		
+		while(j<=right)
+		{
+			list2[k++] = list[j++];
+		}
+		
+		for(int index = left;index <= right;index++)
+		{
+			list[index] = list2[index];
+		}
+	}
+	
 	static class Shark17143{
 		int x, y;
 		int size=0;
