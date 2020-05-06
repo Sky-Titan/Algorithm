@@ -29,6 +29,26 @@ public class Samsung {
 		}
 	}
 	
+	static void bj17779() throws Exception
+	{
+		BufferedReader b = new BufferedReader(new InputStreamReader(System.in));
+		
+		int N = Integer.parseInt(b.readLine());
+		
+		int map[][] = new int[N+1][N+1];
+		
+		for(int i=1;i<=N;i++)
+		{
+			StringTokenizer strtok = new StringTokenizer(b.readLine());
+			for(int j=1;j<=N;j++)
+			{
+				map[i][j] = Integer.parseInt(strtok.nextToken());
+			}
+		}
+		
+		
+	}
+	
 	static class Virus{
 		int x,y,time=0;
 		public Virus()

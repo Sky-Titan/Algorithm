@@ -36,6 +36,146 @@ public class DynamicProgramming {
 		}
 	}
 	
+	static void bj1915() throws Exception
+	{
+		BufferedReader b = new BufferedReader(new InputStreamReader(System.in));
+		
+		StringTokenizer strtok = new StringTokenizer(b.readLine());
+		
+		int N = Integer.parseInt(strtok.nextToken());
+		int M = Integer.parseInt(strtok.nextToken());
+		
+		int map[][] = new int[N+1][M+1];
+		
+		for(int i=1;i<=N;i++)
+		{
+			strtok = new StringTokenizer(b.readLine());
+			for(int j=1;j<=M;j++)
+			{
+				map[i][j] = Integer.parseInt(strtok.nextToken());
+			}
+		}
+		
+		int dp[][] = new int[N+1][M+1];
+		for(int i=1;i<N;i++)
+		{
+			for(int j=1;j<M;j++)
+			{
+				if(i==1)
+				{
+					
+				}
+				
+			}
+		}
+	}
+	
+	static void bj6359() throws Exception
+	{
+		BufferedReader b = new BufferedReader(new InputStreamReader(System.in));
+		
+		int T = Integer.parseInt(b.readLine());
+		
+		for(int t=0;t<T;t++)
+		{
+			int N = Integer.parseInt(b.readLine());
+			
+			boolean[] isOpen = new boolean[N+1];
+			int count=0;
+			//라운드
+			for(int i=1;i<=N;i++)
+			{
+				for(int n = 1;n<=N;n++)
+				{
+					if(i==1)
+					{
+						count++;
+						isOpen[n] = true;
+					}
+					else if(n%i==0)
+					{
+						if(!isOpen[n])
+						{
+							count++;
+							isOpen[n] = true;
+						}
+						else
+						{
+							count--;
+							isOpen[n] = false;
+						}
+					}
+				}
+			}
+			System.out.println(count);
+		}
+	}
+	
+	static void bj9252() throws Exception
+	{
+		BufferedReader b = new BufferedReader(new InputStreamReader(System.in));
+	
+		String input[] = new String[2];
+		
+		for(int i=0;i<2;i++)
+			input[i] = b.readLine();
+		int dp_len[][] = new int[input[0].length()][input[1].length()];
+		String dp[][] = new String[input[0].length()][input[1].length()];
+
+		for(int i = 0; i < input[0].length(); i++)
+		{
+			for(int j = 0;j < input[1].length(); j++)
+			{
+				dp[i][j] = "";
+				if(input[0].charAt(i) == input[1].charAt(j))
+				{
+					char common_c = input[0].charAt(i);
+					if(i==0 || j==0)
+					{
+						dp[i][j] = common_c+"";
+						dp_len[i][j] = 1;
+					}
+					else
+					{
+						dp[i][j] = dp[i-1][j-1] + common_c;
+						dp_len[i][j] = dp_len[i-1][j-1] + 1;
+					}
+						
+				}
+				else//다른 경우
+				{
+					if(i > 0 && j==0)
+					{
+						dp[i][j] = dp[i-1][j];
+						dp_len[i][j] = dp_len[i-1][j];
+						
+					}
+					else if(i==0 && j > 0)
+					{
+						dp[i][j] = dp[i][j-1];
+						dp_len[i][j] = dp_len[i][j-1];
+					}
+					else if(i>0&& j>0)
+					{
+						if(dp_len[i-1][j] > dp_len[i][j-1])
+						{
+							dp[i][j] = dp[i-1][j];
+							dp_len[i][j] = dp_len[i-1][j];
+						}
+						else
+						{
+							dp[i][j] = dp[i][j-1];
+							dp_len[i][j] = dp_len[i][j-1];
+						}
+					}
+				}
+			}
+		}
+		System.out.println(dp_len[input[0].length()-1][input[1].length()-1]);
+
+		System.out.println(dp[input[0].length()-1][input[1].length()-1]);
+	}
+	
 	static void bj1965() throws Exception
 	{
 		InputStreamReader is = new InputStreamReader(System.in);
@@ -607,7 +747,39 @@ public class DynamicProgramming {
 			input[i] = str;
 		}
 		
-
+		int[][] dp = new int[input[0].length()][input[1].length()];
+		
+		for(int i=0;i<input[0].length();i++)
+		{
+			for(int j=0;j<input[1].length();j++)
+			{
+				
+				if(input[0].charAt(i) == input[1].charAt(j))//두 문자 같은 경우
+				{
+					if(i==0||j==0)//둘 중 하나가 맨 첫번째 글자일경우 무조건 1
+						dp[i][j] = 1;
+					else//이전 문자들까지의 가장 긴 것 포함 후 +1
+						dp[i][j] = dp[i-1][j-1] + 1;
+				}
+				else//두 문자 다른 경우
+				{
+					if(i==0 || j==0)
+					{
+						if(i > 0 && j==0)
+							dp[i][j] = dp[i-1][j];
+						else if(i == 0 && j > 0)
+							dp[i][j] = dp[i][j-1];
+					}
+					else
+					{
+						//그 전까지의 문자열 비교한 것 중 가장 긴것
+						dp[i][j] = Math.max(dp[i-1][j], dp[i][j-1]);
+					}
+				}
+			}
+		}
+		
+		System.out.println(dp[input[0].length()-1][input[1].length()-1]);
 	}
 	
 	static void bj11051() throws Exception

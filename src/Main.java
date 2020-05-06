@@ -19,8 +19,7 @@ public class Main {
 		
 		try
 		{
-
-			Samsung.bj17142();
+			DynamicProgramming.bj6359();
 		}
 		catch(Exception e)
 		{
