@@ -19,7 +19,7 @@ public class Main {
 		
 		try
 		{
-			DynamicProgramming.bj6359();
+			Kakao.kakao_Intern2019_3();
 		}
 		catch(Exception e)
 		{

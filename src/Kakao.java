@@ -5,6 +5,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.Queue;
+import java.util.Stack;
 import java.util.StringTokenizer;
 
 public class Kakao {
@@ -13,6 +14,230 @@ public class Kakao {
 	{
 		
 	}
+	
+	static void kakao_Intern2019_3() throws Exception
+	{
+		String[] user_id = {"frodo", "fradi", "crodo", "abc123", "frodoc"};
+		String[] banned_id = {"fr*d*", "abc1**"};
+		
+		HashSet<String> result = new HashSet<>();
+		
+		boolean visited[] = new boolean[banned_id.length];
+		boolean visited_user[] = new boolean[user_id.length];
+		
+		int count[] = {0};
+		ArrayList<ArrayList<String>> isIn = new ArrayList<>();
+		ArrayList<String> list = new ArrayList<>();
+		recursive_3(0,banned_id.length, user_id, banned_id, visited, visited_user,count,list,isIn);
+		
+		System.out.println(count[0]);
+	}
+	
+	static void recursive_3(int index,int depth ,String[] user_id, String[] banned_id, boolean visited[], boolean visited_user[], int count[],ArrayList<String> list,ArrayList<ArrayList<String>> isIn )
+	{
+		if(depth == 0)
+		{
+			boolean isPass = false;
+			
+			for(int i=0;i<isIn.size();i++)
+			{
+				isPass = false;
+				for(int j=0;j<list.size();j++)
+				{
+					if(!isIn.get(i).contains(list.get(j)))
+					{
+						isPass = true;
+					}
+				}
+				//중복
+				if(!isPass)
+					return;
+				
+			}
+			
+			isIn.add(new ArrayList<>(list));
+			count[0]++;
+		}
+		else
+		{
+			for(int i=index;i<user_id.length;i++)
+			{
+				String user = user_id[i];
+				
+				if(!visited_user[i])
+				{
+					for(int j=0;j<banned_id.length;j++)
+					{
+						String ban = banned_id[j];
+						boolean isBan = true;
+						
+						if(!visited[j] && ban.length() == user.length())//비교
+						{
+							for(int k=0;k<ban.length();k++)
+							{
+								if(ban.charAt(k) != '*' && ban.charAt(k) != user.charAt(k))
+								{
+									isBan = false;
+									break;
+								}
+							}
+							
+							if(isBan)
+							{
+								visited[j] = true;
+								visited_user[i] = true;
+								list.add(user);
+								recursive_3(i+1, depth-1, user_id, banned_id, visited, visited_user,count, list,isIn);
+								list.remove(user);
+								visited[j] = false;
+								visited_user[i] = false;
+					
+							}
+						}
+					}
+				}
+				
+			
+			}
+		}
+	}
+	
+	static void kakao_Intern2019_2() throws Exception
+	{
+		String input = "{{4,2,3},{3},{2,3,4,1},{2,3}}";
+		
+		ArrayList<Integer> list = new ArrayList<>();
+		int count[] = new int[100000];
+		
+		StringTokenizer strtok = new StringTokenizer(input,"{");
+		
+		while(strtok.hasMoreTokens())
+		{
+			StringTokenizer strtok2 = new StringTokenizer(strtok.nextToken(),"}");
+			while(strtok2.hasMoreTokens())
+			{
+				StringTokenizer strtok3 = new StringTokenizer(strtok2.nextToken(),",");
+				while(strtok3.hasMoreTokens())
+				{
+					int num = Integer.parseInt(strtok3.nextToken());
+					count[num]++;
+					if(count[num] == 1)
+						list.add(num);
+				}
+			}
+		}
+		
+		Object[] numbers = list.toArray();
+		mergeSort(numbers, count, 0, numbers.length-1);
+		for(int i=0;i<numbers.length;i++)
+			System.out.print(numbers[i]+" ");
+	}
+	
+	static void mergeSort(Object[] numbers,int count[] ,int left, int right)
+	{
+		if(left < right)
+		{
+			int mid = (left + right) / 2;
+			mergeSort(numbers, count, left, mid);
+			mergeSort(numbers, count, mid+1, right);
+			merge(numbers, count, left, right, mid);
+		}
+	}
+	
+	static void merge(Object[] numbers,int count[] ,int left, int right, int mid)
+	{
+		int i = left;
+		int j = mid+1;
+		int k = left;
+		
+		Object[] list = new Object[numbers.length];
+		
+		while(i <= mid && j <= right)
+		{
+			if(count[(int)numbers[i]] > count[(int)numbers[j]])
+			{
+				list[k++] = numbers[i++];
+			}
+			else
+			{
+				list[k++] = numbers[j++];
+			}
+		}
+		
+		while(i <= mid)
+		{
+			list[k++] = numbers[i++];
+		}
+		
+		while(j <= right)
+		{
+			list[k++] = numbers[j++];
+		}
+		
+		for(k = left;k<=right;k++)
+		{
+			numbers[k] = list[k];
+		}
+	}
+	
+	static void kakao_Intern2019_1() throws Exception
+	{
+		int board[][]=
+				{{0,0,0,0,0},
+				{0,0,1,0,3},
+				{0,2,5,0,1},
+				{4,2,4,4,2},
+				{3,5,1,3,1}};
+		
+		int moves [] = {1,5,3,5,1,2,1,4};
+		
+		int count=0;
+		
+		Stack<Integer> stack = new Stack();
+		
+		for(int n=0;n<moves.length;n++)
+		{
+			int move = moves[n]-1;
+			
+			int picked = pickOut(board, move);
+			
+			if(!stack.isEmpty())
+			{
+				//터뜨림
+				if(picked == stack.peek())
+				{
+					count += 2;
+					stack.pop();
+				}
+				else
+				{
+					stack.push(picked);
+				}
+			}
+			else
+			{
+				stack.push(picked);
+			}
+			
+		}
+		System.out.println(count);
+	}
+	
+	static int pickOut(int board[][],int move)
+	{
+		int result = 0;
+		for(int i=0;i<board.length;i++)
+		{
+			if(board[i][move] > 0)
+			{
+				result = board[i][move];
+				board[i][move] = 0;
+				return result;
+			}
+		}
+		return result;
+	}
+	
 	
 	//2017카카오 공채 - 추석 트래픽
 	static void kakao_recruit2017_7() throws Exception
