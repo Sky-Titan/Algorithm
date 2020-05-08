@@ -17,9 +17,11 @@ public class Main {
 	
 	public static void main(String[] args) {
 		
+		long[] room_number = {1,3,4,1,3,1};
+		long k = 10;
 		try
 		{
-			Kakao.kakao_Intern2019_3();
+			Kakao.kakao_Intern2019_4(k,room_number);
 		}
 		catch(Exception e)
 		{
