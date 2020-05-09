@@ -19,7 +19,7 @@ public class Main {
 		
 		try
 		{
-			Kakao.kakao_Intern2019_3();
+			Samsung.bj17825();
 		}
 		catch(Exception e)
 		{

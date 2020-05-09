@@ -29,6 +29,215 @@ public class Samsung {
 		}
 	}
 	
+	
+	
+	
+	static class YutMap{
+		int value = 0;
+		YutMap blue;
+		YutMap red;
+		boolean isBlue = false;
+		ArrayList<Horse> currentHorse = new ArrayList<>();
+		
+		public YutMap()
+		{
+			
+		}
+		public YutMap(int value, boolean isBlue) {
+			super();
+			this.value = value;
+			this.isBlue = isBlue;
+		}
+		public YutMap(int value,YutMap red ,boolean isBlue) {
+			super();
+			this.value = value;
+			this.isBlue = isBlue;
+			this.red = red;
+			
+		}
+		public YutMap(int value, YutMap blue, YutMap red, boolean isBlue) {
+			super();
+			this.value = value;
+			this.blue = blue;
+			this.red = red;
+			this.isBlue = isBlue;
+		}
+		
+		
+	}
+	
+	static class Horse{
+		YutMap position;
+		
+		public Horse()
+		{
+			
+		}
+		
+		public Horse(YutMap position)
+		{
+			this.position = position;
+		}
+	}
+	
+	static void bj17825() throws Exception
+	{
+		BufferedReader b = new BufferedReader(new InputStreamReader(System.in));
+		
+		int numbers[] = new int[10];
+		ArrayList<Horse> horses = new ArrayList<>();
+		
+		
+		StringTokenizer strtok = new StringTokenizer(b.readLine());
+		
+		for(int i=0;i<10;i++)
+			numbers[i] = Integer.parseInt(strtok.nextToken());
+		
+		YutMap start = new YutMap(0, new YutMap(2,false), false);
+		YutMap node10 = new YutMap(10, new YutMap(12,false), new YutMap(13,false), true);
+		YutMap node20 = new YutMap(20, new YutMap(22,false), new YutMap(22,false), true);
+		YutMap node25 = new YutMap(25, new YutMap(30,false), false);
+		YutMap node30 = new YutMap(30, new YutMap(32,false), new YutMap(28,false), true);
+		
+		YutMap finish = new YutMap(0, false);
+		YutMap node40 = new YutMap(40, finish, false);
+		
+		YutMap current = start;
+		current = makingNodes(current, 2, 8, 2,false);
+		current.red = node10;
+		
+		current = node10;
+		current = makingNodes(current, 12, 18, 2,false);
+		current.red = node20;
+		
+		current = node10;
+		current = makingNodes(current, 13, 19, 3, true);
+		current.red = node25;
+		
+		current = node20;
+		current = makingNodes(current, 22, 28, 2,false);
+		current.red = node30;
+		
+		current = node20;
+		current = makingNodes(current, 22, 24, 2,true);
+		current.red = node25;
+		
+		current = node30;
+		current = makingNodes(current, 32, 38, 2,false);
+		current.red = node40;
+		
+		current = node30;
+		current = makingNodes(current, 28, 26, -1,true);
+		current.red = node25;
+		
+		current = node25;
+		current = makingNodes(current, 30, 35, 5,false);
+		current.red = node40;
+		
+		for(int i=0;i<4;i++)
+		{
+			horses.add(new Horse(start));
+			start.currentHorse.add(horses.get(i));
+		}
+		
+		
+		int max[] = {Integer.MIN_VALUE};
+		
+		recursive(finish, 0, numbers, horses, max, 0);
+		System.out.println(max[0]);
+	}
+	
+	static void recursive(YutMap finish, int index, int[] numbers, ArrayList<Horse> horses, int max[], int score)
+	{
+		if(index == numbers.length)
+		{
+			max[0] = Math.max(max[0], score);
+
+		}
+		else
+		{
+			int num = numbers[index];
+			
+			for(int i=0;i<horses.size();i++)
+			{
+				if(horses.get(i).position != finish)
+				{
+					YutMap prev = horses.get(i).position;
+					YutMap now = horses.get(i).position;
+					
+					for(int j=0;j<num;j++)
+					{
+						
+						if(j==0 && now.isBlue)
+							now = now.blue;
+						else
+							now = now.red;
+						
+						if(now == finish)
+							break;
+						
+					}
+					
+					//해당 위치에 말이없다면, 혹은 finish라면 전진가능
+					if(now.currentHorse.isEmpty() || now==finish)
+					{
+						prev.currentHorse.remove(horses.get(i));
+						now.currentHorse.add(horses.get(i));
+						score += now.value;
+						horses.get(i).position = now;
+
+						recursive(finish, index+1, numbers, horses, max, score);
+
+						horses.get(i).position = prev;
+						score -= now.value;
+						now.currentHorse.remove(horses.get(i));
+						prev.currentHorse.add(horses.get(i));
+					}
+					
+				}
+				
+				
+			}
+		}
+	}
+	
+	static YutMap makingNodes(YutMap current, int s, int f, int num,boolean isBlue)
+	{
+		
+		if(isBlue)
+			current = current.blue;
+		else
+			current = current.red;
+		if(num > 0)
+		{
+			for(int i=s;i<=f;i+=num)
+			{
+				
+				if(i!=s)
+				current = current.red;
+				current.value = i;
+				current.isBlue = false;
+				current.red = new YutMap();
+			}
+		}
+		else
+		{
+			for(int i=s;i>=f;i+=num)
+			{
+				
+				if(i!=s)
+				current = current.red;
+				current.value = i;
+				current.isBlue = false;
+				current.red = new YutMap();
+			}
+		}
+		
+		return current;
+	}
+	
+	
+	
 	static void bj17779() throws Exception
 	{
 		BufferedReader b = new BufferedReader(new InputStreamReader(System.in));
