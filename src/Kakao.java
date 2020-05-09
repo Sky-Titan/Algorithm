@@ -1,6 +1,8 @@
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -14,6 +16,153 @@ public class Kakao {
 	{
 		
 	}
+	
+	static long[] kakao_Intern2019_4(long k, long[] room_number) {
+        long[] answer = new long[room_number.length];
+        ArrayList<Long> visited = new ArrayList<>();
+        HashMap<K, V>
+        for(int i=0;i<room_number.length;i++)
+        {
+        	if(!visited.contains(room_number[i]))
+        	{
+        		answer[i] = room_number[i];
+        		//visited.add(answer[i]);
+        		
+        		if(!visited.isEmpty())
+        		{
+        			int left = 0;
+        			int right = visited.size()-1;
+        			int mid = (left + right) / 2;
+        			
+        			while(left <= right)
+        			{
+        				if(visited.get(mid) < answer[i])
+        				{
+        					left = mid + 1;
+        				}
+        				else
+        				{
+        					right = mid - 1;
+        				}
+        				 mid = (left + right) / 2;
+             			
+        			}
+        			
+        			if(visited.get(mid) > answer[i])
+    				{
+    					visited.add(mid, answer[i]);
+    					
+    				}
+    				else
+    				{
+    					visited.add(mid+1, answer[i]);
+    					//System.out.println("Get : "+visited.get(mid+1)+" mid : "+String.valueOf(mid));
+    				}
+        			
+        			
+        			//mergeSort(visited, 0, visited.size()-1);
+        		}
+        		else
+        		{
+        			visited.add(answer[i]);
+        		}
+        		
+        	}
+        	else
+        	{
+        		int index = visited.indexOf(room_number[i]);
+            	//System.out.println("num : "+room_number[i]+" index : "+index);
+            	
+            	//가장 큰 수 일때
+            	if(index == visited.size()-1)
+            	{
+            		answer[i] = room_number[i]+1;
+            		visited.add(answer[i]);
+            	}
+            	else // 더 큰 수가 있을 때
+            	{
+            		long room = room_number[i];
+            		
+            		for(int j = index+1;j<visited.size();j++)
+            		{
+            			if(Math.abs(visited.get(j)-room) > 1)
+            			{
+            				//System.out.println("1 : "+visited.get(j)+" 2 : "+room);
+            				answer[i] = room+1;
+            				visited.add(j, answer[i]);
+            				break;
+            			}
+            			room = visited.get(j);
+            			
+            			//마지막일때
+            			if(j == visited.size()-1)
+            			{
+            				answer[i] = room+1;
+            				visited.add(room+1);
+            				break;
+            			}
+            		}
+            	}
+            	
+            	
+        	}
+        	
+        }
+        
+      //  for(int i=0;i<answer.length;i++)
+       // 	System.out.print(answer[i]+" ");
+        return answer;
+    }
+	
+	static void mergeSort(ArrayList<Long> visited,int left, int right)
+	{
+		if(left < right)
+		{
+			int mid = (left + right) / 2;
+			mergeSort(visited, left, mid);
+			mergeSort(visited, mid+1, right);
+			merge(visited, left, right, mid);
+		}
+	}
+	static void merge(ArrayList<Long> visited,int left, int right, int mid)
+	{
+		int i = left;
+		int j = mid + 1;
+		int k = left;
+		
+		long list[] = new long[visited.size()];
+		
+		while(i <= mid && j <= right)
+		{
+			if(visited.get(i) < visited.get(j))
+			{
+				list[k++] = visited.get(i);
+				i++;
+			}
+			else
+			{
+				list[k++] = visited.get(j);
+				j++;
+			}
+		}
+		
+		while(i <= mid)
+		{
+			list[k++] = visited.get(i);
+			i++;
+		}
+		
+		while(j <= right)
+		{
+			list[k++] = visited.get(j);
+			j++;
+		}
+		
+		for(k = left;k<=right;k++)
+			visited.set(k, list[k]);
+	}
+	
+	
 	
 	static void kakao_Intern2019_3() throws Exception
 	{
@@ -200,24 +349,27 @@ public class Kakao {
 			int move = moves[n]-1;
 			
 			int picked = pickOut(board, move);
-			
-			if(!stack.isEmpty())
+			if(picked!=0)
 			{
-				//터뜨림
-				if(picked == stack.peek())
+				if(!stack.isEmpty())
 				{
-					count += 2;
-					stack.pop();
+					//터뜨림
+					if(picked == stack.peek())
+					{
+						count += 2;
+						stack.pop();
+					}
+					else
+					{
+						stack.push(picked);
+					}
 				}
 				else
 				{
 					stack.push(picked);
 				}
 			}
-			else
-			{
-				stack.push(picked);
-			}
+			
 			
 		}
 		System.out.println(count);
