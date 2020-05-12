@@ -29,8 +29,72 @@ public class Samsung {
 		}
 	}
 	
+	static class AccessPoint{
+		int x,y;
+		int C,P;
+		
+		public AccessPoint()
+		{
+			
+		}
+
+		public AccessPoint(int x, int y, int c, int p) {
+			super();
+			this.x = x;
+			this.y = y;
+			C = c;
+			P = p;
+		}
+		
+	}
 	
-	
+	static void s5644() throws Exception {
+		BufferedReader b = new BufferedReader(new InputStreamReader(System.in));
+
+		int T = Integer.parseInt(b.readLine());
+		
+		for(int t=1;t<=T;t++)
+		{
+			StringTokenizer strtok = new StringTokenizer(b.readLine());
+			
+			int M = Integer.parseInt(strtok.nextToken());
+			int A = Integer.parseInt(strtok.nextToken());
+			
+			int move[][] = new int[2][M];
+			
+			for(int i=0;i<2;i++)
+			{
+				strtok = new StringTokenizer(b.readLine());
+				
+				for(int j=0;j<M;j++)
+					move[i][j] = Integer.parseInt(strtok.nextToken());
+			}
+			
+			AccessPoint ap[] = new AccessPoint[A];
+			
+			for(int i=0;i<A;i++)
+			{
+				strtok = new StringTokenizer(b.readLine());
+				int x = Integer.parseInt(strtok.nextToken());
+				int y = Integer.parseInt(strtok.nextToken());
+				int C = Integer.parseInt(strtok.nextToken());
+				int P = Integer.parseInt(strtok.nextToken());
+				ap[i] = new AccessPoint(x,y,C,P);
+			}
+			
+			int sum = 0;
+			
+			for(int k=0;k<=M;k++)
+			{
+				//面傈家 茫扁
+				
+				//面傈樊 八荤
+				
+			}
+		}
+		
+	}
+
 	
 	static class YutMap{
 		int value = 0;
@@ -245,6 +309,7 @@ public class Samsung {
 		int N = Integer.parseInt(b.readLine());
 		
 		int map[][] = new int[N+1][N+1];
+		int people[] = new int[5];//阿 急芭备 牢备
 		
 		for(int i=1;i<=N;i++)
 		{
@@ -255,8 +320,162 @@ public class Samsung {
 			}
 		}
 		
+		int min = Integer.MAX_VALUE;
+		
+		for(int d1 = 1;d1 <= N;d1++)
+		{
+			for(int d2 = 1;d2 <= N;d2++)
+			{
+				for(int x=1;x<=N;x++)
+				{
+					for(int y=1;y<=N;y++)
+					{
+						int sum = 0;
+						boolean[][] visited= new boolean[N+1][N+1];
+						
+						boolean isPass = true;
+						int i=x,j=y;
+						while(i<=x+d1 && j >= y-d1)
+						{
+							if(1<=i && i<=N && 1<=j && j<=N)
+							{	
+								visited[i][j] = true;
+								i++;
+								j--;
+							}
+							else
+							{
+								isPass = false;
+								break;
+							}
+							
+						}
+						if(!isPass)
+							continue;
+						
+						i=x;
+						j=y;
+						while(i<=x+d2 && j <= y+d2)
+						{
+							if(1<=i && i<=N && 1<=j && j<=N)
+							{
+								visited[i][j] = true;
+								i++;
+								j++;
+							}
+							else
+							{
+								isPass = false;
+								break;
+							}	
+						}
+						if(!isPass)
+							continue;
+						
+						i=x+d1;
+						j=y-d1;
+						while(i<=x+d1+d2 && j <= y-d1+d2)
+						{
+							if(1<=i && i<=N && 1<=j && j<=N)
+							{
+								visited[i][j] = true;
+								i++;
+								j++;
+							}
+							else
+							{
+								isPass = false;
+								break;
+							}	
+						}
+						if(!isPass)
+							continue;
+						
+						i=x+d2;
+						j=y+d2;
+						while(i<=x+d2+d1 && j >= y+d2-d1)
+						{
+							if(1<=i && i<=N && 1<=j && j<=N)
+							{
+								visited[i][j] = true;
+								i++;
+								j--;
+							}
+							else
+							{
+								isPass = false;
+								break;
+							}
+						}
+						if(!isPass)
+							continue;
+						
+						boolean start = false;
+						
+						for(i=1;i<=N;i++)
+						{
+							for(j=1;j<=N;j++)
+							{
+								if(!start)
+								{
+									if(!visited[i][j])
+									{
+										if(1 <= i && i< x+d1 && 1<= j && j <= y)//1锅 备开
+										{
+											people[0] += map[i][j];
+										}
+										else if(1<= i && i <= x+d2 && y < j && j <= N)//2锅 备开
+										{
+											people[1] += map[i][j];
+										}
+										else if(x+d1 <= i && i <= N && 1 <= j && j < y-d1+d2)//3锅备开
+										{		
+											people[2] += map[i][j];
+										}
+										else if(x+d2 < i && i <= N && y-d1+d2 <= j && j <= N)//4锅 备开
+										{
+											people[3] += map[i][j];
+										}
+										else//5锅 备开
+										{	
+											people[4] += map[i][j];
+										}
+									}
+									else
+									{
+										if(x < i && i < x+d1+d2)
+											start = true;
+										
+										people[4] += map[i][j];
+									}
+								}
+								else
+								{
+									if(visited[i][j])
+										start = false;
+									people[4] += map[i][j];
+									
+								}
+							
+							}	
+						}
+						
+						Arrays.sort(people);
+
+						if(people[0] != 0)
+							min = Math.min(min, people[4] - people[0]);
+
+						for(i=0;i<5;i++)
+							people[i] = 0;
+					}
+				}
+			}
+		}
+		
+		System.out.println(min);
 		
 	}
+	
 	
 	static class Virus{
 		int x,y,time=0;

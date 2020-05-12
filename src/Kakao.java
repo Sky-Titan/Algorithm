@@ -16,7 +16,7 @@ public class Kakao {
 	{
 		
 	}
-	
+	/*
 	static long[] kakao_Intern2019_4(long k, long[] room_number) {
         long[] answer = new long[room_number.length];
         ArrayList<Long> visited = new ArrayList<>();
@@ -113,7 +113,7 @@ public class Kakao {
        // 	System.out.print(answer[i]+" ");
         return answer;
     }
-	
+	*/
 	static void mergeSort(ArrayList<Long> visited,int left, int right)
 	{
 		if(left < right)

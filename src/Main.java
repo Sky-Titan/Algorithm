@@ -17,15 +17,10 @@ public class Main {
 	
 	public static void main(String[] args) {
 		
-		long[] room_number = {1,3,4,1,3,1};
-		long k = 10;
 		try
 		{
-<<<<<<< HEAD
-			Samsung.bj17825();
-=======
-			Kakao.kakao_Intern2019_4(k,room_number);
->>>>>>> 5bd0673aa835062a9eb51efb82120ab853063dc4
+			Samsung.bj17779();
+
 		}
 		catch(Exception e)
 		{
