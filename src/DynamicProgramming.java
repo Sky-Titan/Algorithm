@@ -36,6 +36,173 @@ public class DynamicProgramming {
 		}
 	}
 	
+	static void bj1937_2() throws Exception
+	{
+		BufferedReader b = new BufferedReader(new InputStreamReader(System.in));
+		
+		int N = Integer.parseInt(b.readLine());
+		
+		int map[][] = new int[N][N];
+		
+		for(int i=0;i<N;i++)
+		{
+			StringTokenizer strtok = new StringTokenizer(b.readLine());
+			
+			for(int j=0;j<N;j++)
+			{
+				map[i][j] = Integer.parseInt(strtok.nextToken());
+			}
+		}
+		
+		int dp[][] = new int[N][N];
+		boolean visited[][] = new boolean[N][N];
+		
+		int max = Integer.MIN_VALUE;
+		
+		int r[] = {0,0,1,-1};
+		int c[] = {1,-1,0,0};
+		for(int i=0;i<N;i++)
+		{
+			for(int j=0;j<N;j++)
+			{
+				if(!visited[i][j])
+				{
+					dfs1937(i, j, N, map, dp, visited,r ,c);
+				}
+				max = Math.max(max, dp[i][j]);
+			}
+		}
+		
+		System.out.println(max);
+	}
+	
+	static int dfs1937(int x, int y, int N, int map[][], int dp[][], boolean visited[][], int r[], int c[])
+	{
+		visited[x][y] = true;
+		
+		dp[x][y] = 1;
+		
+		int x2;
+		int y2;
+		for(int i=0;i<4;i++)
+		{
+			x2 = x + r[i];
+			y2 = y + c[i];
+			
+			if(0 <= x2 && x2 < N && 0 <= y2 && y2 < N)
+			{
+				if(map[x2][y2] > map[x][y])
+				{
+					if(!visited[x2][y2])
+						dp[x][y] = Math.max(dp[x][y], dfs1937(x2, y2, N, map, dp, visited,r,c) + 1);
+					else
+						dp[x][y] = Math.max(dp[x][y], dp[x2][y2] + 1);
+				}
+				
+			}
+		}
+		
+		return dp[x][y];
+	}
+	
+	static void bj1965_2() throws Exception
+	{
+		BufferedReader b = new BufferedReader(new InputStreamReader(System.in));
+		
+		int N = Integer.parseInt(b.readLine());
+		
+		int box[] = new int[N];
+		
+		int dp[] = new int[N];
+		
+		StringTokenizer strtok = new StringTokenizer(b.readLine());
+		
+		for(int i=0;i<N;i++)
+		{
+			box[i] = Integer.parseInt(strtok.nextToken());
+		}
+		
+		int max = Integer.MIN_VALUE;
+		
+		for(int i=0;i<N;i++)
+		{
+			dp[i] = 1;
+			
+			if(i!=0)
+			{
+				for(int j=i-1;j>=0;j--)
+				{
+					if(box[j] < box[i] && dp[j] + 1 > dp[i])
+					{
+						dp[i] = dp[j] + 1;
+					}
+				}
+			}
+			max = Math.max(max, dp[i]);
+		}
+		System.out.println(max);
+	}
+	
+	static void bj11054_2() throws Exception
+	{
+		BufferedReader b = new BufferedReader(new InputStreamReader(System.in));
+		
+		int N = Integer.parseInt(b.readLine());
+		
+		int number[] = new int[N];
+		int dp[] = new int[N];
+		
+		StringTokenizer strtok = new StringTokenizer(b.readLine());
+		
+		for(int i=0;i<N;i++)
+		{
+			number[i] = Integer.parseInt(strtok.nextToken());
+		}
+		
+		for(int i=0;i<N;i++)
+		{
+			dp[i] = 1;
+			
+			if(i!=0)
+			{
+				for(int j=i-1;j>=0;j--)
+				{
+					if(number[j] < number[i] && dp[j] + 1 > dp[i])
+					{
+						dp[i] = dp[j] + 1;
+					}
+				}
+			}
+		}
+		
+		int dp2[] = new int[N];
+		
+		for(int i=N-1;i>=0;i--)
+		{
+			dp2[i] = 1;
+			
+			if(i!=0)
+			{
+				for(int j=i+1;j<N;j++)
+				{
+					if(number[j] < number[i] && dp2[j] + 1 > dp2[i])
+					{
+						dp2[i] = dp2[j] + 1;
+					}
+				}
+			}
+		}
+		
+		int max = Integer.MIN_VALUE;
+		
+		for(int i=0;i<N;i++)
+		{
+			max = Math.max(max, dp[i] + dp2[i] - 1);
+		}
+		System.out.println(max);
+		
+	}
+	
 	static void bj1915() throws Exception
 	{
 		BufferedReader b = new BufferedReader(new InputStreamReader(System.in));
