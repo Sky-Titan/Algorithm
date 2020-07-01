@@ -14,20 +14,18 @@ import java.util.HashSet;
 public class Main {
 
 	
+
 	
 	public static void main(String[] args) {
 		
-		try
-		{
-			DynamicProgramming.bj1937_2();
-
-		}
-		catch(Exception e)
-		{
-			e.printStackTrace();
-		}
-	
-	
+		
+		 String p = "hi2(3(xm)co)hi";
+		 
+		 int num = 2;
+		 
+		 int mark[] = {1,2,3,4,5,6,5};
+		 System.out.println(Solution.solution(num,mark));
 	}
+	
 	
 }
