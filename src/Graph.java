@@ -235,19 +235,19 @@ public class Graph {
 		
 		for(int t=0;t<T;t++)
 		{
-			int N = Integer.parseInt(b.readLine());//ÆíÀÇÁ¡ °³¼ö
+			int N = Integer.parseInt(b.readLine());//í¸ì˜ì  ê°œìˆ˜
 			
 			StringTokenizer strtok = new StringTokenizer(b.readLine());
 			int x = Integer.parseInt(strtok.nextToken());
 			int y = Integer.parseInt(strtok.nextToken());
 			
-			//Ã³À½¿£ ¸ÆÁÖ 20º´, 1º´´ç 50m => 20º´ 1000m
+			//ì²˜ìŒì—” ë§¥ì£¼ 20ë³‘, 1ë³‘ë‹¹ 50m => 20ë³‘ 1000m
 			
 			ArrayList<Festival> map = new ArrayList<>();
 			
 			Queue<Festival> q = new LinkedList<>();
 			
-			//»ó±ÙÀÌ³× Áı
+			//ìƒê·¼ì´ë„¤ ì§‘
 			map.add(new Festival(x, y, 20));
 			q.offer(map.get(0));
 			
@@ -290,13 +290,13 @@ public class Graph {
 
 					if(!visited[i])
 					{
-						int go_distance = beer * 50;//ÇöÀç °¥ ¼ö ÀÖ´Â °Å¸®
+						int go_distance = beer * 50;//í˜„ì¬ ê°ˆ ìˆ˜ ìˆëŠ” ê±°ë¦¬
 						int distance = Math.abs(x - next.x) + Math.abs(y - next.y);
 						
-						if(distance <= go_distance)//ÇöÀç ¸ÆÁÖ·Î °¥ ¼öÀÖÀ¸¸é
+						if(distance <= go_distance)//í˜„ì¬ ë§¥ì£¼ë¡œ ê°ˆ ìˆ˜ìˆìœ¼ë©´
 						{
 							visited[i] = true;
-							next.beer = 20;//¸ÆÁÖ »ï
+							next.beer = 20;//ë§¥ì£¼ ì‚¼
 							q.offer(next);
 						}
 					}
@@ -350,11 +350,11 @@ public class Graph {
 			{
 				map[i][j] = Integer.parseInt(strtok.nextToken());
 				
-				if(map[i][j] == 2)//¹ÙÀÌ·¯½º À§Ä¡
+				if(map[i][j] == 2)//ë°”ì´ëŸ¬ìŠ¤ ìœ„ì¹˜
 				{
 					starts.add(new Position(i,j));
 				}
-				else if(map[i][j] == 0)//º® ¼¼¿ï ¼ö ÀÖ´Â °ø°£ À§Ä¡
+				else if(map[i][j] == 0)//ë²½ ì„¸ìš¸ ìˆ˜ ìˆëŠ” ê³µê°„ ìœ„ì¹˜
 				{
 					zeros.add(new Position(i, j));
 				}
@@ -372,7 +372,7 @@ public class Graph {
 	
 	static void A_bj14502(int depth, int index, int map[][], int N, int M,ArrayList<Position> starts, ArrayList<Position> zeros ,int[] max)
 	{
-		//º® À§Ä¡ ¼±Á¤ ¿Ï·á -> bfs Å½»öÀ¸·Î ¹ÙÀÌ·¯½º ÆÛ¶ß¸²
+		//ë²½ ìœ„ì¹˜ ì„ ì • ì™„ë£Œ -> bfs íƒìƒ‰ìœ¼ë¡œ ë°”ì´ëŸ¬ìŠ¤ í¼ëœ¨ë¦¼
 		if(depth == 3)
 		{
 			boolean visited[][] = new boolean[N][M];
@@ -450,7 +450,7 @@ public class Graph {
 		}
 		else
 		{
-			//º® 3°³ À§Ä¡ ¼±Á¤
+			//ë²½ 3ê°œ ìœ„ì¹˜ ì„ ì •
 			for(int k=index;k<zeros.size();k++)
 			{
 				int map2[][] = new int[N][M];
@@ -501,7 +501,7 @@ public class Graph {
 		{
 			for(int j=0;j<M;j++)
 			{
-				if(map[i][j] == 'L')//»õ·Î¿î ¼¶ ¹ß°ß
+				if(map[i][j] == 'L')//ìƒˆë¡œìš´ ì„¬ ë°œê²¬
 				{
 					int max = Integer.MIN_VALUE;
 					Queue<Position> q = new LinkedList<>();
@@ -594,11 +594,11 @@ public class Graph {
 		
 		StringTokenizer strtok = new StringTokenizer(b.readLine());
 		
-		int F = Integer.parseInt(strtok.nextToken());//°Ç¹°ÀÇ ÃÑ Ãş °³
-		int S = Integer.parseInt(strtok.nextToken());//Áö±İ ÀÖ´Â Ãş(ÇöÀçÀ§Ä¡)
-		int G = Integer.parseInt(strtok.nextToken());//½ºÅ¸Æ®¸µÅ© À§Ä¡(¸ñÇ¥)
-		int U = Integer.parseInt(strtok.nextToken());//ÇÑ ¹ø¿¡ À§·Î °¡´Â Ãş °³¼ö
-		int D = Integer.parseInt(strtok.nextToken());//ÇÑ ¹ø¿¡ ¹ØÀ¸·Î °¡´Â Ãş °³¼ö
+		int F = Integer.parseInt(strtok.nextToken());//ê±´ë¬¼ì˜ ì´ ì¸µ ê°œ
+		int S = Integer.parseInt(strtok.nextToken());//ì§€ê¸ˆ ìˆëŠ” ì¸µ(í˜„ì¬ìœ„ì¹˜)
+		int G = Integer.parseInt(strtok.nextToken());//ìŠ¤íƒ€íŠ¸ë§í¬ ìœ„ì¹˜(ëª©í‘œ)
+		int U = Integer.parseInt(strtok.nextToken());//í•œ ë²ˆì— ìœ„ë¡œ ê°€ëŠ” ì¸µ ê°œìˆ˜
+		int D = Integer.parseInt(strtok.nextToken());//í•œ ë²ˆì— ë°‘ìœ¼ë¡œ ê°€ëŠ” ì¸µ ê°œìˆ˜
 		
 		boolean visited[] = new boolean[F+1];
 		Queue<Position> q = new LinkedList<>();
@@ -613,13 +613,13 @@ public class Graph {
 			int level = now.x;
 			int distance = now.distance;
 			
-			if(level == G)//¸ñÇ¥ µµ´Ş
+			if(level == G)//ëª©í‘œ ë„ë‹¬
 			{
 				System.out.println(distance);
 				return;
 			}
 			
-			//À§·Î°¡±â
+			//ìœ„ë¡œê°€ê¸°
 			if(level + U <= F)
 			{
 				if(!visited[level + U])
@@ -632,7 +632,7 @@ public class Graph {
 				
 			}
 			
-			//¹ØÀ¸·Î°¡±â
+			//ë°‘ìœ¼ë¡œê°€ê¸°
 			if(level - D > 0)
 			{
 				if(!visited[level - D])
@@ -686,14 +686,14 @@ public class Graph {
 			
 			if(A_now!=0)
 			{
-				//A->B·Î
-				if(A_now + B_now > B)//³ÑÄ¡¸é
+				//A->Bë¡œ
+				if(A_now + B_now > B)//ë„˜ì¹˜ë©´
 				{
 					A_next = A_now + B_now - B;
 					B_next = B;
 					C_next = C_now;
 				}
-				else//¾È³ÑÄ¡´Â °æ¿ì 
+				else//ì•ˆë„˜ì¹˜ëŠ” ê²½ìš° 
 				{
 					A_next = 0;
 					B_next = A_now + B_now;
@@ -706,14 +706,14 @@ public class Graph {
 					q.offer(new Position(A_next, B_next, C_next));
 				}
 				
-				//A->C·Î
-				if(A_now + C_now > C)//³ÑÄ¡¸é
+				//A->Cë¡œ
+				if(A_now + C_now > C)//ë„˜ì¹˜ë©´
 				{
 					A_next = A_now + C_now - C;
 					B_next = B_now;
 					C_next = C;
 				}
-				else//¾È³ÑÄ¡´Â °æ¿ì 
+				else//ì•ˆë„˜ì¹˜ëŠ” ê²½ìš° 
 				{
 					A_next = 0;
 					B_next = B_now;
@@ -728,14 +728,14 @@ public class Graph {
 			}
 			if(B_now!=0)
 			{
-				//B->A·Î
-				if(B_now + A_now > A)//³ÑÄ¡¸é
+				//B->Aë¡œ
+				if(B_now + A_now > A)//ë„˜ì¹˜ë©´
 				{
 					A_next = A;
 					B_next = B_now + A_now - A;
 					C_next = C_now;
 				}
-				else//¾È³ÑÄ¡´Â °æ¿ì 
+				else//ì•ˆë„˜ì¹˜ëŠ” ê²½ìš° 
 				{
 					A_next = B_now + A_now;
 					B_next = 0;
@@ -748,14 +748,14 @@ public class Graph {
 					q.offer(new Position(A_next, B_next, C_next));
 				}
 				
-				//B->C·Î
-				if(B_now + C_now > C)//³ÑÄ¡¸é
+				//B->Cë¡œ
+				if(B_now + C_now > C)//ë„˜ì¹˜ë©´
 				{
 					A_next = A_now;
 					B_next = B_now + C_now - C;
 					C_next = C;
 				}
-				else//¾È³ÑÄ¡´Â °æ¿ì 
+				else//ì•ˆë„˜ì¹˜ëŠ” ê²½ìš° 
 				{
 					A_next = A_now;
 					B_next = 0;
@@ -770,14 +770,14 @@ public class Graph {
 			}
 			if(C_now!=0)
 			{
-				//C->A·Î
-				if(C_now + A_now > A)//³ÑÄ¡¸é
+				//C->Aë¡œ
+				if(C_now + A_now > A)//ë„˜ì¹˜ë©´
 				{
 					A_next = A;
 					B_next = B_now;
 					C_next = C_now + A_now - A;
 				}
-				else//¾È³ÑÄ¡´Â °æ¿ì 
+				else//ì•ˆë„˜ì¹˜ëŠ” ê²½ìš° 
 				{
 					A_next = C_now + A_now;
 					B_next = B_now;
@@ -790,14 +790,14 @@ public class Graph {
 					q.offer(new Position(A_next, B_next, C_next));
 				}
 				
-				//C->B·Î
-				if(C_now + B_now > B)//³ÑÄ¡¸é
+				//C->Bë¡œ
+				if(C_now + B_now > B)//ë„˜ì¹˜ë©´
 				{
 					A_next = A_now;
 					B_next = B;
 					C_next = C_now + B_now - B;
 				}
-				else//¾È³ÑÄ¡´Â °æ¿ì 
+				else//ì•ˆë„˜ì¹˜ëŠ” ê²½ìš° 
 				{
 					A_next = A_now;
 					B_next = C_now + B_now;
@@ -829,8 +829,8 @@ public class Graph {
 		for(int t=0;t<T;t++)
 		{
 			StringTokenizer strtok = new StringTokenizer(b.readLine());
-			int N = Integer.parseInt(strtok.nextToken());//µµ½Ã °³¼ö
-			int M = Integer.parseInt(strtok.nextToken());//ºñÇà±â °³¼ö
+			int N = Integer.parseInt(strtok.nextToken());//ë„ì‹œ ê°œìˆ˜
+			int M = Integer.parseInt(strtok.nextToken());//ë¹„í–‰ê¸° ê°œìˆ˜
 			
 			
 			ArrayList<ArrayList<Integer>> airplane = new ArrayList<>();
@@ -852,7 +852,7 @@ public class Graph {
 			
 		
 				Queue<Position> q = new LinkedList<>();
-				boolean visited[][] = new boolean[N+1][N+1];//ÇØ´ç ºñÇà±â Å¾½Â¿©ºÎ
+				boolean visited[][] = new boolean[N+1][N+1];//í•´ë‹¹ ë¹„í–‰ê¸° íƒ‘ìŠ¹ì—¬ë¶€
 				
 				for(int i=0;i<airplane.get(A).size();i++)
 				{
@@ -875,7 +875,7 @@ public class Graph {
 					int distance = now.distance;
 					HashSet set = now.set;
 					
-					if(set.size()==N)//¸ğµç ±¹°¡ ¹æ¹®ÇŞÀ» °æ¿ì
+					if(set.size()==N)//ëª¨ë“  êµ­ê°€ ë°©ë¬¸í–‡ì„ ê²½ìš°
 					{
 						System.out.println(distance);
 						for(int i=0;i<now.graph_path.size();i++)
@@ -889,7 +889,7 @@ public class Graph {
 					{
 						int next_country = airplane.get(country).get(j);
 						
-						if(!visited[country][next_country])//Å¾½Â ¾ÈÇÑ ºñÇà±âÀÎ °æ¿ì
+						if(!visited[country][next_country])//íƒ‘ìŠ¹ ì•ˆí•œ ë¹„í–‰ê¸°ì¸ ê²½ìš°
 						{
 							
 							//visited[next_country][country] = true;
@@ -926,7 +926,7 @@ public class Graph {
 		int M = Integer.parseInt(strtok.nextToken());
 		
 		int map[][] = new int[N+1][M+1];
-		boolean visited[][][] = new boolean[N+1][M+1][5]; //µ¿¼­³²ºÏ ¹æÇâµµ µû·Î ¹æ¹®¿©ºÎÃ¼Å©
+		boolean visited[][][] = new boolean[N+1][M+1][5]; //ë™ì„œë‚¨ë¶ ë°©í–¥ë„ ë”°ë¡œ ë°©ë¬¸ì—¬ë¶€ì²´í¬
 		
 		for(int i=1;i<=N;i++)
 		{
@@ -941,7 +941,7 @@ public class Graph {
 		strtok = new StringTokenizer(b.readLine());
 		Position start = new Position(Integer.parseInt(strtok.nextToken()), Integer.parseInt(strtok.nextToken()));
 		start.dir = Integer.parseInt(strtok.nextToken());
-		start.distance = 0;//¸í·ÉÈ½¼ö
+		start.distance = 0;//ëª…ë ¹íšŸìˆ˜
 		
 		strtok = new StringTokenizer(b.readLine());
 		Position finish = new Position(Integer.parseInt(strtok.nextToken()), Integer.parseInt(strtok.nextToken()));
@@ -951,7 +951,7 @@ public class Graph {
 		visited[start.x][start.y][start.dir] = true;
 		q.offer(start);
 		
-		//1234 µ¿¼­³²ºÏ
+		//1234 ë™ì„œë‚¨ë¶
 		while(!q.isEmpty())
 		{
 			Position now = q.poll();
@@ -969,7 +969,7 @@ public class Graph {
 			for(int i=1;i<=4;i++)
 			{
 				int order = order_count(dir, i);
-				if(!visited[x][y][i] && order == 1)//¹æÇâ ¹Ù²Ü ¶§¸¶´Ù ¹æ¹®¿©ºÎ Ã¼Å©
+				if(!visited[x][y][i] && order == 1)//ë°©í–¥ ë°”ê¿€ ë•Œë§ˆë‹¤ ë°©ë¬¸ì—¬ë¶€ ì²´í¬
 				{
 					Position next = new Position(x, y);
 					next.distance = distance + order;
@@ -980,7 +980,7 @@ public class Graph {
 					
 			}
 			
-			//ÇØ´ç ¹æÇâÀ¸·Î °Å¸® ÀÌµ¿ ¿©ºÎ
+			//í•´ë‹¹ ë°©í–¥ìœ¼ë¡œ ê±°ë¦¬ ì´ë™ ì—¬ë¶€
 			for(int j=1;j<=3;j++)
 			{
 				Position next = go_k(now, j, N, M, visited, map);
@@ -995,7 +995,7 @@ public class Graph {
 	
 	static int order_count(int origin, int change)
 	{
-		if(change==origin)//°°À½
+		if(change==origin)//ê°™ìŒ
 			return 0;
 		else if(change + origin == 3 || change + origin == 7)
 			return 2;
@@ -1006,13 +1006,13 @@ public class Graph {
 	
 	static Position go_k (Position now, int k, int N, int M,boolean[][][] visited, int[][] map)
 	{
-		if(now.dir == 1)//µ¿
+		if(now.dir == 1)//ë™
 		{
 			if(now.y + k <= M)
 			{
 				if(!visited[now.x][now.y+k][now.dir])
 				{
-					//Áß°£¿¡ º®ÀÖ´Â Áö °Ë»ç
+					//ì¤‘ê°„ì— ë²½ìˆëŠ” ì§€ ê²€ì‚¬
 					for(int i=1;i<=k;i++)
 					{
 						if(map[now.x][now.y+i]==1)
@@ -1030,7 +1030,7 @@ public class Graph {
 				return null;
 			
 		}
-		else if(now.dir == 2)//¼­
+		else if(now.dir == 2)//ì„œ
 		{
 			if(now.y - k > 0)
 			{
@@ -1052,7 +1052,7 @@ public class Graph {
 			else
 				return null;
 		}
-		else if(now.dir == 3)//³²
+		else if(now.dir == 3)//ë‚¨
 		{
 			if(now.x + k <= N)
 			{
@@ -1074,7 +1074,7 @@ public class Graph {
 			else
 				return null;
 		}
-		else//ºÏ
+		else//ë¶
 		{
 			if(now.x - k > 0)
 			{
@@ -1175,17 +1175,17 @@ public class Graph {
 				
 			}
 			
-			if(isFind)//mid = weight ·Îµµ Åë°úÇØ¼­ °¥¼ö ÀÖÀ¸¸é ´õ Å«°ª Áı¾î ³Ö¾îº½
+			if(isFind)//mid = weight ë¡œë„ í†µê³¼í•´ì„œ ê°ˆìˆ˜ ìˆìœ¼ë©´ ë” í°ê°’ ì§‘ì–´ ë„£ì–´ë´„
 			{
 				left = mid + 1;
 				result = Math.max(result, mid);
 			}
-			else//mid = weight ·Î´Â ¸øÅë°úÇÏ¸é ±×°Åº¸´Ù ´õ ÀÛÀº°ª Áı¾î ³Ö¾îº½
+			else//mid = weight ë¡œëŠ” ëª»í†µê³¼í•˜ë©´ ê·¸ê±°ë³´ë‹¤ ë” ì‘ì€ê°’ ì§‘ì–´ ë„£ì–´ë´„
 			{
 				right = mid - 1;
 			}
 		}
-		System.out.println(result);//±×Áß °¡Àå Å« °ª Ãâ·Â
+		System.out.println(result);//ê·¸ì¤‘ ê°€ì¥ í° ê°’ ì¶œë ¥
 	}
 	static class Edge{
 		int to;
@@ -1208,8 +1208,8 @@ public class Graph {
 		BufferedReader b = new BufferedReader(is);
 		
 		StringTokenizer strtok = new StringTokenizer(b.readLine()," ");
-		int n = Integer.parseInt(strtok.nextToken());//»ç°Ç°³¼ö(Á¤Á¡)
-		int k = Integer.parseInt(strtok.nextToken());//»ç°Ç°ü°è°³¼ö(°£¼±)
+		int n = Integer.parseInt(strtok.nextToken());//ì‚¬ê±´ê°œìˆ˜(ì •ì )
+		int k = Integer.parseInt(strtok.nextToken());//ì‚¬ê±´ê´€ê³„ê°œìˆ˜(ê°„ì„ )
 		
 		int graph[][] = new int[n+1][n+1];
 		
@@ -1222,7 +1222,7 @@ public class Graph {
 				if(i==j)
 					graph[i][j] = 0;
 				else
-					graph[i][j] = 100000;//¹«ÇÑ
+					graph[i][j] = 100000;//ë¬´í•œ
 			}
 			visited[i] = false;
 		}
@@ -1236,10 +1236,10 @@ public class Graph {
 			graph[x][y] = 1;
 		}
 		
-		//ÇÃ·ÎÀÌµå ¿Í¼£ ¾Ë°í¸®Áò
+		//í”Œë¡œì´ë“œ ì™€ìƒ¬ ì•Œê³ ë¦¬ì¦˜
 		for(int l=1;l<=n;l++)
 		{
-			//¸ğµç Á¤Á¡ÀÌ lÀ» °ÅÃÄ°¨
+			//ëª¨ë“  ì •ì ì´ lì„ ê±°ì³ê°
 			for(int i=1;i<=n;i++)
 			{
 				for(int j=1;j<=n;j++)
@@ -1251,7 +1251,7 @@ public class Graph {
 		}
 		
 		
-		int s = Integer.parseInt(b.readLine());//°ü°è¸¦ ¾Ë°í½ÍÀº »ç°Ç½ÖÀÇ °³¼ö
+		int s = Integer.parseInt(b.readLine());//ê´€ê³„ë¥¼ ì•Œê³ ì‹¶ì€ ì‚¬ê±´ìŒì˜ ê°œìˆ˜
 		
 		for(int i=0;i<s;i++)
 		{
@@ -1261,7 +1261,7 @@ public class Graph {
 			
 			if(graph[x][y] == 100000 && graph[y][x] == 100000)//0
 				System.out.println(0);
-			else if(graph[x][y] != 100000 && graph[y][x] == 100000)//x°¡ ¸ÕÀú ÀÏ¾î³² : -1
+			else if(graph[x][y] != 100000 && graph[y][x] == 100000)//xê°€ ë¨¼ì € ì¼ì–´ë‚¨ : -1
 				System.out.println(-1);
 			else
 				System.out.println(1);
@@ -1276,8 +1276,8 @@ public class Graph {
 		BufferedReader b = new BufferedReader(is);
 		
 		StringTokenizer strtok = new StringTokenizer(b.readLine()," ");
-		int n = Integer.parseInt(strtok.nextToken());//»ç°Ç°³¼ö(Á¤Á¡)
-		int k = Integer.parseInt(strtok.nextToken());//»ç°Ç°ü°è°³¼ö(°£¼±)
+		int n = Integer.parseInt(strtok.nextToken());//ì‚¬ê±´ê°œìˆ˜(ì •ì )
+		int k = Integer.parseInt(strtok.nextToken());//ì‚¬ê±´ê´€ê³„ê°œìˆ˜(ê°„ì„ )
 		
 		ArrayList<ArrayList<Integer>> graph = new ArrayList<>();
 		ArrayList<ArrayList<Integer>> graph_reverse = new ArrayList<>();
@@ -1321,7 +1321,7 @@ public class Graph {
 				
 		}
 		
-		int s = Integer.parseInt(b.readLine());//°ü°è¸¦ ¾Ë°í½ÍÀº »ç°Ç½ÖÀÇ °³¼ö
+		int s = Integer.parseInt(b.readLine());//ê´€ê³„ë¥¼ ì•Œê³ ì‹¶ì€ ì‚¬ê±´ìŒì˜ ê°œìˆ˜
 		
 		while(!q.isEmpty())
 		{
@@ -1444,7 +1444,7 @@ public class Graph {
 		{
 			StringTokenizer strtok = new StringTokenizer(b.readLine()," ");
 			
-			int L = Integer.parseInt(strtok.nextToken());//Ãş
+			int L = Integer.parseInt(strtok.nextToken());//ì¸µ
 			int R = Integer.parseInt(strtok.nextToken());
 			int C = Integer.parseInt(strtok.nextToken());
 			
@@ -1456,8 +1456,8 @@ public class Graph {
 			char graph[][][] = new char[L][R][C];
 			boolean visited[][][] = new boolean[L][R][C];
 			
-			Position S = new Position();//½ÃÀÛÁöÁ¡
-			Position E = new Position();//Å»ÃâÁöÁ¡
+			Position S = new Position();//ì‹œì‘ì§€ì 
+			Position E = new Position();//íƒˆì¶œì§€ì 
 			
 			for(int i=0;i<L;i++)
 			{
@@ -1490,8 +1490,8 @@ public class Graph {
 			visited[S.x][S.y][S.z] = true;
 			q.offer(S);
 			
-			boolean isSuccess = false;//Å»Ãâ¿©ºÎ
-			int minute = 0;//Å»Ãâ½Ã°£
+			boolean isSuccess = false;//íƒˆì¶œì—¬ë¶€
+			int minute = 0;//íƒˆì¶œì‹œê°„
 			while(!q.isEmpty())
 			{
 				Position pos = q.poll();
@@ -1500,7 +1500,7 @@ public class Graph {
 				int z = pos.z;
 				int distance = pos.distance;
 				//System.out.println(x+" "+y+" "+z+" ");
-				if(x == E.x && y == E.y && z == E.z) //Å»Ãâ¼º°ø
+				if(x == E.x && y == E.y && z == E.z) //íƒˆì¶œì„±ê³µ
 				{
 					isSuccess = true;
 					minute = pos.distance;
@@ -1569,14 +1569,14 @@ public class Graph {
 				}
 			}
 			
-			if(isSuccess)//Å»Ãâ¼º°ø
+			if(isSuccess)//íƒˆì¶œì„±ê³µ
 				System.out.println("Escaped in "+minute+" minute(s).");
-			else//Å»Ãâ½ÇÆĞ
+			else//íƒˆì¶œì‹¤íŒ¨
 				System.out.println("Trapped!");
 		}
 	}
 	
-	static void bj2668() throws Exception //cycle ¹®Á¦
+	static void bj2668() throws Exception //cycle ë¬¸ì œ
 	{
 		InputStreamReader is = new InputStreamReader(System.in);
 		BufferedReader b = new BufferedReader(is);
@@ -1594,7 +1594,7 @@ public class Graph {
 			graph.add(new ArrayList<>());
 		}
 		
-		for(int i=1;i<=N;i++)//±×·¡ÇÁ ÀÔ·Â
+		for(int i=1;i<=N;i++)//ê·¸ë˜í”„ ì…ë ¥
 		{
 			graph.get(i).add(Integer.parseInt(b.readLine()));
 		}
@@ -1635,7 +1635,7 @@ public class Graph {
 			{
 				A_bj2668(next, graph, visited, finish, result);
 			}
-			else//¹æ¹®ÇÑ ÀûÀÌ ÀÖ´Â°æ¿ì cycleÀÎÁö ¾Æ´ÑÁö ±¸ºĞ
+			else//ë°©ë¬¸í•œ ì ì´ ìˆëŠ”ê²½ìš° cycleì¸ì§€ ì•„ë‹Œì§€ êµ¬ë¶„
 			{
 				if(finish[next])//cycle O
 				{
@@ -1678,7 +1678,7 @@ public class Graph {
 			int A = Integer.parseInt(strtok.nextToken());
 			int B = Integer.parseInt(strtok.nextToken());
 			
-			graph.get(A).add(B);//B¸¦ ÇØÅ·ÇÏ¸é Aµµ ÇØÅ·
+			graph.get(A).add(B);//Bë¥¼ í•´í‚¹í•˜ë©´ Aë„ í•´í‚¹
 		}
 		
 		int max = Integer.MIN_VALUE;
@@ -1767,11 +1767,11 @@ public class Graph {
 			int A = Integer.parseInt(strtok.nextToken());
 			int B = Integer.parseInt(strtok.nextToken());
 			
-			graph_reverse.get(A).add(B);//¿ª¹æÇâ ±×·¡ÇÁ
-			graph.get(B).add(A);//B -> A·Î °¥ ¼ö ÀÖÀ½ (A°¡ B¸¦ ½Å·Ú)
+			graph_reverse.get(A).add(B);//ì—­ë°©í–¥ ê·¸ë˜í”„
+			graph.get(B).add(A);//B -> Aë¡œ ê°ˆ ìˆ˜ ìˆìŒ (Aê°€ Bë¥¼ ì‹ ë¢°)
 		}
 		
-		int t[] = {0};//½ÃÀÛ ½Ã°£, ³¡³­ ½Ã°£ À÷´Â ¿ëµµ
+		int t[] = {0};//ì‹œì‘ ì‹œê°„, ëë‚œ ì‹œê°„ ìŸ¤ëŠ” ìš©ë„
 		
 		int start[] = new int[N+1], finish[] = new int[N+1], index[] = new int[N+1];
 		
@@ -1786,17 +1786,17 @@ public class Graph {
 		
 		
 		for(int i=0;i<=N;i++)
-			visited[i] = false;//ÃÊ±âÈ­
+			visited[i] = false;//ì´ˆê¸°í™”
 		
-		ArrayList<ArrayList<Integer>> component = new ArrayList<ArrayList<Integer>>();//°­°áÇÕ ÄÄÆ÷³ÍÆ®µé
+		ArrayList<ArrayList<Integer>> component = new ArrayList<ArrayList<Integer>>();//ê°•ê²°í•© ì»´í¬ë„ŒíŠ¸ë“¤
 		
-		//finish time ´À¸° ¼ø¼­´ë·Î ¿ª¹æÇâ ±×·¡ÇÁ¿¡¼­ dfs Å½»öÀ» ÅëÇØ¼­ °­°áÇÕ ÄÄÆ÷³ÍÆ®µé ºĞ¸®
+		//finish time ëŠë¦° ìˆœì„œëŒ€ë¡œ ì—­ë°©í–¥ ê·¸ë˜í”„ì—ì„œ dfs íƒìƒ‰ì„ í†µí•´ì„œ ê°•ê²°í•© ì»´í¬ë„ŒíŠ¸ë“¤ ë¶„ë¦¬
 		for(int i=N*2; i>=1;i--)
 		{
 			int now = 1;
 			for(int j=1;j<=N;j++)
 			{
-				if(finish[j] == i)//finish time Ã£±â
+				if(finish[j] == i)//finish time ì°¾ê¸°
 				{
 					now = j;
 					if(!visited[j])
@@ -1809,12 +1809,12 @@ public class Graph {
 			}
 		}
 		
-		ArrayList<ArrayList<Integer>> graph_for_componet = new ArrayList<ArrayList<Integer>>();//ÄÄÆ÷³ÍÆ®»çÀÌÀÇ ±×·¡ÇÁ
+		ArrayList<ArrayList<Integer>> graph_for_componet = new ArrayList<ArrayList<Integer>>();//ì»´í¬ë„ŒíŠ¸ì‚¬ì´ì˜ ê·¸ë˜í”„
 		
 		for(int i=0;i<component.size();i++)
 			graph_for_componet.add(new ArrayList<>());
 		
-		//ÄÄÆ÷³ÍÆ®»çÀÌÀÇ ±×·¡ÇÁ ¸¸µé±â
+		//ì»´í¬ë„ŒíŠ¸ì‚¬ì´ì˜ ê·¸ë˜í”„ ë§Œë“¤ê¸°
 		for(int i=1;i<=N;i++)
 		{
 			int now_component = find_component(i, component);
@@ -1823,13 +1823,13 @@ public class Graph {
 			{
 				int next_component = find_component(graph.get(i).get(j), component);
 
-				if(!graph_for_componet.get(now_component).contains(next_component) && now_component!=next_component)//Áßº¹Á¦°Å
-					graph_for_componet.get(now_component).add(next_component);//±×·¡ÇÁ¿¡ Ãß°¡
+				if(!graph_for_componet.get(now_component).contains(next_component) && now_component!=next_component)//ì¤‘ë³µì œê±°
+					graph_for_componet.get(now_component).add(next_component);//ê·¸ë˜í”„ì— ì¶”ê°€
 			}
 			
 		}
 		
-		ArrayList<ArrayList<Integer>> result = new ArrayList<ArrayList<Integer>>();//°¢ component°¡ ÇØÅ·½ÃÅ³¼ö ÀÖ´Â componentµéÀÇ ¸®½ºÆ®
+		ArrayList<ArrayList<Integer>> result = new ArrayList<ArrayList<Integer>>();//ê° componentê°€ í•´í‚¹ì‹œí‚¬ìˆ˜ ìˆëŠ” componentë“¤ì˜ ë¦¬ìŠ¤íŠ¸
 		
 		visited = new boolean[component.size()];
 		
@@ -1847,7 +1847,7 @@ public class Graph {
 			}
 		}
 		
-		int[] result_final = new int[result.size()];//°¢ component°¡ ÇØÅ· ½ÃÅ³¼ö ÀÖ´Â computerµéÀÇ °³¼ö list
+		int[] result_final = new int[result.size()];//ê° componentê°€ í•´í‚¹ ì‹œí‚¬ìˆ˜ ìˆëŠ” computerë“¤ì˜ ê°œìˆ˜ list
 		
 		int max_size = 0;
 		
@@ -1874,11 +1874,11 @@ public class Graph {
 		}
 
 		
-		ArrayList<Integer> end = new ArrayList<>();//ÃÖÁ¾ °á°ú
+		ArrayList<Integer> end = new ArrayList<>();//ìµœì¢… ê²°ê³¼
 
 		for(int i=0;i<result_final.length;i++)
 		{
-			if(max_size == result_final[i]) //ÃÖ´ë °³¼ö¶û °°À¸¸é ÇØ´ç componentÀÇ ¸â¹öµé ÀüºÎ Ãß°¡
+			if(max_size == result_final[i]) //ìµœëŒ€ ê°œìˆ˜ë‘ ê°™ìœ¼ë©´ í•´ë‹¹ componentì˜ ë©¤ë²„ë“¤ ì „ë¶€ ì¶”ê°€
 			{
 				for(int j=0;j<component.get(i).size();j++)
 					end.add(component.get(i).get(j));
@@ -1898,17 +1898,17 @@ public class Graph {
 	{
 		for(int i=0;i<component.size();i++)
 		{
-			if(component.get(i).contains(member))//ÇØ´ç ¸â¹ö¸¦ Æ÷ÇÔÇÏ´Â component°ª ¸®ÅÏ
+			if(component.get(i).contains(member))//í•´ë‹¹ ë©¤ë²„ë¥¼ í¬í•¨í•˜ëŠ” componentê°’ ë¦¬í„´
 				return i;
 		}
 		return -1;
 	}
 	
-	static void A_bj1325(int now, int[] t,int[] start, int[] finish, int[] index, ArrayList<ArrayList<Integer>> graph, boolean[] visited)//°­°áÇÕ ÄÄÆ÷³ÍÆ® ºĞ¸®¸¦ À§ÇÑ finish time Ã£±â
+	static void A_bj1325(int now, int[] t,int[] start, int[] finish, int[] index, ArrayList<ArrayList<Integer>> graph, boolean[] visited)//ê°•ê²°í•© ì»´í¬ë„ŒíŠ¸ ë¶„ë¦¬ë¥¼ ìœ„í•œ finish time ì°¾ê¸°
 	{
 		visited[now] = true;
 		
-		start[now] = ++t[0];//½ÃÀÛ ½Ã°£
+		start[now] = ++t[0];//ì‹œì‘ ì‹œê°„
 		
 	
 		for(int i=0;i<graph.get(now).size();i++)
@@ -1921,11 +1921,11 @@ public class Graph {
 			}
 			
 		}
-		finish[now] = ++t[0];//³¡³­½Ã°£
+		finish[now] = ++t[0];//ëë‚œì‹œê°„
 		index[now] = now;
 	}
 	
-	static void B_bj1325(int now, ArrayList<ArrayList<Integer>> graph_reverse, ArrayList<ArrayList<Integer>> component, int c_count,boolean[] visited)//¿ª¹æÇâ ±×·¡ÇÁ¿¡¼­ °­°áÇÕ ÄÄÆ÷³ÍÆ® ºĞ¸®
+	static void B_bj1325(int now, ArrayList<ArrayList<Integer>> graph_reverse, ArrayList<ArrayList<Integer>> component, int c_count,boolean[] visited)//ì—­ë°©í–¥ ê·¸ë˜í”„ì—ì„œ ê°•ê²°í•© ì»´í¬ë„ŒíŠ¸ ë¶„ë¦¬
 	{
 		visited[now] = true;
 		component.get(c_count).add(now);
@@ -1973,7 +1973,7 @@ public class Graph {
 		int N = 12,M=6;
 		char graph[][] = new char[N][M];
 		boolean visited[][] = new boolean[N][M];
-		boolean checked[][] = new boolean[N][M];//ÄŞº¸ Ã³¸® µÈ ºÎºĞ
+		boolean checked[][] = new boolean[N][M];//ì½¤ë³´ ì²˜ë¦¬ ëœ ë¶€ë¶„
 		
 		for(int i=0;i<N;i++)
 		{
@@ -1986,15 +1986,15 @@ public class Graph {
 			}
 		}
 		
-		int combo = 0;//¿¬¼â È½¼ö
+		int combo = 0;//ì—°ì‡„ íšŸìˆ˜
 		
-		boolean finish = false;//ÄŞº¸ ÀÖ´ÂÁö ¿©ºÎ
+		boolean finish = false;//ì½¤ë³´ ìˆëŠ”ì§€ ì—¬ë¶€
 		
 		while(!finish)
 		{
-			for(int i=0;i<N;i++)//»ó->ÇÏ
+			for(int i=0;i<N;i++)//ìƒ->í•˜
 			{
-				for(int j=0;j<M;j++)//ÁÂ->¿ì
+				for(int j=0;j<M;j++)//ì¢Œ->ìš°
 				{
 					if(graph[i][j] != '.' && !visited[i][j])
 					{
@@ -2021,7 +2021,7 @@ public class Graph {
 				}
 			}
 			
-			if(!finish)//ÄŞº¸ ÀÖ´ÂÁö È®ÀÎ
+			if(!finish)//ì½¤ë³´ ìˆëŠ”ì§€ í™•ì¸
 				combo++;
 		}
 		
@@ -2035,7 +2035,7 @@ public class Graph {
 		visited[x][y] = true;
 		char now = graph[x][y];
 		
-		temp.add(new Position(x,y));//ÇöÀç ³ëµå Ãß°¡
+		temp.add(new Position(x,y));//í˜„ì¬ ë…¸ë“œ ì¶”ê°€
 		
 		
 		if(x!=0)
@@ -2075,13 +2075,13 @@ public class Graph {
 			}
 		}
 		
-		if(temp.size() >= 4)//ÄŞº¸ ¼º¸³
+		if(temp.size() >= 4)//ì½¤ë³´ ì„±ë¦½
 		{
 			for(int i=0;i<temp.size();i++)
 			{
 				checked[temp.get(i).x][temp.get(i).y] = true;
 			}
-			temp.clear();//ÃÊ±âÈ­
+			temp.clear();//ì´ˆê¸°í™”
 		}
 	}
 	
@@ -2147,11 +2147,11 @@ public class Graph {
 		cnt++;
 		for(int i=0;i<graph.get(s).size();i++)
 		{
-			if(!visited[graph.get(s).get(i)]) // ¹æ¹® x -> °è¼Ó Å½»ö
+			if(!visited[graph.get(s).get(i)]) // ë°©ë¬¸ x -> ê³„ì† íƒìƒ‰
 			{
 				A_bj9446(graph.get(s).get(i), visited, graph, team, cycle,cnt, finished);
 			}
-			else//¹æ¹® o -> 1. cycle ÀÖÀ½ 2. cycle ¾øÀ½(ÀÌ¹ÌÅ½»ö¿Ï·á)
+			else//ë°©ë¬¸ o -> 1. cycle ìˆìŒ 2. cycle ì—†ìŒ(ì´ë¯¸íƒìƒ‰ì™„ë£Œ)
 			{
 				if(!finished[graph.get(s).get(i)])
 				{
@@ -2187,7 +2187,7 @@ public class Graph {
 				graph[i][j] = Integer.parseInt(strtok.nextToken());
 				if(graph[i][j] ==1 && q.isEmpty())
 				{
-					q.offer(new Position(i,j));// bfs Å½»öÀ» ½ÃÀÛÇÒ ¼¶ÀÇ Ã¹ À§Ä¡
+					q.offer(new Position(i,j));// bfs íƒìƒ‰ì„ ì‹œì‘í•  ì„¬ì˜ ì²« ìœ„ì¹˜
 					visited[i][j] = true;
 				}
 				else
@@ -2199,11 +2199,11 @@ public class Graph {
 		}
 		
 		
-		ArrayList<Integer> bridge = new ArrayList<>();//¼¶ °£ÀÇ °Å¸®µé ÀúÀå
+		ArrayList<Integer> bridge = new ArrayList<>();//ì„¬ ê°„ì˜ ê±°ë¦¬ë“¤ ì €ì¥
 		
 		while(!q.isEmpty())
 		{			
-			//1¹ø bfs	: ¼¶ Å½»ö -> visited trueÃ³¸® ¹× ¼¶ ³¡ÀÚ¶ô ºÎºĞÀÇ ¹Ù´Ùµé Å¥¿¡ Ãß°¡
+			//1ë²ˆ bfs	: ì„¬ íƒìƒ‰ -> visited trueì²˜ë¦¬ ë° ì„¬ ëìë½ ë¶€ë¶„ì˜ ë°”ë‹¤ë“¤ íì— ì¶”ê°€
 			while(!q.isEmpty())
 			{
 				Position pos = q.poll();
@@ -2212,13 +2212,13 @@ public class Graph {
 						
 				if(x!=0)
 				{
-					if(graph[x-1][y] == 1 && !visited[x-1][y])//ÇØ´ç ¼¶ÀÏ°æ¿ì
+					if(graph[x-1][y] == 1 && !visited[x-1][y])//í•´ë‹¹ ì„¬ì¼ê²½ìš°
 					{
 						Position p2 = new Position(x-1,y);
 						visited[x-1][y] = true;
 						q.add(p2);
 					}
-					else if(graph[x-1][y] == 0 && !visited[x-1][y])//¹Ù´ÙÀÏ°æ¿ì
+					else if(graph[x-1][y] == 0 && !visited[x-1][y])//ë°”ë‹¤ì¼ê²½ìš°
 					{
 						Position p2 = new Position(x-1,y);
 						p2.distance = 1;
@@ -2228,13 +2228,13 @@ public class Graph {
 				}
 				if(x!=N-1)
 				{
-					if(graph[x+1][y] == 1 && !visited[x+1][y])//ÇØ´ç ¼¶ÀÏ°æ¿ì
+					if(graph[x+1][y] == 1 && !visited[x+1][y])//í•´ë‹¹ ì„¬ì¼ê²½ìš°
 					{
 						Position p2 = new Position(x+1,y);
 						visited[x+1][y] = true;
 						q.add(p2);
 					}
-					else if(graph[x+1][y] == 0 && !visited[x+1][y])//¹Ù´ÙÀÏ°æ¿ì
+					else if(graph[x+1][y] == 0 && !visited[x+1][y])//ë°”ë‹¤ì¼ê²½ìš°
 					{
 						Position p2 = new Position(x+1,y);
 						p2.distance = 1;
@@ -2244,13 +2244,13 @@ public class Graph {
 				}
 				if(y!=0)
 				{
-					if(graph[x][y-1] == 1 && !visited[x][y-1])//ÇØ´ç ¼¶ÀÏ°æ¿ì
+					if(graph[x][y-1] == 1 && !visited[x][y-1])//í•´ë‹¹ ì„¬ì¼ê²½ìš°
 					{
 						Position p2 = new Position(x,y-1);
 						visited[x][y-1] = true;
 						q.add(p2);
 					}
-					else if(graph[x][y-1] == 0 && !visited[x][y-1])//¹Ù´ÙÀÏ°æ¿ì
+					else if(graph[x][y-1] == 0 && !visited[x][y-1])//ë°”ë‹¤ì¼ê²½ìš°
 					{
 						Position p2 = new Position(x,y-1);
 						p2.distance = 1;
@@ -2260,13 +2260,13 @@ public class Graph {
 				}
 				if(y!=N-1)
 				{
-					if(graph[x][y+1] == 1 && !visited[x][y+1])//ÇØ´ç ¼¶ÀÏ°æ¿ì
+					if(graph[x][y+1] == 1 && !visited[x][y+1])//í•´ë‹¹ ì„¬ì¼ê²½ìš°
 					{
 						Position p2 = new Position(x,y+1);
 						visited[x][y+1] = true;
 						q.add(p2);
 					}
-					else if(graph[x][y+1] == 0 && !visited[x][y+1])//¹Ù´ÙÀÏ°æ¿ì
+					else if(graph[x][y+1] == 0 && !visited[x][y+1])//ë°”ë‹¤ì¼ê²½ìš°
 					{
 						Position p2 = new Position(x,y+1);
 						p2.distance = 1;
@@ -2278,7 +2278,7 @@ public class Graph {
 			q.addAll(q2);
 			q2.clear();
 				
-			//2¹ø bfs : ´Ù¸¥ ¼¶±îÁöÀÇ °Å¸®°è»ê
+			//2ë²ˆ bfs : ë‹¤ë¥¸ ì„¬ê¹Œì§€ì˜ ê±°ë¦¬ê³„ì‚°
 			while(!q.isEmpty())
 			{
 				Position pos = q.poll();
@@ -2287,7 +2287,7 @@ public class Graph {
 						
 				if(x!=0)
 				{
-					if(graph[x-1][y] == 1 && !visited[x-1][y])//´Ù¸¥ ¼¶ÀÏ°æ¿ì
+					if(graph[x-1][y] == 1 && !visited[x-1][y])//ë‹¤ë¥¸ ì„¬ì¼ê²½ìš°
 					{
 						bridge.add(pos.distance);
 						if(q2.isEmpty())
@@ -2296,7 +2296,7 @@ public class Graph {
 							visited[x-1][y] = true;
 						}
 					}
-					else if(graph[x-1][y] == 0 && !visited[x-1][y])//¹Ù´ÙÀÏ°æ¿ì
+					else if(graph[x-1][y] == 0 && !visited[x-1][y])//ë°”ë‹¤ì¼ê²½ìš°
 					{
 						Position p2 = new Position(x-1,y);
 						p2.distance = pos.distance+1;
@@ -2306,7 +2306,7 @@ public class Graph {
 				}
 				if(x!=N-1)
 				{
-					if(graph[x+1][y] == 1 && !visited[x+1][y])//´Ù¸¥ ¼¶ÀÏ°æ¿ì
+					if(graph[x+1][y] == 1 && !visited[x+1][y])//ë‹¤ë¥¸ ì„¬ì¼ê²½ìš°
 					{
 						bridge.add(pos.distance);
 						if(q2.isEmpty())
@@ -2315,7 +2315,7 @@ public class Graph {
 							visited[x+1][y] = true;
 						}
 					}
-					else if(graph[x+1][y] == 0 && !visited[x+1][y])//¹Ù´ÙÀÏ°æ¿ì
+					else if(graph[x+1][y] == 0 && !visited[x+1][y])//ë°”ë‹¤ì¼ê²½ìš°
 					{
 						Position p2 = new Position(x+1,y);
 						p2.distance = pos.distance+1;
@@ -2325,7 +2325,7 @@ public class Graph {
 				}
 				if(y!=0)
 				{
-					if(graph[x][y-1] == 1 && !visited[x][y-1])//´Ù¸¥ ¼¶ÀÏ°æ¿ì
+					if(graph[x][y-1] == 1 && !visited[x][y-1])//ë‹¤ë¥¸ ì„¬ì¼ê²½ìš°
 					{
 						bridge.add(pos.distance);
 						if(q2.isEmpty())
@@ -2334,7 +2334,7 @@ public class Graph {
 							visited[x][y-1] = true;
 						}
 					}
-					else if(graph[x][y-1] == 0 && !visited[x][y-1])//¹Ù´ÙÀÏ°æ¿ì
+					else if(graph[x][y-1] == 0 && !visited[x][y-1])//ë°”ë‹¤ì¼ê²½ìš°
 					{
 						Position p2 = new Position(x,y-1);
 						p2.distance = pos.distance+1;
@@ -2344,7 +2344,7 @@ public class Graph {
 				}
 				if(y!=N-1)
 				{
-					if(graph[x][y+1] == 1 && !visited[x][y+1])//´Ù¸¥ ¼¶ÀÏ°æ¿ì
+					if(graph[x][y+1] == 1 && !visited[x][y+1])//ë‹¤ë¥¸ ì„¬ì¼ê²½ìš°
 					{
 						bridge.add(pos.distance);
 						if(q2.isEmpty())
@@ -2353,7 +2353,7 @@ public class Graph {
 							visited[x][y+1] = true;
 						}
 					}
-					else if(graph[x][y+1] == 0 && !visited[x][y+1])//¹Ù´ÙÀÏ°æ¿ì
+					else if(graph[x][y+1] == 0 && !visited[x][y+1])//ë°”ë‹¤ì¼ê²½ìš°
 					{
 						Position p2 = new Position(x,y+1);
 						p2.distance = pos.distance+1;
@@ -2492,7 +2492,7 @@ public class Graph {
 	{
 		visited[x][y] = true;
 		
-		int count=0;//ÇöÀç ¹°
+		int count=0;//í˜„ì¬ ë¬¼
 		
 		if(x!=0)
 		{
@@ -2565,18 +2565,18 @@ public class Graph {
 		for(int i=0;i<K;i++)
 		{
 			StringTokenizer strtok = new StringTokenizer(b.readLine()," ");
-			int V = Integer.parseInt(strtok.nextToken());//Á¤Á¡¼ö
-			int E = Integer.parseInt(strtok.nextToken());//°£¼±¼ö
+			int V = Integer.parseInt(strtok.nextToken());//ì •ì ìˆ˜
+			int E = Integer.parseInt(strtok.nextToken());//ê°„ì„ ìˆ˜
 			
 		//	int graph[][] = new int[V+1][V+1];
 			ArrayList<ArrayList<Integer>> graph = new ArrayList<ArrayList<Integer>>();
 			
 			visited1707 = new boolean[V+1];
 			
-			int set[] = new int [V+1];//°¢ v°¡ ¾î´À ÁıÇÕ¿¡ ¼ÓÇØÀÕ´ÂÁö 0 = ¾Æ¹«µ¥µµ ¾È¼ÓÇØÀÕÀ½, 1 = Ã¹¹øÂ° ÁıÇÕ, 2 = µÎ¹øÂ°ÁıÇÕ
+			int set[] = new int [V+1];//ê° vê°€ ì–´ëŠ ì§‘í•©ì— ì†í•´ì‡ëŠ”ì§€ 0 = ì•„ë¬´ë°ë„ ì•ˆì†í•´ì‡ìŒ, 1 = ì²«ë²ˆì§¸ ì§‘í•©, 2 = ë‘ë²ˆì§¸ì§‘í•©
 			
 			graph.add(new ArrayList<>());
-			for(int j=1;j<=V;j++)//ÃÊ±âÈ­
+			for(int j=1;j<=V;j++)//ì´ˆê¸°í™”
 			{
 				set[j] = 0;
 				visited1707[j] = false;
@@ -2663,10 +2663,10 @@ public class Graph {
 		int M = Integer.parseInt(strtok.nextToken());
 		
 		int graph[][] = new int[N+1][N+1];
-		int result[][] = new int[N+1][N+1];//ÄÉºóº£ÀÌÄÁ °á°úµé
+		int result[][] = new int[N+1][N+1];//ì¼€ë¹ˆë² ì´ì»¨ ê²°ê³¼ë“¤
 		boolean visited[] = new boolean[N+1];
 		
-		for(int i=1;i<=N;i++)//ÃÊ±âÈ­
+		for(int i=1;i<=N;i++)//ì´ˆê¸°í™”
 		{
 			visited[i] = false;
 			for(int j=1;j<=N;j++)
@@ -2799,7 +2799,7 @@ public class Graph {
 				if(!visited10026[i][j])
 				{
 					NoBlind++;
-					A_bj10026(i, j, graph10026,N);//»ö¸Í¾Æ´Ñ »ç¶÷
+					A_bj10026(i, j, graph10026,N);//ìƒ‰ë§¹ì•„ë‹Œ ì‚¬ëŒ
 				}
 			}
 		}
@@ -2815,7 +2815,7 @@ public class Graph {
 				if(!visited10026[i][j])
 				{
 					Blind++;
-					A_bj10026(i, j, graph10026_2, N);//»ö¸ÍÀÎ »ç¶÷
+					A_bj10026(i, j, graph10026_2, N);//ìƒ‰ë§¹ì¸ ì‚¬ëŒ
 				}
 			}
 		}
@@ -2828,28 +2828,28 @@ public class Graph {
 		visited10026[x][y] = true;
 		char color = graph[x][y];
 		
-		if(x!=0)//»ó
+		if(x!=0)//ìƒ
 		{
 			if(graph[x-1][y] == color && !visited10026[x-1][y])
 			{
 				A_bj10026(x-1, y, graph, N);
 			}
 		}
-		if(x!=N-1)//ÇÏ
+		if(x!=N-1)//í•˜
 		{
 			if(graph[x+1][y] == color && !visited10026[x+1][y])
 			{
 				A_bj10026(x+1, y, graph, N);
 			}
 		}
-		if(y!=0)//ÁÂ
+		if(y!=0)//ì¢Œ
 		{
 			if(graph[x][y-1] == color && !visited10026[x][y-1])
 			{
 				A_bj10026(x, y-1, graph, N);
 			}
 		}
-		if(y!=N-1)//¿ì
+		if(y!=N-1)//ìš°
 		{
 			if(graph[x][y+1] == color && !visited10026[x][y+1])
 			{
@@ -2871,7 +2871,7 @@ public class Graph {
 		int C = Integer.parseInt(strtok.nextToken());
 		graph1987 = new char[R+1][C+1];
 
-		boolean[] isMeet = new boolean[26];//¸¸³­Àû ÀÖ´Â ¾ËÆÄºªÀÎÁö
+		boolean[] isMeet = new boolean[26];//ë§Œë‚œì  ìˆëŠ” ì•ŒíŒŒë²³ì¸ì§€
 		
 		for(int i=0;i<26;i++)
 			isMeet[i] = false;
@@ -2901,7 +2901,7 @@ public class Graph {
 
 		int max = count;
 		
-		if(x!=1)//»ó
+		if(x!=1)//ìƒ
 		{
 			if(!isMeet[graph1987[x-1][y] - 65])
 			{
@@ -2916,7 +2916,7 @@ public class Graph {
 				}
 			}
 		}
-		if(x!=R)//ÇÏ
+		if(x!=R)//í•˜
 		{
 			if(!isMeet[graph1987[x+1][y] - 65])
 			{
@@ -2932,7 +2932,7 @@ public class Graph {
 				}
 			}
 		}
-		if(y!=1)//ÁÂ
+		if(y!=1)//ì¢Œ
 		{
 			if(!isMeet[graph1987[x][y-1] - 65])
 			{
@@ -2948,7 +2948,7 @@ public class Graph {
 				}
 			}
 		}
-		if(y!=C)//¿ì
+		if(y!=C)//ìš°
 		{
 			if(!isMeet[graph1987[x][y+1] - 65])
 			{
@@ -3023,7 +3023,7 @@ public class Graph {
 					q.offer(p);
 				visited[1][1] = true;
 				
-				boolean isPass = false;//pass°¡ Æ®·ç¸é ¿ŞÂÊÀ¸·Î, pass°¡ false¸é ¿À¸¥ÂÊÀ¸·Î
+				boolean isPass = false;//passê°€ íŠ¸ë£¨ë©´ ì™¼ìª½ìœ¼ë¡œ, passê°€ falseë©´ ì˜¤ë¥¸ìª½ìœ¼ë¡œ
 				
 				while(!q.isEmpty())
 				{
@@ -3050,9 +3050,9 @@ public class Graph {
 						{
 							if(!visited[r[i]][c[i]])
 							{
-								if(max < map[r[i]][c[i]])//maxº¸´Ù Ä¿¼­ »õ·Î¿î max°¡ µÉ°æ¿ì
+								if(max < map[r[i]][c[i]])//maxë³´ë‹¤ ì»¤ì„œ ìƒˆë¡œìš´ maxê°€ ë ê²½ìš°
 								{
-									if(map[r[i]][c[i]] <= up )//ÇöÀç Ã£°í ÀÖ´Â ¼öº¸´Ù Â÷ÀÌ°¡ ´õ ÀÛÀº »óÈ²ÀÏ ¶§¸¸ Ãß°¡
+									if(map[r[i]][c[i]] <= up )//í˜„ì¬ ì°¾ê³  ìˆëŠ” ìˆ˜ë³´ë‹¤ ì°¨ì´ê°€ ë” ì‘ì€ ìƒí™©ì¼ ë•Œë§Œ ì¶”ê°€
 									{
 										visited[r[i]][c[i]] = true;
 										Position next = new Position(r[i], c[i]);
@@ -3061,9 +3061,9 @@ public class Graph {
 										q.offer(next);
 									}
 								}
-								else if(min > map[r[i]][c[i]])//minº¸´Ù ÀÛ¾Æ¼­ »õ·Î¿î min µÉ °æ¿ì
+								else if(min > map[r[i]][c[i]])//minë³´ë‹¤ ì‘ì•„ì„œ ìƒˆë¡œìš´ min ë  ê²½ìš°
 								{
-									if(map[r[i]][c[i]] >= down )//mid¿¡ ´õ °¡±îÀÌ °¥ ¼ö ÀÖ´Â °æ¿ì
+									if(map[r[i]][c[i]] >= down )//midì— ë” ê°€ê¹Œì´ ê°ˆ ìˆ˜ ìˆëŠ” ê²½ìš°
 									{
 										visited[r[i]][c[i]] = true;
 										Position next = new Position(r[i], c[i]);
@@ -3072,7 +3072,7 @@ public class Graph {
 										q.offer(next);
 									}
 								}
-								else//max¶û min »çÀÌÀÇ ¼öÀÎ °æ¿ì ±×³É Ãß°¡
+								else//maxë‘ min ì‚¬ì´ì˜ ìˆ˜ì¸ ê²½ìš° ê·¸ëƒ¥ ì¶”ê°€
 								{
 									visited[r[i]][c[i]] = true;
 									Position next = new Position(r[i], c[i]);
@@ -3088,7 +3088,7 @@ public class Graph {
 					
 				}
 				
-				//´õ ÀÛÀº°ª ³Ö¾îº¸±â
+				//ë” ì‘ì€ê°’ ë„£ì–´ë³´ê¸°
 				if(isPass)
 				{
 					isPossible = true;
@@ -3097,7 +3097,7 @@ public class Graph {
 				
 			}
 			
-			//´õ ÀÛÀº°ª ³Ö¾îº¸±â
+			//ë” ì‘ì€ê°’ ë„£ì–´ë³´ê¸°
 			if(isPossible)
 			{
 				right = mid - 1;
@@ -3115,7 +3115,7 @@ public class Graph {
 		
 	}
 	
-	static void bj3197() throws Exception//¹éÁ¶
+	static void bj3197() throws Exception//ë°±ì¡°
 	{
 		InputStreamReader is = new InputStreamReader(System.in);
 		BufferedReader b = new BufferedReader(is);
@@ -3125,10 +3125,10 @@ public class Graph {
 		int C = Integer.parseInt(strtok.nextToken());
 		
 		int graph[][] = new int[R][C];
-		int melt[][] = new int[R][C];//³ì´Â ³¯Â¥
+		int melt[][] = new int[R][C];//ë…¹ëŠ” ë‚ ì§œ
 		boolean visited[][] = new boolean[R][C];
 		
-		//'.' -> 0 ==> ¹° °ø°£, 'X' -> 1 ==> ºùÆÇ °ø°£, 'L' -> -1 ==> ¹éÁ¶
+		//'.' -> 0 ==> ë¬¼ ê³µê°„, 'X' -> 1 ==> ë¹™íŒ ê³µê°„, 'L' -> -1 ==> ë°±ì¡°
 		
 		Queue<Position> q = new LinkedList<>();
 		Position bird = new Position();
@@ -3142,11 +3142,11 @@ public class Graph {
 			{
 				melt[i][j] = 0;
 				//visited[i][j] = false;
-				if(str.charAt(j)=='.')//¹°
+				if(str.charAt(j)=='.')//ë¬¼
 					graph[i][j] = 0;
-				else if(str.charAt(j)=='X')//ºùÆÇ
+				else if(str.charAt(j)=='X')//ë¹™íŒ
 					graph[i][j] = 1;
-				else//¹éÁ¶
+				else//ë°±ì¡°
 				{
 					melt[i][j] = -1;
 					graph[i][j] = -1;
@@ -3157,19 +3157,19 @@ public class Graph {
 		}
 		
 		
-		//boolean isMeet = false;//¹éÁ¶µéÀÌ ¸¸³µ´ÂÁö ¿©ºÎ
-		int day=0;//¸¸³ª´Âµ¥ °É¸®´Â ÃÖ¼Ò ÀÏ¼ö
+		//boolean isMeet = false;//ë°±ì¡°ë“¤ì´ ë§Œë‚¬ëŠ”ì§€ ì—¬ë¶€
+		int day=0;//ë§Œë‚˜ëŠ”ë° ê±¸ë¦¬ëŠ” ìµœì†Œ ì¼ìˆ˜
 		
-		//¸ÇÃ³À½ ¹°(È¤Àº ¹éÁ¶)¶û ¹Ù·Î ´ê¾ÆÀÖ´Â ¾óÀ½µé queue¿¡ ¹Ì¸® Ãß°¡(½ÃÀÛÁ¡µé)
+		//ë§¨ì²˜ìŒ ë¬¼(í˜¹ì€ ë°±ì¡°)ë‘ ë°”ë¡œ ë‹¿ì•„ìˆëŠ” ì–¼ìŒë“¤ queueì— ë¯¸ë¦¬ ì¶”ê°€(ì‹œì‘ì ë“¤)
 		for(int i=0;i<R;i++)
 		{
 			for(int j=0;j<C;j++)
 			{
-				if(graph[i][j]== 1 && !visited[i][j]) //ºùÆÇ Ã£±â
+				if(graph[i][j]== 1 && !visited[i][j]) //ë¹™íŒ ì°¾ê¸°
 				{
 					if(i!=0)
 					{
-						if(graph[i-1][j] == 0 || graph[i-1][j] == -1)//¹éÁ¶ È¤Àº ¹°ÀÌ¶û ´ê¾ÆÀÕÀ¸¸éÃß°¡
+						if(graph[i-1][j] == 0 || graph[i-1][j] == -1)//ë°±ì¡° í˜¹ì€ ë¬¼ì´ë‘ ë‹¿ì•„ì‡ìœ¼ë©´ì¶”ê°€
 						{
 							q.offer(new Position(i,j));
 							melt[i][j] = 1;
@@ -3179,7 +3179,7 @@ public class Graph {
 					}
 					if(j!=0)
 					{
-						if(graph[i][j-1] == 0 || graph[i][j-1] == -1)//¹éÁ¶ È¤Àº ¹°ÀÌ¶û ´ê¾ÆÀÕÀ¸¸éÃß°¡
+						if(graph[i][j-1] == 0 || graph[i][j-1] == -1)//ë°±ì¡° í˜¹ì€ ë¬¼ì´ë‘ ë‹¿ì•„ì‡ìœ¼ë©´ì¶”ê°€
 						{
 							q.offer(new Position(i,j));
 							melt[i][j] = 1;
@@ -3189,7 +3189,7 @@ public class Graph {
 					}
 					if(i!=R-1)
 					{
-						if(graph[i+1][j] == 0 || graph[i+1][j] == -1)//¹éÁ¶ È¤Àº ¹°ÀÌ¶û ´ê¾ÆÀÕÀ¸¸éÃß°¡
+						if(graph[i+1][j] == 0 || graph[i+1][j] == -1)//ë°±ì¡° í˜¹ì€ ë¬¼ì´ë‘ ë‹¿ì•„ì‡ìœ¼ë©´ì¶”ê°€
 						{
 							q.offer(new Position(i,j));
 							melt[i][j] = 1;
@@ -3199,7 +3199,7 @@ public class Graph {
 					}
 					if(j!=C-1)
 					{
-						if(graph[i][j+1] == 0 || graph[i][j+1] == -1)//¹éÁ¶ È¤Àº ¹°ÀÌ¶û ´ê¾ÆÀÕÀ¸¸éÃß°¡
+						if(graph[i][j+1] == 0 || graph[i][j+1] == -1)//ë°±ì¡° í˜¹ì€ ë¬¼ì´ë‘ ë‹¿ì•„ì‡ìœ¼ë©´ì¶”ê°€
 						{
 							q.offer(new Position(i,j));
 							melt[i][j] = 1;
@@ -3214,7 +3214,7 @@ public class Graph {
 		
 		int max=0;
 		
-		//¸ğµç ¾óÀ½µéÀÌ ¸îÀÏÂ°¿¡ ³ì´ÂÁö Ã¼Å©
+		//ëª¨ë“  ì–¼ìŒë“¤ì´ ëª‡ì¼ì§¸ì— ë…¹ëŠ”ì§€ ì²´í¬
 		while(!q.isEmpty())
 		{
 			Position pos = q.poll();
@@ -3223,7 +3223,7 @@ public class Graph {
 			
 			if(pos.getX()!=R-1)
 			{
-				if((graph[pos.getX()+1][pos.getY()] == 1) && !visited[pos.getX()+1][pos.getY()])//¹°
+				if((graph[pos.getX()+1][pos.getY()] == 1) && !visited[pos.getX()+1][pos.getY()])//ë¬¼
 				{	
 					q.offer(new Position(pos.getX()+1,pos.getY()));
 					melt[pos.getX()+1][pos.getY()] = melt[pos.getX()][pos.getY()] + 1;
@@ -3275,19 +3275,19 @@ public class Graph {
 		{
 			for(int c=0;c<C;c++)
 			{
-				visited[r][c] = false; // ÃÊ±âÈ­
+				visited[r][c] = false; // ì´ˆê¸°í™”
 			}
 		}
 	
-		q.offer(bird);//Ã¹¹øÂ° ¹éÁ¶ À§Ä¡°¡ ½ÃÀÛÁ¡
+		q.offer(bird);//ì²«ë²ˆì§¸ ë°±ì¡° ìœ„ì¹˜ê°€ ì‹œì‘ì 
 		visited[bird.getX()][bird.getY()] = true;
 			
-		Queue<Position> temp_q = new LinkedList<>();//currentMeltLevel+1 ¿¡ ÇØ´çÇÏ´Â ¾óÀ½µé ÀÓ½Ã·Î Ãß°¡ÇØ³õ°í ÇöÀç melt level Å½»ö ³¡³ª¸é q·Î ¿Å±è
+		Queue<Position> temp_q = new LinkedList<>();//currentMeltLevel+1 ì— í•´ë‹¹í•˜ëŠ” ì–¼ìŒë“¤ ì„ì‹œë¡œ ì¶”ê°€í•´ë†“ê³  í˜„ì¬ melt level íƒìƒ‰ ëë‚˜ë©´ që¡œ ì˜®ê¹€
 		
 		
-		int currentMeltLevel = 0;//ÇöÀç melt ·¹º§
+		int currentMeltLevel = 0;//í˜„ì¬ melt ë ˆë²¨
 		
-		//melt level 0ÀÏ ºÎÅÍ ½ÃÀÛÇØ¼­ queue°¡ ºô ¶§¸¶´Ù melt level ¿Ã·Á¼­ Å½»ö ÇÏ´Ù°¡ ÇöÀç Å½»ö ¹üÀ§¿¡ ´Ù¸¥ bird À§Ä¡°¡ Å½»öµÇ¸é ¹éÁ¶°¡ ¸¸³¯¼ö ÀÖ´Â°ÍÀÌ¶ó°í ÆÇ´Ü
+		//melt level 0ì¼ ë¶€í„° ì‹œì‘í•´ì„œ queueê°€ ë¹Œ ë•Œë§ˆë‹¤ melt level ì˜¬ë ¤ì„œ íƒìƒ‰ í•˜ë‹¤ê°€ í˜„ì¬ íƒìƒ‰ ë²”ìœ„ì— ë‹¤ë¥¸ bird ìœ„ì¹˜ê°€ íƒìƒ‰ë˜ë©´ ë°±ì¡°ê°€ ë§Œë‚ ìˆ˜ ìˆëŠ”ê²ƒì´ë¼ê³  íŒë‹¨
 		while(!q.isEmpty())
 		{
 			Position pos = q.poll();
@@ -3300,7 +3300,7 @@ public class Graph {
 		
 			if(pos.getX()!=R-1)
 			{
-				if(melt[pos.getX()+1][pos.getY()] <= currentMeltLevel && !visited[pos.getX()+1][pos.getY()])//¹°
+				if(melt[pos.getX()+1][pos.getY()] <= currentMeltLevel && !visited[pos.getX()+1][pos.getY()])//ë¬¼
 				{	
 					Position temp = new Position(pos.getX()+1,pos.getY());
 					
@@ -3372,7 +3372,7 @@ public class Graph {
 				
 			}
 			
-			if(q.isEmpty())//ÇöÀç melt ·¹º§¿¡¼± ¹éÁ¶°¡ ¸ø¸¸³ª¹Ç·Î melt level Áõ°¡½ÃÅ´
+			if(q.isEmpty())//í˜„ì¬ melt ë ˆë²¨ì—ì„  ë°±ì¡°ê°€ ëª»ë§Œë‚˜ë¯€ë¡œ melt level ì¦ê°€ì‹œí‚´
 			{
 				q=null;
 				q = temp_q;
@@ -3400,7 +3400,7 @@ public class Graph {
 		
 		Queue<Position> q = new LinkedList<>();
 		
-		int zeroCount=0;//¾ÈÀÍÀº Åä¸¶Åä °³¼ö Çì¾Æ¸®°í ¾ÈÀÍÀº°Ô ÇÏ³ªµµ ¾øÀ¸¸é 0Ãâ·Â
+		int zeroCount=0;//ì•ˆìµì€ í† ë§ˆí†  ê°œìˆ˜ í—¤ì•„ë¦¬ê³  ì•ˆìµì€ê²Œ í•˜ë‚˜ë„ ì—†ìœ¼ë©´ 0ì¶œë ¥
 		
 		for(int i=0;i<H;i++)
 		{
@@ -3434,7 +3434,7 @@ public class Graph {
 			System.out.println(0);
 			return;
 		}
-		int day = 0;//ÀÍ´Âµ¥ ÇÊ¿äÇÑ ÃÖ¼ÒÀÏ¼ö
+		int day = 0;//ìµëŠ”ë° í•„ìš”í•œ ìµœì†Œì¼ìˆ˜
 		while(!q.isEmpty())
 		{
 			Position pos = q.poll();
@@ -3513,7 +3513,7 @@ public class Graph {
 			for(int j=0;j<N;j++)
 				for(int k=0;k<M;k++)
 				{
-					if(graph[i][j][k]==0 && !visited[i][j][k]){//Åä¸¶Åä°¡ ¸ğµÎ ÀÍÁö ¸øÇÏ´Â »óÈ²
+					if(graph[i][j][k]==0 && !visited[i][j][k]){//í† ë§ˆí† ê°€ ëª¨ë‘ ìµì§€ ëª»í•˜ëŠ” ìƒí™©
 						System.out.println(-1);
 						return;
 					}
@@ -3531,7 +3531,7 @@ public class Graph {
 		int graph[][] = new int[N][N];
 		boolean visited[][] = new boolean[N][N];
 		
-		int maxHeight = 0;//ÃÖ´ë³ôÀÌ
+		int maxHeight = 0;//ìµœëŒ€ë†’ì´
 		
 		for(int i=0;i<N;i++)
 		{
@@ -3545,9 +3545,9 @@ public class Graph {
 			}
 		}
 		
-		ArrayList<Integer> counts = new ArrayList<>();//°¢ °æ¿ì¸¶´Ù ¾ÈÀü¿µ¿ª °³¼öµé
+		ArrayList<Integer> counts = new ArrayList<>();//ê° ê²½ìš°ë§ˆë‹¤ ì•ˆì „ì˜ì—­ ê°œìˆ˜ë“¤
 	
-		for(int i = 0; i <= maxHeight; i++)//¹°¿¡ Àá±ä ±âµÕ ³ôÀÌ 0 ~ maxHeight ±îÁö ´Ù ¿ÏÀüÅ½»öÇØ¼­ ¾ÈÀü¿µ¿ª Á¦ÀÏ ¸¹Àº°Í »Ì±â
+		for(int i = 0; i <= maxHeight; i++)//ë¬¼ì— ì ê¸´ ê¸°ë‘¥ ë†’ì´ 0 ~ maxHeight ê¹Œì§€ ë‹¤ ì™„ì „íƒìƒ‰í•´ì„œ ì•ˆì „ì˜ì—­ ì œì¼ ë§ì€ê²ƒ ë½‘ê¸°
 		{
 			int count=0;
 			
@@ -3555,9 +3555,9 @@ public class Graph {
 			{
 				for(int k=0;k<N;k++)
 				{
-					if(graph[j][k] > i && !visited[j][k])//¹°¿¡Àá±â´Â ³ôÀÌº¸´Ù Å©¸é ¾ÈÀü¿µ¿ª
+					if(graph[j][k] > i && !visited[j][k])//ë¬¼ì—ì ê¸°ëŠ” ë†’ì´ë³´ë‹¤ í¬ë©´ ì•ˆì „ì˜ì—­
 					{
-						count++;//¾ÈÀü¿µ¿ª °³¼ö
+						count++;//ì•ˆì „ì˜ì—­ ê°œìˆ˜
 						
 						Queue<Position> q = new LinkedList<>();
 						q.offer(new Position(j,k));
@@ -3616,7 +3616,7 @@ public class Graph {
 			counts.add(count);
 		}
 		
-		int max = counts.get(0);//ÃÖ´ë ¾ÈÀü¿µ¿ª °³¼ö
+		int max = counts.get(0);//ìµœëŒ€ ì•ˆì „ì˜ì—­ ê°œìˆ˜
 		
 		for(int i=0;i<counts.size();i++)
 		{
@@ -3667,8 +3667,8 @@ public class Graph {
 		
 		Queue<Position> q = new LinkedList<>();
 		
-		int count=0;//±ºÁı°³¼ö
-		ArrayList<Integer> sizes = new ArrayList<>();//±ºÁı³ĞÀÌµé
+		int count=0;//êµ°ì§‘ê°œìˆ˜
+		ArrayList<Integer> sizes = new ArrayList<>();//êµ°ì§‘ë„“ì´ë“¤
 		
 		for(int i=0;i<N;i++)
 		{
@@ -3779,7 +3779,7 @@ public class Graph {
 			strtok = new StringTokenizer(b.readLine()," ");
 			k = Integer.parseInt(strtok.nextToken());
 			
-			if(k==0)//0ÀÔ·Â½Ã Á¾·á
+			if(k==0)//0ì…ë ¥ì‹œ ì¢…ë£Œ
 				break;
 			else
 				System.out.println();
@@ -3851,14 +3851,14 @@ public class Graph {
 		{
 			for(int j=0;j<M;j++)
 			{
-				if(graph[i][j]==0)//Ã¹¹øÂ° º®³õ±â
+				if(graph[i][j]==0)//ì²«ë²ˆì§¸ ë²½ë†“ê¸°
 				{
 					graph[i][j]=1;
 					for(int n=0;n<N;n++)
 					{
 						for(int m=0;m<M;m++)
 						{
-							if(graph[n][m]==0)//µÎ¹øÂ° º®³õ±â
+							if(graph[n][m]==0)//ë‘ë²ˆì§¸ ë²½ë†“ê¸°
 							{
 								graph[n][m]=1;
 								
@@ -3866,7 +3866,7 @@ public class Graph {
 								{
 									for(int u=0;u<M;u++)
 									{
-										if(graph[y][u]==0)//¼¼¹øÂ° º®³õ±â
+										if(graph[y][u]==0)//ì„¸ë²ˆì§¸ ë²½ë†“ê¸°
 										{
 											graph[y][u]=1;
 											
@@ -3883,7 +3883,7 @@ public class Graph {
 											{
 												Position pos = q.poll();
 												
-												if(pos.getX()!=0)//»ó
+												if(pos.getX()!=0)//ìƒ
 												{
 													if(graph[pos.getX()-1][pos.getY()]==0 && !visited[pos.getX()-1][pos.getY()])
 													{
@@ -3892,7 +3892,7 @@ public class Graph {
 													}
 												}
 												
-												if(pos.getX()!=N-1)//ÇÏ
+												if(pos.getX()!=N-1)//í•˜
 												{
 													if(graph[pos.getX()+1][pos.getY()]==0 && !visited[pos.getX()+1][pos.getY()])
 													{
@@ -3901,7 +3901,7 @@ public class Graph {
 													}
 												}
 												
-												if(pos.getY()!=0)//ÁÂ
+												if(pos.getY()!=0)//ì¢Œ
 												{
 													if(graph[pos.getX()][pos.getY()-1]==0 && !visited[pos.getX()][pos.getY()-1])
 													{
@@ -3910,7 +3910,7 @@ public class Graph {
 													}
 												}
 												
-												if(pos.getY()!=M-1)//¿ì
+												if(pos.getY()!=M-1)//ìš°
 												{
 													if(graph[pos.getX()][pos.getY()+1]==0 && !visited[pos.getX()][pos.getY()+1])
 													{
@@ -3990,11 +3990,11 @@ public class Graph {
 		}
 		
 		Queue<Integer> q = new LinkedList<>();
-		int count=0;//¿¬°á¿ä¼ÒÀÇ °³¼ö
+		int count=0;//ì—°ê²°ìš”ì†Œì˜ ê°œìˆ˜
 		
 		for(int i=1;i<=N;i++)
 		{
-			if(!visited[i])//¹æ¹®¾ÈÇÑ ³ëµåÀÏ¶§ Å½»ö½ÃÀÛ & countÁõ°¡
+			if(!visited[i])//ë°©ë¬¸ì•ˆí•œ ë…¸ë“œì¼ë•Œ íƒìƒ‰ì‹œì‘ & countì¦ê°€
 			{
 				count++;
 				q = new LinkedList<>();
@@ -4025,7 +4025,7 @@ public class Graph {
 		InputStreamReader k = new InputStreamReader(System.in);
 		BufferedReader b = new BufferedReader(k);
 		
-		int N = Integer.parseInt(b.readLine());//Á¤Á¡ °³¼ö
+		int N = Integer.parseInt(b.readLine());//ì •ì  ê°œìˆ˜
 		
 		int graph[][] = new int[N][N];//input
 		int result[][] = new int[N][N];//output
@@ -4039,19 +4039,19 @@ public class Graph {
 			{
 				graph[i][j] = Integer.parseInt(strtok.nextToken());
 				
-				result[i][j] = 0;//ÃÊ±âÈ­
+				result[i][j] = 0;//ì´ˆê¸°í™”
 			}
 		}
 		
-		for(int i=0;i<N;i++)//ÃÑ N¹ø¸¸Å­ °æ·ÎÅ½»ö
+		for(int i=0;i<N;i++)//ì´ Në²ˆë§Œí¼ ê²½ë¡œíƒìƒ‰
 		{
 			Queue<Integer> q = new LinkedList<>();
 			
-			for(int j=0;j<N;j++)//visitedÃÊ±âÈ­
+			for(int j=0;j<N;j++)//visitedì´ˆê¸°í™”
 					visited[j]=false;
 			
 			q.offer(i);
-			//ÁÖÀÇ : ÀÚ±âÀÚ½Å¿¡°Ô·Î µ¹¾Æ¿À´Â °æ·Îµµ »ı°¢ÇØ¾ßÇÏ±â¿¡ i´Â visitedÃ¼Å© ¾ÈÇÔ ex) 0->1->2->0
+			//ì£¼ì˜ : ìê¸°ìì‹ ì—ê²Œë¡œ ëŒì•„ì˜¤ëŠ” ê²½ë¡œë„ ìƒê°í•´ì•¼í•˜ê¸°ì— iëŠ” visitedì²´í¬ ì•ˆí•¨ ex) 0->1->2->0
 			while(!q.isEmpty())
 			{
 				int v = q.poll();
@@ -4060,7 +4060,7 @@ public class Graph {
 				{
 					if(graph[v][j]==1 && !visited[j])
 					{
-						result[i][j] = 1;//i->j·Î °¡´Â °æ·Î°¡ Á¸Àç
+						result[i][j] = 1;//i->jë¡œ ê°€ëŠ” ê²½ë¡œê°€ ì¡´ì¬
 						q.offer(j);
 						visited[j]=true;
 					}
@@ -4085,14 +4085,14 @@ public class Graph {
 		InputStreamReader k = new InputStreamReader(System.in);
 		BufferedReader b = new BufferedReader(k);
 		
-		int T = Integer.parseInt(b.readLine());//Å×½ºÆ® ÄÉÀÌ½º °³¼ö
+		int T = Integer.parseInt(b.readLine());//í…ŒìŠ¤íŠ¸ ì¼€ì´ìŠ¤ ê°œìˆ˜
 		
 		for(int i=0;i<T;i++)
 		{
 			StringTokenizer strtok = new StringTokenizer(b.readLine()," ");
 			int M = Integer.parseInt(strtok.nextToken());//row
 			int N = Integer.parseInt(strtok.nextToken());//column
-			int K = Integer.parseInt(strtok.nextToken());//¹èÃß°³¼ö
+			int K = Integer.parseInt(strtok.nextToken());//ë°°ì¶”ê°œìˆ˜
 			
 			int graph[][] = new int[M][N];
 			boolean visited[][] = new boolean[M][N];
@@ -4109,16 +4109,16 @@ public class Graph {
 			for(int j=0;j<K;j++)
 			{
 				strtok = new StringTokenizer(b.readLine()," ");
-				graph[Integer.parseInt(strtok.nextToken())][Integer.parseInt(strtok.nextToken())] = 1;//¹èÃßÀ§Ä¡
+				graph[Integer.parseInt(strtok.nextToken())][Integer.parseInt(strtok.nextToken())] = 1;//ë°°ì¶”ìœ„ì¹˜
 			}
 			
-			int count = 0;//¹èÃß±ºÁı°³¼ö(Áö··ÀÌ¸¶¸®¼ö)
+			int count = 0;//ë°°ì¶”êµ°ì§‘ê°œìˆ˜(ì§€ë ì´ë§ˆë¦¬ìˆ˜)
 			
 			for(int m=0;m<M;m++)
 			{
 				for(int n=0;n<N;n++)
 				{
-					if(graph[m][n]==1 && !visited[m][n])//±×·¡ÇÁ ÀüÃ¼ ¼øÈ¸ÇÏ´Ù°¡ 1 ÀÎ, ¹æ¹®¾ÈÇÑ À§Ä¡ ¸¸³ª¸é BFS Å½»ö 
+					if(graph[m][n]==1 && !visited[m][n])//ê·¸ë˜í”„ ì „ì²´ ìˆœíšŒí•˜ë‹¤ê°€ 1 ì¸, ë°©ë¬¸ì•ˆí•œ ìœ„ì¹˜ ë§Œë‚˜ë©´ BFS íƒìƒ‰ 
 					{
 						count++;
 						q.offer(new Position(m,n));
@@ -4128,7 +4128,7 @@ public class Graph {
 						{
 							Position pos = q.poll();
 							
-							if(pos.getX()!=0)//»ó
+							if(pos.getX()!=0)//ìƒ
 							{
 								if(graph[pos.getX()-1][pos.getY()]==1 &&!visited[pos.getX()-1][pos.getY()])
 								{
@@ -4137,7 +4137,7 @@ public class Graph {
 								}
 							}
 							
-							if(pos.getX()!=M-1)//ÇÏ
+							if(pos.getX()!=M-1)//í•˜
 							{
 								if(graph[pos.getX()+1][pos.getY()]==1 &&!visited[pos.getX()+1][pos.getY()])
 								{
@@ -4146,7 +4146,7 @@ public class Graph {
 								}
 							}
 							
-							if(pos.getY()!=0)//ÁÂ
+							if(pos.getY()!=0)//ì¢Œ
 							{
 								if(graph[pos.getX()][pos.getY()-1]==1 &&!visited[pos.getX()][pos.getY()-1])
 								{
@@ -4155,7 +4155,7 @@ public class Graph {
 								}
 							}
 							
-							if(pos.getY()!=N-1)//¿ì
+							if(pos.getY()!=N-1)//ìš°
 							{
 								if(graph[pos.getX()][pos.getY()+1]==1 &&!visited[pos.getX()][pos.getY()+1])
 								{
@@ -4177,7 +4177,7 @@ public class Graph {
 		InputStreamReader k = new InputStreamReader(System.in);
 		BufferedReader b = new BufferedReader(k);
 		
-		StringTokenizer strtok = new StringTokenizer(b.readLine()," ");//Áöµµ Å©±â N
+		StringTokenizer strtok = new StringTokenizer(b.readLine()," ");//ì§€ë„ í¬ê¸° N
 		int N = Integer.parseInt(strtok.nextToken());
 		int K = Integer.parseInt(strtok.nextToken());
 		
@@ -4235,12 +4235,12 @@ public class Graph {
 	
 	
 	
-	static void bj7576() throws Exception//Åä¸¶Åä
+	static void bj7576() throws Exception//í† ë§ˆí† 
 	{
 		InputStreamReader k = new InputStreamReader(System.in);
 		BufferedReader b = new BufferedReader(k);
 		
-		StringTokenizer strtok = new StringTokenizer(b.readLine()," ");//Áöµµ Å©±â N
+		StringTokenizer strtok = new StringTokenizer(b.readLine()," ");//ì§€ë„ í¬ê¸° N
 		int M = Integer.parseInt(strtok.nextToken());
 		int N = Integer.parseInt(strtok.nextToken());
 		
@@ -4250,9 +4250,9 @@ public class Graph {
 		
 		Queue<Position> q=new LinkedList<>();
 
-		ArrayList<Integer> days = new ArrayList<>();//ÀÍ´Â ³¯Â¥µé
+		ArrayList<Integer> days = new ArrayList<>();//ìµëŠ” ë‚ ì§œë“¤
 		
-		for(int i=1;i<=N;i++)//µ¥ÀÌÅÍ ÀÔ·Â
+		for(int i=1;i<=N;i++)//ë°ì´í„° ì…ë ¥
 		{
 			strtok = new StringTokenizer(b.readLine()," ");
 			for(int j=1;j<=M;j++)
@@ -4269,14 +4269,14 @@ public class Graph {
 					days.add(0);
 				}
 				
-				if(graph[i][j]==-1)//ºóÄ­ÀÏ¶© ¹æ¹®Çß´Ù°í °¡Á¤
+				if(graph[i][j]==-1)//ë¹ˆì¹¸ì¼ë• ë°©ë¬¸í–ˆë‹¤ê³  ê°€ì •
 					visited[i][j]=true;
 				else if(graph[i][j]==0)
 					visited[i][j]=false;
 			}
 		}
 		
-		if(zeroCount==0)//Åä¸¶Åä°¡ ÀüºÎ ÀÍÀº »óÈ²
+		if(zeroCount==0)//í† ë§ˆí† ê°€ ì „ë¶€ ìµì€ ìƒí™©
 		{
 			System.out.println(0);
 			return;
@@ -4358,11 +4358,11 @@ public class Graph {
 		InputStreamReader k = new InputStreamReader(System.in);
 		BufferedReader b = new BufferedReader(k);
 		
-		int N = Integer.parseInt(b.readLine());//Áöµµ Å©±â N
+		int N = Integer.parseInt(b.readLine());//ì§€ë„ í¬ê¸° N
 		int[][] graph = new int[N+1][N+1];
 		boolean visited[][] = new boolean[N+1][N+1];
 		
-		for(int i=0;i<N;i++)//Áöµµ µ¥ÀÌÅÍ ÀÔ·Â
+		for(int i=0;i<N;i++)//ì§€ë„ ë°ì´í„° ì…ë ¥
 		{
 			String str = b.readLine();
 			for(int j=0;j<N;j++)
@@ -4372,13 +4372,13 @@ public class Graph {
 			}
 		}
 		
-		int hometownCount=0;//´ÜÁö¼ö
-		ArrayList<Integer> homeCounts = new ArrayList<>();//´ÜÁö¸¶´ÙÀÇ Áı °³¼ö. ÈÄ¿¡ ¿À¸§Â÷¼ø Á¤·Ä ÇÊ¿ä
-		int totalSearchCount=0;//ÃÑ Å½»ö¼ö°¡ N*NÀÌµÇ¸é Á¾·á
+		int hometownCount=0;//ë‹¨ì§€ìˆ˜
+		ArrayList<Integer> homeCounts = new ArrayList<>();//ë‹¨ì§€ë§ˆë‹¤ì˜ ì§‘ ê°œìˆ˜. í›„ì— ì˜¤ë¦„ì°¨ìˆœ ì •ë ¬ í•„ìš”
+		int totalSearchCount=0;//ì´ íƒìƒ‰ìˆ˜ê°€ N*Nì´ë˜ë©´ ì¢…ë£Œ
 		
-		int pivot;//0 È¤Àº 1, ÇÑ°³ ´ÜÁö Å½»ö ¿Ï·áÇÒ¶§¸¶´Ù ¹Ù²ñ
+		int pivot;//0 í˜¹ì€ 1, í•œê°œ ë‹¨ì§€ íƒìƒ‰ ì™„ë£Œí• ë•Œë§ˆë‹¤ ë°”ë€œ
 		
-		if(graph[1][1]==1)//½ÃÀÛ À§Ä¡ ¼ıÀÚ¿¡ µû¶ó¼­ Å½»ö pivot°ª ¼³Á¤
+		if(graph[1][1]==1)//ì‹œì‘ ìœ„ì¹˜ ìˆ«ìì— ë”°ë¼ì„œ íƒìƒ‰ pivotê°’ ì„¤ì •
 			pivot=1;
 
 		else
@@ -4391,7 +4391,7 @@ public class Graph {
 		while(totalSearchCount!=N*N)
 		{
 			totalSearchCount=0;
-			if(pivot==1)//¹Ù·Î bfs µ¹·Á¼­ Áı°³¼ö Ä«¿îÆ®
+			if(pivot==1)//ë°”ë¡œ bfs ëŒë ¤ì„œ ì§‘ê°œìˆ˜ ì¹´ìš´íŠ¸
 			{
 				q = new LinkedList<>();
 				q.offer(new Position(startX, startY));
@@ -4399,13 +4399,13 @@ public class Graph {
 				Position pos;
 				
 				visited[startX][startY]=true;
-				int count=0;//ÇØ´ç´ÜÁö Áı°³¼ö
+				int count=0;//í•´ë‹¹ë‹¨ì§€ ì§‘ê°œìˆ˜
 				while(!q.isEmpty())
 				{
-					//totalSearchCount++;//Å½»ö¼ö Áõ°¡
+					//totalSearchCount++;//íƒìƒ‰ìˆ˜ ì¦ê°€
 					count++;
 					pos = q.poll();
-					graph[pos.getX()][pos.getY()]=0;//Å½»ö¿Ï·áÇÑ°÷Àº 0À¸·Î ÀüÈ¯
+					graph[pos.getX()][pos.getY()]=0;//íƒìƒ‰ì™„ë£Œí•œê³³ì€ 0ìœ¼ë¡œ ì „í™˜
 					
 					if(pos.getX()!=N)
 					{
@@ -4447,9 +4447,9 @@ public class Graph {
 				homeCounts.add(count);
 				startX=1;
 				startY=1;
-				pivot=0;//pivotÀüÈ¯
+				pivot=0;//pivotì „í™˜
 			}
-			else//pivot 0ÀÏ¶§, bfs µ¹·Á¼­ 1³ª¿À´Â°÷ Ã£±â
+			else//pivot 0ì¼ë•Œ, bfs ëŒë ¤ì„œ 1ë‚˜ì˜¤ëŠ”ê³³ ì°¾ê¸°
 			{
 				q = new LinkedList<>();
 				q.offer(new Position(startX, startY));
@@ -4553,8 +4553,8 @@ public class Graph {
 		String str = b.readLine();
 
 		StringTokenizer strtok = new StringTokenizer(str," ");
-		int N = Integer.parseInt(strtok.nextToken());//ÁÙ¼ö(row)
-		int M = Integer.parseInt(strtok.nextToken());//ÁÙ¸¶´Ù Á¤¼ö°³¼ö(column)
+		int N = Integer.parseInt(strtok.nextToken());//ì¤„ìˆ˜(row)
+		int M = Integer.parseInt(strtok.nextToken());//ì¤„ë§ˆë‹¤ ì •ìˆ˜ê°œìˆ˜(column)
 		
 		int[][] graph = new int[N+1][M+1];
 		boolean visited[][] = new boolean[N+1][M+1];
@@ -4634,18 +4634,18 @@ public class Graph {
 		
 		String str = b.readLine();
 		StringTokenizer strtok = new StringTokenizer(str," ");
-		N = Integer.parseInt(strtok.nextToken());//Á¤Á¡ °³¼ö
-		M = Integer.parseInt(strtok.nextToken());//°£¼± °³¼ö
-		V = Integer.parseInt(strtok.nextToken());//½ÃÀÛÁ¡
+		N = Integer.parseInt(strtok.nextToken());//ì •ì  ê°œìˆ˜
+		M = Integer.parseInt(strtok.nextToken());//ê°„ì„  ê°œìˆ˜
+		V = Integer.parseInt(strtok.nextToken());//ì‹œì‘ì 
 		
 		visited = new boolean[N+1];
 		graph = new int[N+1][N+1];
 		
-		for(int i=0;i<N+1;i++)//±×·¡ÇÁÃÊ±âÈ­
+		for(int i=0;i<N+1;i++)//ê·¸ë˜í”„ì´ˆê¸°í™”
 			for(int j=0;j<N+1;j++)
 				graph[i][j] = 0;
 		
-		for(int i = 0;i<M;i++)//±×·¡ÇÁ »ı¼º
+		for(int i = 0;i<M;i++)//ê·¸ë˜í”„ ìƒì„±
 		{
 			str = b.readLine();
 			strtok = new StringTokenizer(str," ");
@@ -4677,7 +4677,7 @@ public class Graph {
 		System.out.print(v);
 		for(int i=1;i<visited.length;i++)
 		{
-			if(graph[v][i]==1 && !visited[i])//¹æ¹®ÇÑÀû¾øÀ¸¸é ¹æ¹®
+			if(graph[v][i]==1 && !visited[i])//ë°©ë¬¸í•œì ì—†ìœ¼ë©´ ë°©ë¬¸
 			{
 				System.out.print(" ");
 				adfs(i);
@@ -4691,7 +4691,7 @@ public class Graph {
 	{
 		initialize();
 		
-		visited[start] = true; //½ÃÀÛÁ¡
+		visited[start] = true; //ì‹œì‘ì 
 		q.offer(start);
 		//enqueue(start);
 		while(!q.isEmpty())
@@ -4702,7 +4702,7 @@ public class Graph {
 			
 			for(int i=1;i<visited.length;i++)
 			{
-				if(graph[v][i]==1 && !visited[i])//ÀÎÁ¢ÇØÀÖÀ¸¸é enqueue
+				if(graph[v][i]==1 && !visited[i])//ì¸ì ‘í•´ìˆìœ¼ë©´ enqueue
 				{
 					visited[i] = true;
 					q.offer(i);
