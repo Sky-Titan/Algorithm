@@ -31,15 +31,15 @@ public class Main {
 			}
 			else//보
 			{
-				Structure beem = new Structure(x,y,a);
+				Structure beam = new Structure(x,y,a);
 				//삭제
 				if(b == 0)
 				{
-					deleteBeem(beem, map);
+					deleteBeam(beam, map);
 				}
 				else//설치
 				{
-					installBeem(beem, map);
+					installBeam(beam, map);
 				}
 			}
 
@@ -176,61 +176,62 @@ public class Main {
 	static void installPillar(Structure pillar, HashMap<String, Structure> map)
 	{
 		String key = String.valueOf(pillar.x)+ String.valueOf(pillar.y)+ String.valueOf(pillar.a)+"";
-		String x = String.valueOf(pillar.x);
-		String y = String.valueOf(pillar.y);
-		String a = String.valueOf(pillar.a);
-		//바닥 위에 있는지
-		if(pillar.y==0)
-		{
-			map.put(key, pillar);
-			return;
-		}
 
-		//보의 한쪽 끝에 있는지
-		if(map.containsKey( String.valueOf(pillar.x-1)+ String.valueOf(pillar.y)+"1")
-				|| map.containsKey(String.valueOf(pillar.x) + String.valueOf(pillar.y) + "1") )
-		{
-			pillar.isBottomOnBeem = true;
-			map.put(key, pillar);
-			return;
-		}
 
-		//다른 기둥 위인지
-		if (map.containsKey( String.valueOf(pillar.x) + String.valueOf(pillar.y - 1) +"0"))
-		{
-			pillar.isBottomOnPillar = true;
-			map.put(key, pillar);
-			return;
-		}
+		if(canInstallPillar(pillar, map))
+			map.putIfAbsent(key, pillar);
+
+		return;
 	}
 
 	//보 설치
-	static void installBeem(Structure beem, HashMap<String, Structure> map)
+	static void installBeam(Structure beam, HashMap<String, Structure> map)
 	{
-		String key = String.valueOf(beem.x)+ String.valueOf(beem.y)+ String.valueOf(beem.a) +"";
+		String key = String.valueOf(beam.x)+ String.valueOf(beam.y)+ String.valueOf(beam.a) +"";
 
-		//한쪽끝이 기둥위에 있는지
-		if(map.containsKey( String.valueOf(beem.x) + String.valueOf(beem.y - 1)+"0") )
+
+		if(canInstallBeam(beam, map))
+			map.putIfAbsent(key, beam);
+
+		return;
+	}
+
+	static boolean canInstallPillar(Structure pillar, HashMap<String, Structure> map)
+	{
+		//바닥 위에 있는지
+		if(pillar.y==0)
 		{
-			beem.isLeftOnPillar = true;
-			map.put(key, beem);
-			return;
+			return true;
 		}
-		if(map.containsKey( String.valueOf(beem.x+1) + String.valueOf(beem.y - 1)+"0") )
+
+		//보의 한쪽 끝부분 위에 있는지
+		if(isPillarOnLeftBeam(pillar, map) || isPillarOnRightBeam(pillar, map) )
 		{
-			beem.isRightOnPillar = true;
-			map.put(key, beem);
-			return;
+			return true;
+		}
+
+		//다른 기둥 위인지
+		if (isPillarOnPillar(pillar, map))
+		{
+			return true;
+		}
+		return false;
+	}
+
+	static boolean canInstallBeam(Structure beam, HashMap<String, Structure> map)
+	{
+		//한쪽끝이 기둥위에 있는지
+		if( isBeamOnLeftPillar(beam, map) || isBeamOnRightPillar(beam, map))
+		{
+			return true;
 		}
 
 		//양쪽 끝부분이 다른 보와 연결
-		if(map.containsKey( String.valueOf(beem.x-1) + String.valueOf(beem.y) + "1")
-				&& map.containsKey( String.valueOf(beem.x+1) + String.valueOf(beem.y) + "1" ))
+		if( isBeamConnectLeftBeam(beam, map) && isBeamConnectRightBeam(beam, map))
 		{
-			beem.isBothConnectBeem = true;
-			map.put(key, beem);
-			return;
+			return true;
 		}
+		return false;
 	}
 
 	//기둥 삭제
@@ -238,70 +239,160 @@ public class Main {
 	{
 		String key = String.valueOf(pillar.x)+ String.valueOf(pillar.y)+ String.valueOf(pillar.a) +"";
 
-		//삭제할 기둥 위에 기둥 있는지
-		if(map.containsKey( String.valueOf(pillar.x) + String.valueOf(pillar.y + 1) + "0"))
-			return;
-
-		//양쪽에 있는 보들이 조건 만족하는지 검사
-		//오른쪽 보만 있음
-		if(!map.containsKey( String.valueOf(pillar.x-1) + String.valueOf(pillar.y+1) + "1")
-			&& map.containsKey( String.valueOf(pillar.x) + String.valueOf(pillar.y+1) + "1"))
-			return;
-		//왼쪽보만 있음
-		if(map.containsKey( String.valueOf(pillar.x-1) + String.valueOf(pillar.y+1) + "1")
-				&& !map.containsKey( String.valueOf(pillar.x) + String.valueOf(pillar.y+1) + "1"))
-			return;
-
 		map.remove(key);
+
+		Iterator<String> iterator = map.keySet().iterator();
+
+		while(iterator.hasNext())
+		{
+			Structure structure = map.get(iterator.next());
+			if(structure.a==0)//기둥
+			{
+				if(!canInstallPillar(structure, map))
+				{
+					map.putIfAbsent(key, pillar);
+					return;
+				}
+			}
+			else//보
+			{
+				if(!canInstallBeam(structure, map))
+				{
+					map.putIfAbsent(key, pillar);
+					return;
+				}
+			}
+		}
 	}
 
 	//보 삭제
-	static void deleteBeem(Structure beem, HashMap<String, Structure> map)
+	static void deleteBeam(Structure beam, HashMap<String, Structure> map)
 	{
-		String key = String.valueOf(beem.x)+ String.valueOf(beem.y)+ String.valueOf(beem.a) +"";
-
-		//양쪽 보들이 기둥에 연결되어 있는지
-		// 왼쪽 보
-		if(map.containsKey( String.valueOf(beem.x-1) + String.valueOf(beem.y) + "1" ))
-		{
-			Structure leftBeem = map.get( String.valueOf(beem.x-1) + String.valueOf(beem.y) + "1");
-
-			if(!leftBeem.isLeftOnPillar)
-				return;
-		}
-		//오른쪽 보
-		if(map.containsKey( String.valueOf(beem.x+1) + String.valueOf(beem.y) + "1"))
-		{
-			Structure rightBeem = map.get( String.valueOf(beem.x+1) + String.valueOf(beem.y) + "1");
-
-			if(!rightBeem.isRightOnPillar)
-				return;
-		}
-
-		// 본인 양쪽 끝 위에 기둥이 있는지
-		//왼쪽
-		if(map.containsKey( String.valueOf(beem.x) + String.valueOf(beem.y) + "0" ))
-			return;
-		//오른쪽
-		if(map.containsKey( String.valueOf(beem.x + 1) + String.valueOf(beem.y) +"0" ))
-			return;
+		String key = String.valueOf(beam.x)+ String.valueOf(beam.y)+ String.valueOf(beam.a) +"";
 
 		map.remove(key);
+
+		Iterator<String> iterator = map.keySet().iterator();
+
+		while(iterator.hasNext())
+		{
+			Structure structure = map.get(iterator.next());
+			if(structure.a==0)//기둥
+			{
+				if(!canInstallPillar(structure, map))
+				{
+					map.putIfAbsent(key, beam);
+					return;
+				}
+			}
+			else//보
+			{
+				if(!canInstallBeam(structure, map))
+				{
+					map.putIfAbsent(key, beam);
+					return;
+				}
+			}
+		}
 	}
+
+
+	//기둥 왼쪽위에 보 존재 여부
+	static boolean isPillarUnderLeftBeam(Structure pillar, HashMap<String, Structure> map)
+	{
+		if(map.containsKey(String.valueOf(pillar.x - 1) + String.valueOf(pillar.y + 1) + "1"))
+			return true;
+		return false;
+	}
+	//기둥 오른쪽위에 보 존재 여부
+	static boolean isPillarUnderRightBeam(Structure pillar, HashMap<String, Structure> map)
+	{
+		if(map.containsKey(String.valueOf(pillar.x) + String.valueOf(pillar.y + 1) + "1"))
+			return true;
+		return false;
+	}
+	//기둥 왼쪽아래에 보 존재 여부
+	static boolean isPillarOnLeftBeam(Structure pillar, HashMap<String, Structure> map)
+	{
+		if(map.containsKey(String.valueOf(pillar.x - 1) + String.valueOf(pillar.y) + "1"))
+			return true;
+		return false;
+	}
+	//기둥 오른쪽아래에 보 존재 여부
+	static boolean isPillarOnRightBeam(Structure pillar, HashMap<String, Structure> map)
+	{
+		if(map.containsKey(String.valueOf(pillar.x) + String.valueOf(pillar.y) + "1"))
+			return true;
+		return false;
+	}
+
+	//기둥 위에 기둥 존재 여부
+	static boolean isPillarUnderPillar(Structure pillar, HashMap<String, Structure> map)
+	{
+		if(map.containsKey(String.valueOf(pillar.x) + String.valueOf(pillar.y + 1) + "0"))
+			return true;
+		return false;
+	}
+
+	//기둥 밑에 기둥 존재 여부
+	static boolean isPillarOnPillar(Structure pillar, HashMap<String, Structure> map)
+	{
+		if(map.containsKey(String.valueOf(pillar.x) + String.valueOf(pillar.y - 1) + "0"))
+			return true;
+		return false;
+	}
+
+	//보 왼쪽 보 존재 여부
+	static boolean isBeamConnectLeftBeam(Structure beam, HashMap<String, Structure> map)
+	{
+		if(map.containsKey(String.valueOf(beam.x - 1) + String.valueOf(beam.y) + "1"))
+			return true;
+		return false;
+	}
+
+	//보 오른쪽 보 존재 여부
+	static boolean isBeamConnectRightBeam(Structure beam, HashMap<String, Structure> map)
+	{
+		if(map.containsKey(String.valueOf(beam.x + 1) + String.valueOf(beam.y) + "1"))
+			return true;
+		return false;
+	}
+
+	//보 왼쪽 위 기둥 존재 여부
+	static boolean isBeamUnderLeftPillar(Structure beam, HashMap<String, Structure> map)
+	{
+		if(map.containsKey(String.valueOf(beam.x) + String.valueOf(beam.y) + "0"))
+			return true;
+		return false;
+	}
+	//보 오른쪽 위 기둥 존재 여부
+	static boolean isBeamUnderRightPillar(Structure beam, HashMap<String, Structure> map)
+	{
+		if(map.containsKey(String.valueOf(beam.x+1) + String.valueOf(beam.y) + "0"))
+			return true;
+		return false;
+	}
+
+	//보 왼쪽 아래 기둥 존재 여부
+	static boolean isBeamOnLeftPillar(Structure beam, HashMap<String, Structure> map)
+	{
+		if(map.containsKey(String.valueOf(beam.x) + String.valueOf(beam.y-1) + "0"))
+			return true;
+		return false;
+	}
+	//보 오른쪽 아래 기둥 존재 여부
+	static boolean isBeamOnRightPillar(Structure beam, HashMap<String, Structure> map)
+	{
+		if(map.containsKey(String.valueOf(beam.x+1) + String.valueOf(beam.y-1) + "0"))
+			return true;
+		return false;
+	}
+
 
 	static class Structure{
 		int a; //기둥이면 0, 보면 1
 		int x, y;
 
-		//보용
-		boolean isBothConnectBeem = false;
-
-		boolean isLeftOnPillar = false;
-		boolean isRightOnPillar = false;
-
-		//기둥용
-		boolean isBottomOnPillar = false;
-		boolean isBottomOnBeem = false;
 
 		public Structure()
 		{
