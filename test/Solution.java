@@ -1,4 +1,3 @@
-
 import java.util.*;
 public class Solution {
 
@@ -30,7 +29,7 @@ public class Solution {
 			//설치
 			if(b == CONSTRUCT)
 				construct(structure);
-			//삭제
+				//삭제
 			else
 				deConstruct(structure);
 		}
