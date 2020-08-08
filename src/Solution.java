@@ -1,202 +1,366 @@
-import java.awt.List;
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
-import java.lang.reflect.Array;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.Queue;
-import java.util.StringTokenizer;
+
 import java.util.*;
 public class Solution {
-	
-	 static boolean isFinish = false;
-     static boolean isCycle = false;
-     static boolean isMeet[];
-     
-     static int count = 0;
-     static ArrayList<Integer> cycle = new ArrayList<>();
-	static int solution(int num, int[] mark) {
-	     int answer = -1;
-	    
-	     isMeet = new boolean[mark.length];
-	     isMeet[0] = true;
-	    
-	     answer = dfs(0,num,mark);
-	     
-	    // for(int i=cycle.size()-1;i>=0;i--)
-	  //  	 System.out.println(cycle.get(i));
-	     
-	     return answer;
-	}
-	
-	static int dfs(int now ,int num ,int[] mark )
-	{
-		int next = mark[now];
-		count++;
-		
-		if(count == num)
+
+	private static int N;
+	private static HashMap<String, Structure> map;
+
+	public static int[][] solution(int n, int[][] build_frame) {
+		int[][] answer = {};
+
+		N = n;
+		map = new HashMap<>(); //key : "xya"
+
+		for(int[] frame : build_frame)
 		{
-			isFinish = true;
-			return next;
-		}
-		
-		if(isMeet[next])//cycle¹ß°ß
-		{
-			cycle.add(now);
-			isCycle = true;
-			return next;
-		}
-		else
-		{
-			isMeet[next] = true;
-			
-			int cycle_origin = dfs(next,num ,mark);
-			
-			//cycle Çü¼º¿Ï·á
-			if(now == cycle_origin)
+			int x = frame[0]; //ê°€ë¡œì¢Œí‘œ
+			int y = frame[1]; //ì„¸ë¡œì¢Œí‘œ
+			int a = frame[2]; //êµ¬ì¡°ë¬¼ 0 :ê¸°ë‘¥, 1 : ë³´
+			int b = frame[3]; //ì„¤ì¹˜ì—¬ë¶€ 0 : ì‚­ì œ, 1 : ì„¤ì¹˜
+
+			//ê¸°ë‘¥
+			if(a == 0)
 			{
-				if(isCycle)
+				Structure pillar = new Structure(x,y,a);
+				//ì‚­ì œ
+				if(b == 0)
 				{
-					isFinish = true;
-					cycle.add(now);
-					
-					//System.out.println(num-count[0]);
-					int result_index = (num - count) % cycle.size();
-					
-					return cycle.get(cycle.size()-1-result_index);
+					deletePillar(pillar);
 				}
-				else
-					return cycle_origin;
+				else//ì„¤ì¹˜
+				{
+					installPillar(pillar);
+				}
 			}
-			else
+			else//ë³´
 			{
-				if(!isFinish)
-					cycle.add(now);
-				return cycle_origin;
+				Structure beam = new Structure(x,y,a);
+				//ì‚­ì œ
+				if(b == 0)
+				{
+					deleteBeam(beam);
+				}
+				else//ì„¤ì¹˜
+				{
+					installBeam(beam);
+				}
+			}
+
+		}
+
+		Iterator<Structure> iterator = map.values().iterator();
+		answer = new int[map.values().size()][3];
+		int i = 0;
+
+		while(iterator.hasNext())
+		{
+			Structure structure = iterator.next();
+
+			answer[i][0] = structure.x;
+			answer[i][1] = structure.y;
+			answer[i][2] = structure.a;
+			i++;
+		}
+
+		mergerSort(answer, 0, answer.length-1);
+
+
+		return answer;
+	}
+
+	static void mergerSort(int answer[][], int left, int right)
+	{
+		if(left < right)
+		{
+			int mid = (left + right) / 2;
+			mergerSort(answer, left, mid);
+			mergerSort(answer, mid+1, right);
+			merge(answer, left, mid, right);
+		}
+	}
+
+	static void merge(int answer[][], int left, int mid, int right)
+	{
+		int i = left;
+		int j = mid + 1;
+		int k = 0;
+		int temp[][] = new int[right - left + 1][3];
+
+		while(i <= mid && j <= right)
+		{
+			//xì¢Œí‘œ ê¸°ì¤€ ì˜¤ë¦„ì°¨ìˆœ ì •ë ¬
+			if(answer[i][0] < answer[j][0])
+			{
+				temp[k][0] = answer[i][0];
+				temp[k][1] = answer[i][1];
+				temp[k][2] = answer[i][2];
+				k++;
+				i++;
+			}
+			else if(answer[i][0] > answer[j][0])
+			{
+				temp[k][0] = answer[j][0];
+				temp[k][1] = answer[j][1];
+				temp[k][2] = answer[j][2];
+				k++;
+				j++;
+			}
+			else if(answer[i][0] == answer[j][0])
+			{
+				//yì¢Œí‘œ ê¸°ì¤€ ì˜¤ë¦„ì°¨ìˆœ ì •ë ¬
+				if(answer[i][1] < answer[j][1])
+				{
+					temp[k][0] = answer[i][0];
+					temp[k][1] = answer[i][1];
+					temp[k][2] = answer[i][2];
+					k++;
+					i++;
+				}
+				else if(answer[i][1] > answer[j][1])
+				{
+					temp[k][0] = answer[j][0];
+					temp[k][1] = answer[j][1];
+					temp[k][2] = answer[j][2];
+					k++;
+					j++;
+				}
+				else if(answer[i][1] == answer[j][1])
+				{
+					//ê¸°ë‘¥ì´ ë³´ë³´ë‹¤ ì•ì—
+					if(answer[i][2] < answer[j][2])
+					{
+						temp[k][0] = answer[i][0];
+						temp[k][1] = answer[i][1];
+						temp[k][2] = answer[i][2];
+						k++;
+						i++;
+					}
+					else
+					{
+						temp[k][0] = answer[j][0];
+						temp[k][1] = answer[j][1];
+						temp[k][2] = answer[j][2];
+						k++;
+						j++;
+					}
+				}
+			}
+		}
+
+		while(i <= mid)
+		{
+			temp[k][0] = answer[i][0];
+			temp[k][1] = answer[i][1];
+			temp[k][2] = answer[i][2];
+			k++;
+			i++;
+		}
+
+		while(j <= right)
+		{
+			temp[k][0] = answer[j][0];
+			temp[k][1] = answer[j][1];
+			temp[k][2] = answer[j][2];
+			k++;
+			j++;
+		}
+
+		i = left;
+		for(k=0;k < temp.length;k++)
+		{
+			answer[i][0] = temp[k][0];
+			answer[i][1] = temp[k][1];
+			answer[i][2] = temp[k][2];
+			i++;
+		}
+	}
+
+
+	//ê¸°ë‘¥ ì„¤ì¹˜
+	static void installPillar(Structure pillar)
+	{
+		String key = String.valueOf(pillar.x)+ String.valueOf(pillar.y)+ String.valueOf(pillar.a);
+
+		if(canInstallPillar(pillar, map))
+			map.putIfAbsent(key, pillar);
+
+		return;
+	}
+
+	//ë³´ ì„¤ì¹˜
+	static void installBeam(Structure beam)
+	{
+		String key = String.valueOf(beam.x)+ String.valueOf(beam.y)+ String.valueOf(beam.a);
+
+		if(canInstallBeam(beam, map))
+			map.putIfAbsent(key, beam);
+
+		return;
+	}
+
+	static boolean canInstallPillar(Structure pillar, HashMap<String, Structure> map)
+	{
+		//ë°”ë‹¥ ìœ„ì— ìˆëŠ”ì§€, ë³´ ìœ„ì— ìˆëŠ”ì§€, ê¸°ë‘¥ ìœ„ì— ìˆëŠ”ì§€
+		if(pillar.y==0)
+			return true;
+		if(0 < pillar.x)
+		{
+			if (isPillarOnLeftBeam(pillar))
+				return true;
+		}
+
+		if(pillar.x < N)
+		{
+			if(isPillarOnRightBeam(pillar))
+				return true;
+		}
+
+		if(isPillarOnPillar(pillar))
+			return true;
+
+		return false;
+	}
+
+	static boolean canInstallBeam(Structure beam, HashMap<String, Structure> map)
+	{
+		//í•œìª½ëì´ ê¸°ë‘¥ìœ„ì— ìˆëŠ”ì§€, ì–‘ìª½ì´ ë™ì‹œì— ë³´ì™€ ì—°ê²°ëëŠ”ì§€
+		if(isBeamOnLeftPillar(beam))
+			return true;
+		if(isBeamOnRightPillar(beam))
+			return true;
+
+		if(0 < beam.x && beam.x < N)
+		{
+			if(isBeamConnectLeftBeam(beam) && isBeamConnectRightBeam(beam))
+				return true;
+		}
+
+		return false;
+	}
+
+	//ê¸°ë‘¥ ì‚­ì œ
+	static void deletePillar(Structure pillar)
+	{
+		String key = String.valueOf(pillar.x)+ String.valueOf(pillar.y)+ String.valueOf(pillar.a) ;
+
+		map.remove(key);
+
+
+		Iterator<Structure> iterator = map.values().iterator();
+
+		while(iterator.hasNext())
+		{
+			Structure structure = iterator.next();
+			if(structure.a==0)//ê¸°ë‘¥
+			{
+				if(!canInstallPillar(structure, map))
+				{
+					map.putIfAbsent(key, pillar);
+					return;
+				}
+			}
+			else//ë³´
+			{
+				if(!canInstallBeam(structure, map))
+				{
+					map.putIfAbsent(key, pillar);
+					return;
+				}
 			}
 		}
 	}
-	
-	static String solution2(String compressed) {
-        String answer = "";
-        
-        boolean isRepeat = false;
-        String repeat_count_str="";
-        int repeat_count=0;
-        
-        String repeat_str ="";
-        
-        Stack<String> str_stack = new Stack<>();//¹®ÀÚ¿­ ½ºÅÃ
-        Stack<Integer> num_stack = new Stack<>();//¹İº¹È½¼ö ½ºÅÃ
-        Stack<Character> start_stack = new Stack<>();//°ıÈ£ ½ºÅÃ
-        
-        for(int i=0;i<compressed.length();i++)
-        {
-        	char now = compressed.charAt(i);
-        	
-        	//¼ıÀÚ
-        	if(Character.isDigit(now))
-        	{
-        		if(!isRepeat)
-        			isRepeat = true;
-        		
-        		repeat_count_str += now;
-        	}
-        	else if(now == '(')
-        	{
-        		num_stack.push(Integer.parseInt(repeat_count_str));
-        		start_stack.push(now);
-        		
-        		repeat_count_str ="";//ÃÊ±âÈ­
-        	}
-        	else if(now == ')')
-        	{
-        		String str = "";
-        		String str2 = "";
-        		//start_stack.push(now);
-        		start_stack.pop();//°ıÈ£ ½ºÅÃ ÇÏ³ª ºñ¿ì±â
-        		//¹İº¹¹®ÀÚ ºñ¾î ÀÖ´Â °æ¿ì -> ¾È¿¡ pop ÇØ¼­ ¹İº¹ ÈÄ »ğÀÔ
-        		if(repeat_str.equals(""))
-        		{
-        			repeat_str = str_stack.pop();
-        			repeat_count = num_stack.pop();
-        		}
-        		else //ºñ¾îÀÖÁö ¾ÊÀº °æ¿ì -> ÇöÀç repeat_str ¹İº¹ ÈÄ ¿¬°á ÈÄ  »ğÀÔ
-        		{
-        			if(!str_stack.isEmpty() && !start_stack.isEmpty())
-            			str = str_stack.pop();
-            		
-            		repeat_count = num_stack.pop();//¹İº¹È½¼ö pop
-        		}
-        		
-        		for(int k=0;k<repeat_count;k++)
-        		{
-        			str += repeat_str;
-        		}
-    			
-    			str_stack.push(str);
-        		
-        		
-        		repeat_str = "";
-        		isRepeat = false;
-        	}
-        	else
-        	{
-        		//°ıÈ£ ½ºÅÃÀÌ ºñ¾îÀÖÀ¸¸é ¹Ù·Î »ğÀÔ
-        		if(!isRepeat)
-        		{
-        			String str ="";
-        			if(!str_stack.isEmpty())
-        				str = str_stack.pop();
-        			str += now;
-        			str_stack.push(str);
-        		}
-        		else //¾È ºñ¾îÀÖÀ¸¸é ¹İº¹ ¹®ÀÚ¿¡ »ğÀÔ
-        		{
-        			repeat_str += now;
-        		}
-        	}
-        }
-        for(int i=0;i<str_stack.size();i++)
-        	System.out.println(str_stack.get(i));
-        //answer = str_stack.pop();
-        return answer;
-    }
-	
-	static int solution1(String p) {
-        int answer = 0;
-        
-        //¿ŞÂÊÀ¸·Î ºüÁ®³ª¿Ã ¼ö ÀÖ´Â °æ¿ì
-        for(int i=0;i<p.length();i++)
-        {
-        	int now = p.charAt(i);
-        	
-        	if(now == '<')
-        	{
-        		answer++;
-        	}
-        	else
-        		break;
-        		
-        }
-        
-        for(int i=p.length()-1;i>=0;i--)
-        {
-        	int now = p.charAt(i);
-        	
-        	if(now == '>')
-        	{
-        		answer++;
-        	}
-        	else
-        		break;
-        }
-        
-        return answer;
-    }
-	 
-	 
+
+	//ë³´ ì‚­ì œ
+	static void deleteBeam(Structure beam)
+	{
+		String key = String.valueOf(beam.x)+ String.valueOf(beam.y)+ String.valueOf(beam.a);
+		map.remove(key);
+
+
+		Iterator<Structure> iterator = map.values().iterator();
+
+		while(iterator.hasNext())
+		{
+			Structure structure = iterator.next();
+			if(structure.a==0)//ê¸°ë‘¥
+			{
+				if(!canInstallPillar(structure, map))
+				{
+					map.putIfAbsent(key, beam);
+					return;
+				}
+			}
+			else//ë³´
+			{
+				if(!canInstallBeam(structure, map))
+				{
+					map.putIfAbsent(key, beam);
+					return;
+				}
+			}
+		}
+	}
+
+
+	//ê¸°ë‘¥ ì™¼ìª½ì•„ë˜ì— ë³´ ì¡´ì¬ ì—¬ë¶€
+	static boolean isPillarOnLeftBeam(Structure pillar)
+	{
+		return map.containsKey(String.valueOf(pillar.x - 1) + String.valueOf(pillar.y) + "1");
+	}
+	//ê¸°ë‘¥ ì˜¤ë¥¸ìª½ì•„ë˜ì— ë³´ ì¡´ì¬ ì—¬ë¶€
+	static boolean isPillarOnRightBeam(Structure pillar)
+	{
+		return map.containsKey(String.valueOf(pillar.x) + String.valueOf(pillar.y) + "1");
+	}
+
+
+	//ê¸°ë‘¥ ë°‘ì— ê¸°ë‘¥ ì¡´ì¬ ì—¬ë¶€
+	static boolean isPillarOnPillar(Structure pillar)
+	{
+		return map.containsKey(String.valueOf(pillar.x) + String.valueOf(pillar.y - 1) + "0");
+	}
+
+	//ë³´ ì™¼ìª½ ë³´ ì¡´ì¬ ì—¬ë¶€
+	static boolean isBeamConnectLeftBeam(Structure beam)
+	{
+		return map.containsKey(String.valueOf(beam.x - 1) + String.valueOf(beam.y) + "1");
+	}
+
+	//ë³´ ì˜¤ë¥¸ìª½ ë³´ ì¡´ì¬ ì—¬ë¶€
+	static boolean isBeamConnectRightBeam(Structure beam)
+	{
+		return map.containsKey(String.valueOf(beam.x + 1) + String.valueOf(beam.y) + "1");
+	}
+
+	//ë³´ ì™¼ìª½ ì•„ë˜ ê¸°ë‘¥ ì¡´ì¬ ì—¬ë¶€
+	static boolean isBeamOnLeftPillar(Structure beam)
+	{
+		return map.containsKey(String.valueOf(beam.x) + String.valueOf(beam.y-1) + "0");
+	}
+	//ë³´ ì˜¤ë¥¸ìª½ ì•„ë˜ ê¸°ë‘¥ ì¡´ì¬ ì—¬ë¶€
+	static boolean isBeamOnRightPillar(Structure beam)
+	{
+		return map.containsKey(String.valueOf(beam.x+1) + String.valueOf(beam.y-1) + "0");
+	}
+
+
+	static class Structure{
+		int a; //ê¸°ë‘¥ì´ë©´ 0, ë³´ë©´ 1
+		int x, y;
+
+
+		public Structure()
+		{
+
+		}
+
+		public Structure(int x, int y, int a)
+		{
+			this.x = x;
+			this.y = y;
+			this.a = a;
+		}
+
+
+	}
 }
