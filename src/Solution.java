@@ -1,308 +1,206 @@
-import java.util.ArrayList;
+import java.util.*;
 
-public class Solution {
 
+class Solution {
+
+	static int[][] map;
+	static boolean[][] visited;
 	static int N;
-	static int[] weak_a;
-	static int[] dist_a;
-	static int min_people;
-	static int visit_count = 0;
-	static boolean visited[];
-	static int FRIEND_NUMBER;//친구들 숫자
 
+	public static int solution(int[][] board) {
+		int answer = 0;
 
-	public static int solution(int n, int[] weak, int[] dist) {
+		map = board;
+		N = board.length;
 
-		N = n;
-		weak_a = weak;
-		dist_a = dist;
+		visited = new boolean[N][N];
 
-		FRIEND_NUMBER = dist.length;
+		Queue<Robot> queue = new LinkedList<>();
+		queue.offer(new Robot(0,0,0,1, 0));
 
-		visited = new boolean[weak.length];
-
-		min_people = FRIEND_NUMBER+1;
-
-		//한계 인원 결정
-		for(int people = 1; people <= FRIEND_NUMBER;people++)
+		while (!queue.isEmpty())
 		{
-			//투입 인원 결정
-			for(int friend = FRIEND_NUMBER-1; friend >= 0;friend--)
+			Robot robot = queue.poll();
+			int pos_1_x = robot.pos_1_x;
+			int pos_1_y = robot.pos_1_y;
+			int pos_2_x = robot.pos_2_x;
+			int pos_2_y = robot.pos_2_y;
+			int time = robot.time;
+
+			if( (pos_1_x == N-1 && pos_1_y == N-1) || (pos_2_x == N-1 && pos_2_y == N-1) )
+				return time;
+
+			//상하좌우
+			int x[] = {-1, 1, 0, 0};
+			int y[] = {0, 0, -1, 1};
+
+			//이동 케이스
+			for(int i = 0; i < 4;i++)
 			{
-				//시작 위치 결정
-				for(int start = 0; start < weak_a.length; start++)
+				int x_1 = pos_1_x + x[i];
+				int y_1 = pos_1_y + y[i];
+				int x_2 = pos_2_x + x[i];
+				int y_2 = pos_2_y + y[i];
+
+				if(0 <= x_1 && x_1 < N && 0 <= y_1 && y_1 < N
+						&& 0 <= x_2 && x_2 < N && 0 <= y_2 && y_2 < N)
 				{
-					int current = clockVisit(start, dist_a[friend]);
-					dfs(people, friend, 1, current);
-					clockUnvisit(start, dist_a[friend]);
-
-					//최소 인원 찾음
-					if(min_people <= people)
-						return min_people;
-				}
-
-				for(int start = weak_a.length-1 ; start >= 0; start--)
-				{
-					int current = counterClockVisit(start, dist_a[friend]);
-					dfs_counter(people, friend, 1, current);
-					counterClockUnvisit(start, dist_a[friend]);
-
-					//최소 인원 찾음
-					if(min_people <= people)
-						return min_people;
-				}
-			}
-		}
-
-		return -1;
-	}
-
-
-	public static void dfs(int peopleLimit, int start_friend, int peopleCount, int current)
-	{
-		//한계 인원 됨
-		if(peopleLimit == peopleCount)
-		{
-			//완전 방문 완료
-			if(isCompleteVisit())
-			{
-				min_people = Math.min(min_people, peopleCount);
-			}
-		}
-		else
-		{
-			//그 다음 친구 결정
-			for(int friend = start_friend-1;friend >=0; friend--)
-			{
-				for(int start = current; start < weak_a.length; start++)
-				{
-					if(!visited[start])
+					//벽 아닐 때만 방문
+					if(map[x_1][y_1] == 0 && map[x_2][y_2] == 0)
 					{
-						int current2 = clockVisit(start, dist_a[friend]);
-						dfs(peopleLimit, friend, peopleCount+1, current2);
-						clockUnvisit(start, dist_a[friend]);
+						if(!visited[x_1][y_1] || !visited[x_2][y_2])
+						{
+							visited[x_1][y_1] = true;
+							visited[x_2][y_2] = true;
 
-						if(min_people <= peopleLimit)
-							return;
+							queue.offer(new Robot(x_1, y_1, x_2, y_2,time+1));
+						}
 					}
 				}
 			}
-		}
 
-	}
+			//회전 케이스
+			//1 : 1번축 시계방향
+			int axis_x = pos_1_x;//축 x
+			int axis_y = pos_1_y;//축 y
+			int move_x = pos_2_x;//움직이는 x
+			int move_y = pos_2_y;//움직이는 y
 
-	public static void dfs_counter(int peopleLimit, int start_friend, int peopleCount, int current)
-	{
-		//한계 인원 됨
-		if(peopleLimit == peopleCount)
-		{
-			//완전 방문 완료
-			if(isCompleteVisit())
+			if(axis_x  == move_x) //가로 방향
 			{
-				min_people = Math.min(min_people, peopleCount);
-			}
-		}
-		else
-		{
-			//그 다음 친구 결정
-			for(int friend = start_friend-1; friend >= 0; friend--)
-			{
-				for(int start = current; start >=0; start--)
+				//축이 더 뒤 열에 있는 경우
+				if(axis_y < move_y)
 				{
-					if(!visited[start])
-					{
-						int current2 = counterClockVisit(start, dist_a[friend]);
-						dfs_counter(peopleLimit, friend, peopleCount+1, current2);
-						counterClockUnvisit(start, dist_a[friend]);
+					//시계 방향
+					int x2 = move_x + 1;
+					int y2 = move_y - 1;
 
-						if(min_people <= peopleLimit)
-							return;
+					if(0 <= x2 && x2 < N && 0 <= y2 && y2 < N)
+					{
+						//축 대각선 방향 빈 공간인지 확인
+						if(map[axis_x+1][move_y] == 0)
+						{
+							if(map[x2][y2] == 0 &&!visited[x2][y2])
+							{
+								visited[x2][y2] = true;
+								queue.offer(new Robot(axis_x, axis_y, x2,y2, time+1));
+							}
+						}
+					}
+
+					//반시계 방향
+					x2 = move_x - 1;
+					y2 = move_y - 1;
+
+					if(0 <= x2 && x2 < N && 0 <= y2 && y2 < N)
+					{
+						//축 대각선 방향 빈 공간인지 확인
+						if(map[axis_x-1][move_y] == 0)
+						{
+							if(map[x2][y2] == 0 &&!visited[x2][y2])
+							{
+								visited[x2][y2] = true;
+								queue.offer(new Robot(axis_x, axis_y, x2,y2, time+1));
+							}
+						}
+					}
+				}
+				//축이 더 앞열
+				else
+				{
+					int x2 = move_x - 1;
+					int y2 = move_y + 1;
+
+					if(0 <= x2 && x2 < N && 0 <= y2 && y2 < N)
+					{
+						//축 대각선 방향 빈 공간인지 확인
+						if(map[axis_x-1][move_y] == 0)
+						{
+							if(map[x2][y2] == 0 &&!visited[x2][y2])
+							{
+								visited[x2][y2] = true;
+								queue.offer(new Robot(axis_x, axis_y, x2,y2, time+1));
+							}
+						}
 					}
 				}
 			}
-		}
-
-	}
-
-	//모든 weak 지점 방문 끝났는지 체크
-	public static boolean isCompleteVisit()
-	{
-		if(visit_count == visited.length)
-			return true;
-		return false;
-	}
-
-
-	//시계방향 방문
-	public static int clockVisit(int start, int distance)
-	{
-		int current = start+1;
-		int former = start;
-
-		if(start == weak_a.length - 1)
-			current = 0;
-
-		setVisit(start);
-
-		while(true)
-		{
-			int move = weak_a[current] - weak_a[former];
-
-			//원형 순환
-			if(move < 0)
-				move += N;
-
-			if(distance - move >= 0 && !visited[current])
-			{
-				distance -= move;
-				setVisit(current);
-
-				former = current;
-
-				if(current == weak_a.length-1)
-					current = 0;
-				else
-					current++;
-
-			}
+			//세로 방향
 			else
-				break;
-		}
-
-		return current;
-	}
-
-	//시계방향 방문 해제
-	public static int clockUnvisit(int start, int distance)
-	{
-		int current = start+1;
-		int former = start;
-
-		if(start == weak_a.length - 1)
-			current = 0;
-
-		setUnvisit(start);
-
-		while(true)
-		{
-			int move = weak_a[current] - weak_a[former];
-
-			//원형 순환
-			if(move < 0)
-				move += N;
-
-			if(distance - move >= 0 && visited[current])
 			{
-				distance -= move;
-				setUnvisit(current);
+				//축이 위에 있음
+				if(axis_x < move_x)
+				{
+					int x2 = move_x - 1;
+					int y2 = move_y - 1;
 
-				former = current;
+					if(0 <= x2 && x2 < N && 0 <= y2 && y2 < N)
+					{
+						//축 대각선 방향 빈 공간인지 확인
+						if(map[move_x][axis_y-1] == 0)
+						{
+							if(map[x2][y2] == 0 &&!visited[x2][y2])
+							{
+								visited[x2][y2] = true;
+								queue.offer(new Robot(axis_x, axis_y, x2,y2, time+1));
+							}
+						}
+					}
+				}
+				//축이 밑에 있음
+				{
+					int x2 = move_x + 1;
+					int y2 = move_y + 1;
 
-				if(current == weak_a.length-1)
-					current = 0;
-				else
-					current++;
+					if(0 <= x2 && x2 < N && 0 <= y2 && y2 < N)
+					{
+						//축 대각선 방향 빈 공간인지 확인
+						if(map[move_x][axis_y+1] == 0)
+						{
+							if(map[x2][y2] == 0 &&!visited[x2][y2])
+							{
+								visited[x2][y2] = true;
+								queue.offer(new Robot(axis_x, axis_y, x2,y2, time+1));
+							}
+						}
+					}
+				}
 			}
-			else
-				break;
+
+
 		}
 
-		return current;
+
+		return answer;
 	}
 
-	//반시계방향 방문
-	public static int counterClockVisit(int start, int distance)
-	{
-		int current = start-1;
-		int former = start;
 
-		if(start == 0)
-			current = weak_a.length-1;
 
-		setVisit(start);
 
-		while(true)
+	static class Robot{
+
+		int pos_1_x, pos_1_y;
+		int pos_2_x, pos_2_y;
+		int time;
+
+		public Robot()
 		{
-			int move = weak_a[former] - weak_a[current];
 
-			//원형 순환
-			if(move < 0)
-				move += N;
-
-			if(distance - move >= 0 && !visited[current])
-			{
-				distance -= move;
-				setVisit(current);
-
-				former = current;
-
-				if(current == 0)
-					current = weak_a.length-1;
-				else
-					current--;
-			}
-			else
-				break;
 		}
 
-		return current;
-	}
-
-	//반시계방향 방문 해제
-	public static int counterClockUnvisit(int start, int distance)
-	{
-		int current = start-1;
-		int former = start;
-
-		if(start == 0)
-			current = weak_a.length-1;
-
-		setUnvisit(start);
-
-		while(true)
-		{
-			int move = weak_a[former] - weak_a[current];
-
-			//원형 순환
-			if(move < 0)
-				move += N;
-
-			if(distance - move >= 0 && visited[current])
-			{
-				distance -= move;
-				setUnvisit(current);
-
-				former = current;
-
-				if(current == 0)
-					current = weak_a.length-1;
-				else
-					current--;
-			}
-			else
-				break;
+		public Robot(int pos_1_x, int pos_1_y, int pos_2_x, int pos_2_y) {
+			this.pos_1_x = pos_1_x;
+			this.pos_1_y = pos_1_y;
+			this.pos_2_x = pos_2_x;
+			this.pos_2_y = pos_2_y;
 		}
 
-		return current;
-	}
-
-	//방문 처리
-	public static void setVisit(int index)
-	{
-		if(!visited[index])
-		{
-			visited[index] = true;
-			visit_count++;
-		}
-	}
-
-	//방문 해제
-	public static void setUnvisit(int index)
-	{
-		if(visited[index])
-		{
-			visited[index] = false;
-			visit_count--;
+		public Robot(int pos_1_x, int pos_1_y, int pos_2_x, int pos_2_y, int time) {
+			this.pos_1_x = pos_1_x;
+			this.pos_1_y = pos_1_y;
+			this.pos_2_x = pos_2_x;
+			this.pos_2_y = pos_2_y;
+			this.time = time;
 		}
 	}
 }

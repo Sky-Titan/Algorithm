@@ -6,10 +6,14 @@ public class Main {
 
 	public static void main(String[] args) {
 
-		int n=12;
-		int[] weak = {1, 5, 6, 10};
-		int[] dist = {1, 2, 3, 4};
+		int[][] board = {
+				{0, 0, 0, 1, 1},
+				{0, 0, 0, 1, 0},
+				{0, 1, 0, 1, 1},
+				{1, 1, 0, 0, 1},
+				{0, 0, 0, 0, 0}
+		};
 
-		System.out.println(Solution.solution(n, weak, dist));
+		System.out.println(Solution.solution(board));
 	}
 }
