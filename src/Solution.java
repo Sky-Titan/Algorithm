@@ -1,366 +1,361 @@
+import java.util.ArrayList;
 
-import java.util.*;
 public class Solution {
 
-	private static int N;
-	private static HashMap<String, Structure> map;
+	static int N;
+	static int[] weak_a;
+	static int[] dist_a;
+	static int min_people;
+	static int visit_count = 0;
+	static boolean visited[], friend_visited[];
 
-	public static int[][] solution(int n, int[][] build_frame) {
-		int[][] answer = {};
+
+	static int wall[];
+
+	public static int solution(int n, int[] weak, int[] dist) {
+		int answer = 0;
 
 		N = n;
-		map = new HashMap<>(); //key : "xya"
+		weak_a = weak;
+		dist_a = dist;
 
-		for(int[] frame : build_frame)
+		wall = new int[n];
+
+		int current = weak[0];
+		int next = 0;
+
+		int value = 1;
+
+		friend_visited = new boolean[dist.length];
+
+		/*
+		for(int i = 0;i < weak.length;i++)
 		{
-			int x = frame[0]; //가로좌표
-			int y = frame[1]; //세로좌표
-			int a = frame[2]; //구조물 0 :기둥, 1 : 보
-			int b = frame[3]; //설치여부 0 : 삭제, 1 : 설치
+			if(i < weak.length-1)
+				next = weak[i+1];
+			else
+				next = n;
 
-			//기둥
-			if(a == 0)
+
+			for(int j = current;j < next;j++)
 			{
-				Structure pillar = new Structure(x,y,a);
-				//삭제
-				if(b == 0)
-				{
-					deletePillar(pillar);
-				}
-				else//설치
-				{
-					installPillar(pillar);
-				}
-			}
-			else//보
-			{
-				Structure beam = new Structure(x,y,a);
-				//삭제
-				if(b == 0)
-				{
-					deleteBeam(beam);
-				}
-				else//설치
-				{
-					installBeam(beam);
-				}
+				wall[j] = value;
 			}
 
+			current = next;
+			value++;
 		}
+*/
+		visited = new boolean[weak.length];
 
-		Iterator<Structure> iterator = map.values().iterator();
-		answer = new int[map.values().size()][3];
-		int i = 0;
+		min_people = friend_visited.length+1;
 
-		while(iterator.hasNext())
+		//한계 인원 결정
+		for(int people = 1; people <= friend_visited.length;people++)
 		{
-			Structure structure = iterator.next();
+			//투입 인원 결정
+			for(int friend = friend_visited.length-1; friend >= 0;friend--)
+			{
+				//시작 위치 결정
+				for(int start = 0; start< weak_a.length; start++)
+				{
+					friend_visited[friend] = true;
+					clockVisit(start, dist_a[friend]);
+					dfs(people, friend, 1);
+					clockUnvisit(start, dist_a[friend]);
 
-			answer[i][0] = structure.x;
-			answer[i][1] = structure.y;
-			answer[i][2] = structure.a;
-			i++;
+					//최소 인원 찾음
+					if(min_people <= people)
+						return min_people;
+
+					counterClockVisit(start, dist_a[friend]);
+					dfs_counter(people, friend, 1);
+					counterClockUnvisit(start, dist_a[friend]);
+					friend_visited[friend] = false;
+
+					//최소 인원 찾음
+					if(min_people <= people)
+						return min_people;
+				}
+			}
 		}
 
-		mergerSort(answer, 0, answer.length-1);
-
-
-		return answer;
+		return -1;
 	}
 
-	static void mergerSort(int answer[][], int left, int right)
+
+	public static void dfs(int peopleLimit, int index, int peopleCount)
 	{
-		if(left < right)
+		//한계 인원 됨
+		if(peopleLimit == peopleCount || isCompleteVisit())
 		{
-			int mid = (left + right) / 2;
-			mergerSort(answer, left, mid);
-			mergerSort(answer, mid+1, right);
-			merge(answer, left, mid, right);
+			//완전 방문 완료
+			if(isCompleteVisit())
+			{
+				min_people = Math.min(min_people, peopleCount);
+			}
 		}
-	}
-
-	static void merge(int answer[][], int left, int mid, int right)
-	{
-		int i = left;
-		int j = mid + 1;
-		int k = 0;
-		int temp[][] = new int[right - left + 1][3];
-
-		while(i <= mid && j <= right)
+		else
 		{
-			//x좌표 기준 오름차순 정렬
-			if(answer[i][0] < answer[j][0])
+			//그 다음 친구 결정
+			for(int friend = friend_visited.length-1;friend >=0; friend--)
 			{
-				temp[k][0] = answer[i][0];
-				temp[k][1] = answer[i][1];
-				temp[k][2] = answer[i][2];
-				k++;
-				i++;
-			}
-			else if(answer[i][0] > answer[j][0])
-			{
-				temp[k][0] = answer[j][0];
-				temp[k][1] = answer[j][1];
-				temp[k][2] = answer[j][2];
-				k++;
-				j++;
-			}
-			else if(answer[i][0] == answer[j][0])
-			{
-				//y좌표 기준 오름차순 정렬
-				if(answer[i][1] < answer[j][1])
+				if(!friend_visited[friend])
 				{
-					temp[k][0] = answer[i][0];
-					temp[k][1] = answer[i][1];
-					temp[k][2] = answer[i][2];
-					k++;
-					i++;
-				}
-				else if(answer[i][1] > answer[j][1])
-				{
-					temp[k][0] = answer[j][0];
-					temp[k][1] = answer[j][1];
-					temp[k][2] = answer[j][2];
-					k++;
-					j++;
-				}
-				else if(answer[i][1] == answer[j][1])
-				{
-					//기둥이 보보다 앞에
-					if(answer[i][2] < answer[j][2])
+					for(int start = 0; start < weak_a.length; start++)
 					{
-						temp[k][0] = answer[i][0];
-						temp[k][1] = answer[i][1];
-						temp[k][2] = answer[i][2];
-						k++;
-						i++;
-					}
-					else
-					{
-						temp[k][0] = answer[j][0];
-						temp[k][1] = answer[j][1];
-						temp[k][2] = answer[j][2];
-						k++;
-						j++;
+						if(!visited[start])
+						{
+							friend_visited[friend] = true;
+							clockVisit(start, dist_a[friend]);
+							dfs(peopleLimit, friend, peopleCount+1);
+							clockUnvisit(start, dist_a[friend]);
+							friend_visited[friend] = false;
+
+							if(min_people <= peopleLimit)
+								return;
+						}
 					}
 				}
+
 			}
 		}
 
-		while(i <= mid)
-		{
-			temp[k][0] = answer[i][0];
-			temp[k][1] = answer[i][1];
-			temp[k][2] = answer[i][2];
-			k++;
-			i++;
-		}
-
-		while(j <= right)
-		{
-			temp[k][0] = answer[j][0];
-			temp[k][1] = answer[j][1];
-			temp[k][2] = answer[j][2];
-			k++;
-			j++;
-		}
-
-		i = left;
-		for(k=0;k < temp.length;k++)
-		{
-			answer[i][0] = temp[k][0];
-			answer[i][1] = temp[k][1];
-			answer[i][2] = temp[k][2];
-			i++;
-		}
 	}
 
-
-	//기둥 설치
-	static void installPillar(Structure pillar)
+	public static void dfs_counter(int peopleLimit, int index, int peopleCount)
 	{
-		String key = String.valueOf(pillar.x)+ String.valueOf(pillar.y)+ String.valueOf(pillar.a);
+		//한계 인원 됨
+		if(peopleLimit == peopleCount || isCompleteVisit())
+		{
+			//완전 방문 완료
+			if(isCompleteVisit())
+			{
+				min_people = Math.min(min_people, peopleCount);
+			}
+		}
+		else
+		{
+			//그 다음 친구 결정
+			for(int friend = friend_visited.length-1; friend >= 0; friend--)
+			{
+				if(!friend_visited[friend])
+				{
+					for(int start = 0; start < weak_a.length; start++)
+					{
+						if(!visited[start])
+						{
+							friend_visited[friend] = true;
+							counterClockVisit(start, dist_a[friend]);
+							dfs_counter(peopleLimit, friend, peopleCount+1);
+							counterClockUnvisit(start, dist_a[friend]);
+							friend_visited[friend] = false;
 
-		if(canInstallPillar(pillar, map))
-			map.putIfAbsent(key, pillar);
+							if(min_people <= peopleLimit)
+								return;
+						}
+					}
+				}
+			}
+		}
 
-		return;
 	}
 
-	//보 설치
-	static void installBeam(Structure beam)
+	//모든 weak 지점 방문 끝났는지 체크
+	public static boolean isCompleteVisit()
 	{
-		String key = String.valueOf(beam.x)+ String.valueOf(beam.y)+ String.valueOf(beam.a);
-
-		if(canInstallBeam(beam, map))
-			map.putIfAbsent(key, beam);
-
-		return;
-	}
-
-	static boolean canInstallPillar(Structure pillar, HashMap<String, Structure> map)
-	{
-		//바닥 위에 있는지, 보 위에 있는지, 기둥 위에 있는지
-		if(pillar.y==0)
+		if(visit_count == visited.length)
 			return true;
-		if(0 < pillar.x)
-		{
-			if (isPillarOnLeftBeam(pillar))
-				return true;
-		}
-
-		if(pillar.x < N)
-		{
-			if(isPillarOnRightBeam(pillar))
-				return true;
-		}
-
-		if(isPillarOnPillar(pillar))
-			return true;
-
 		return false;
 	}
 
-	static boolean canInstallBeam(Structure beam, HashMap<String, Structure> map)
+
+	public static int clockVisit(int start, int distance)
 	{
-		//한쪽끝이 기둥위에 있는지, 양쪽이 동시에 보와 연결됏는지
-		if(isBeamOnLeftPillar(beam))
-			return true;
-		if(isBeamOnRightPillar(beam))
-			return true;
+		int current = start+1;
+		int former = start;
 
-		if(0 < beam.x && beam.x < N)
+		if(start == weak_a.length - 1)
+			current = 0;
+
+		int count = 0;
+
+		setVisit(start);
+
+		while(true)
 		{
-			if(isBeamConnectLeftBeam(beam) && isBeamConnectRightBeam(beam))
-				return true;
-		}
+			int move = weak_a[current] - weak_a[former];
 
-		return false;
-	}
+			if(move < 0)
+				move += N;
 
-	//기둥 삭제
-	static void deletePillar(Structure pillar)
-	{
-		String key = String.valueOf(pillar.x)+ String.valueOf(pillar.y)+ String.valueOf(pillar.a) ;
-
-		map.remove(key);
-
-
-		Iterator<Structure> iterator = map.values().iterator();
-
-		while(iterator.hasNext())
-		{
-			Structure structure = iterator.next();
-			if(structure.a==0)//기둥
+			if(distance - move >= 0 && !visited[current])
 			{
-				if(!canInstallPillar(structure, map))
-				{
-					map.putIfAbsent(key, pillar);
-					return;
-				}
+				distance -= move;
+				setVisit(current);
+				count++;
+
+				if(current == weak_a.length-1)
+					current = 0;
+				else
+					current++;
+
+				if(former == weak_a.length-1)
+					former = 0;
+				else
+					former++;
 			}
-			else//보
-			{
-				if(!canInstallBeam(structure, map))
-				{
-					map.putIfAbsent(key, pillar);
-					return;
-				}
-			}
+			else
+				break;
 		}
+
+		return count;
 	}
 
-	//보 삭제
-	static void deleteBeam(Structure beam)
+	public static int clockUnvisit(int start, int distance)
 	{
-		String key = String.valueOf(beam.x)+ String.valueOf(beam.y)+ String.valueOf(beam.a);
-		map.remove(key);
+		int current = start+1;
+		int former = start;
 
+		if(start == weak_a.length - 1)
+			current = 0;
 
-		Iterator<Structure> iterator = map.values().iterator();
+		int count = 0;
 
-		while(iterator.hasNext())
+		setUnvisit(start);
+
+		while(true)
 		{
-			Structure structure = iterator.next();
-			if(structure.a==0)//기둥
+			int move = weak_a[current] - weak_a[former];
+
+			if(move < 0)
+				move += N;
+
+			if(distance - move >= 0 && visited[current])
 			{
-				if(!canInstallPillar(structure, map))
-				{
-					map.putIfAbsent(key, beam);
-					return;
-				}
+				distance -= move;
+				setUnvisit(current);
+				count++;
+
+				if(current == weak_a.length-1)
+					current = 0;
+				else
+					current++;
+
+				if(former == weak_a.length-1)
+					former = 0;
+				else
+					former++;
 			}
-			else//보
+			else
+				break;
+		}
+
+		return count;
+	}
+
+	//반시계방향
+	public static int counterClockVisit(int start, int distance)
+	{
+		int current = start-1;
+		int former = start;
+
+		if(start == 0)
+			current = weak_a.length-1;
+
+		int count = 0;
+
+		setVisit(start);
+
+		while(true)
+		{
+			int move = weak_a[former] - weak_a[current];
+
+			if(move < 0)
+				move += N;
+
+			if(distance - move >= 0 && !visited[current])
 			{
-				if(!canInstallBeam(structure, map))
-				{
-					map.putIfAbsent(key, beam);
-					return;
-				}
+				distance -= move;
+				setVisit(current);
+				count++;
+
+				if(current == 0)
+					current = weak_a.length-1;
+				else
+					current--;
+
+				if(former == 0)
+					former = weak_a.length-1;
+				else
+					former--;
 			}
+			else
+				break;
 		}
+
+		return count;
 	}
 
-
-	//기둥 왼쪽아래에 보 존재 여부
-	static boolean isPillarOnLeftBeam(Structure pillar)
+	public static int counterClockUnvisit(int start, int distance)
 	{
-		return map.containsKey(String.valueOf(pillar.x - 1) + String.valueOf(pillar.y) + "1");
-	}
-	//기둥 오른쪽아래에 보 존재 여부
-	static boolean isPillarOnRightBeam(Structure pillar)
-	{
-		return map.containsKey(String.valueOf(pillar.x) + String.valueOf(pillar.y) + "1");
-	}
+		int current = start-1;
+		int former = start;
 
+		if(start == 0)
+			current = weak_a.length-1;
 
-	//기둥 밑에 기둥 존재 여부
-	static boolean isPillarOnPillar(Structure pillar)
-	{
-		return map.containsKey(String.valueOf(pillar.x) + String.valueOf(pillar.y - 1) + "0");
-	}
+		int count = 0;
 
-	//보 왼쪽 보 존재 여부
-	static boolean isBeamConnectLeftBeam(Structure beam)
-	{
-		return map.containsKey(String.valueOf(beam.x - 1) + String.valueOf(beam.y) + "1");
-	}
+		setUnvisit(start);
 
-	//보 오른쪽 보 존재 여부
-	static boolean isBeamConnectRightBeam(Structure beam)
-	{
-		return map.containsKey(String.valueOf(beam.x + 1) + String.valueOf(beam.y) + "1");
-	}
-
-	//보 왼쪽 아래 기둥 존재 여부
-	static boolean isBeamOnLeftPillar(Structure beam)
-	{
-		return map.containsKey(String.valueOf(beam.x) + String.valueOf(beam.y-1) + "0");
-	}
-	//보 오른쪽 아래 기둥 존재 여부
-	static boolean isBeamOnRightPillar(Structure beam)
-	{
-		return map.containsKey(String.valueOf(beam.x+1) + String.valueOf(beam.y-1) + "0");
-	}
-
-
-	static class Structure{
-		int a; //기둥이면 0, 보면 1
-		int x, y;
-
-
-		public Structure()
+		while(true)
 		{
+			int move = weak_a[former] - weak_a[current];
 
+			if(move < 0)
+				move += N;
+
+			if(distance - move >= 0 && visited[current])
+			{
+				distance -= move;
+				setUnvisit(current);
+				count++;
+
+				if(current == 0)
+					current = weak_a.length-1;
+				else
+					current--;
+
+				if(former == 0)
+					former = weak_a.length-1;
+				else
+					former--;
+			}
+			else
+				break;
 		}
 
-		public Structure(int x, int y, int a)
+		return count;
+	}
+
+	//방문 처리
+	public static void setVisit(int index)
+	{
+		if(!visited[index])
 		{
-			this.x = x;
-			this.y = y;
-			this.a = a;
+			visited[index] = true;
+			visit_count++;
 		}
+	}
 
-
+	//방문 해제
+	public static void setUnvisit(int index)
+	{
+		if(visited[index])
+		{
+			visited[index] = false;
+			visit_count--;
+		}
 	}
 }
