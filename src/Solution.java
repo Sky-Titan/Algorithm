@@ -4,7 +4,7 @@ import java.util.*;
 class Solution {
 
 	static int[][] map;
-	static boolean[][] visited;
+	static boolean[][][][] visited;
 	static int N;
 
 	public static int solution(int[][] board) {
@@ -13,11 +13,12 @@ class Solution {
 		map = board;
 		N = board.length;
 
-		visited = new boolean[N][N];
+		visited = new boolean[N][N][N][N];
 
 		Queue<Robot> queue = new LinkedList<>();
 		queue.offer(new Robot(0,0,0,1, 0));
-
+		visited[0][0][0][1] = true;
+		visited[0][1][0][0] = true;
 		while (!queue.isEmpty())
 		{
 			Robot robot = queue.poll();
@@ -48,10 +49,10 @@ class Solution {
 					//벽 아닐 때만 방문
 					if(map[x_1][y_1] == 0 && map[x_2][y_2] == 0)
 					{
-						if(!visited[x_1][y_1] || !visited[x_2][y_2])
+						if(!visited[x_1][y_1][x_2][y_2] || !visited[x_2][y_2][x_1][y_1])
 						{
-							visited[x_1][y_1] = true;
-							visited[x_2][y_2] = true;
+							visited[x_1][y_1][x_2][y_2] = true;
+							visited[x_2][y_2][x_1][y_1] = true;
 
 							queue.offer(new Robot(x_1, y_1, x_2, y_2,time+1));
 						}
@@ -60,7 +61,7 @@ class Solution {
 			}
 
 			//회전 케이스
-			//1 : 1번축 시계방향
+			//1 : 1번축
 			int axis_x = pos_1_x;//축 x
 			int axis_y = pos_1_y;//축 y
 			int move_x = pos_2_x;//움직이는 x
@@ -80,9 +81,10 @@ class Solution {
 						//축 대각선 방향 빈 공간인지 확인
 						if(map[axis_x+1][move_y] == 0)
 						{
-							if(map[x2][y2] == 0 &&!visited[x2][y2])
+							if(map[x2][y2] == 0 &&!visited[axis_x][axis_y][x2][y2])
 							{
-								visited[x2][y2] = true;
+								visited[axis_x][axis_y][x2][y2] = true;
+								visited[x2][y2][axis_x][axis_y] = true;
 								queue.offer(new Robot(axis_x, axis_y, x2,y2, time+1));
 							}
 						}
@@ -97,9 +99,10 @@ class Solution {
 						//축 대각선 방향 빈 공간인지 확인
 						if(map[axis_x-1][move_y] == 0)
 						{
-							if(map[x2][y2] == 0 &&!visited[x2][y2])
+							if(map[x2][y2] == 0 &&!visited[axis_x][axis_y][x2][y2])
 							{
-								visited[x2][y2] = true;
+								visited[axis_x][axis_y][x2][y2] = true;
+								visited[x2][y2][axis_x][axis_y] = true;
 								queue.offer(new Robot(axis_x, axis_y, x2,y2, time+1));
 							}
 						}
@@ -108,6 +111,7 @@ class Solution {
 				//축이 더 앞열
 				else
 				{
+					//시계
 					int x2 = move_x - 1;
 					int y2 = move_y + 1;
 
@@ -116,9 +120,29 @@ class Solution {
 						//축 대각선 방향 빈 공간인지 확인
 						if(map[axis_x-1][move_y] == 0)
 						{
-							if(map[x2][y2] == 0 &&!visited[x2][y2])
+							if(map[x2][y2] == 0 &&!visited[axis_x][axis_y][x2][y2])
 							{
-								visited[x2][y2] = true;
+								visited[axis_x][axis_y][x2][y2] = true;
+								visited[x2][y2][axis_x][axis_y] = true;
+								queue.offer(new Robot(axis_x, axis_y, x2,y2, time+1));
+							}
+						}
+					}
+
+
+					//반시계
+					x2 = move_x + 1;
+					y2 = move_y + 1;
+
+					if(0 <= x2 && x2 < N && 0 <= y2 && y2 < N)
+					{
+						//축 대각선 방향 빈 공간인지 확인
+						if(map[axis_x+1][move_y] == 0)
+						{
+							if(map[x2][y2] == 0 &&!visited[axis_x][axis_y][x2][y2])
+							{
+								visited[axis_x][axis_y][x2][y2] = true;
+								visited[x2][y2][axis_x][axis_y] = true;
 								queue.offer(new Robot(axis_x, axis_y, x2,y2, time+1));
 							}
 						}
@@ -131,6 +155,7 @@ class Solution {
 				//축이 위에 있음
 				if(axis_x < move_x)
 				{
+					//시계방향
 					int x2 = move_x - 1;
 					int y2 = move_y - 1;
 
@@ -139,16 +164,36 @@ class Solution {
 						//축 대각선 방향 빈 공간인지 확인
 						if(map[move_x][axis_y-1] == 0)
 						{
-							if(map[x2][y2] == 0 &&!visited[x2][y2])
+							if(map[x2][y2] == 0 &&!visited[axis_x][axis_y][x2][y2])
 							{
-								visited[x2][y2] = true;
+								visited[axis_x][axis_y][x2][y2] = true;
+								visited[x2][y2][axis_x][axis_y] = true;
+								queue.offer(new Robot(axis_x, axis_y, x2,y2, time+1));
+							}
+						}
+					}
+
+					//반시계방향
+					x2 = move_x - 1;
+					y2 = move_y + 1;
+
+					if(0 <= x2 && x2 < N && 0 <= y2 && y2 < N)
+					{
+						//축 대각선 방향 빈 공간인지 확인
+						if(map[move_x][axis_y+1] == 0)
+						{
+							if(map[x2][y2] == 0 &&!visited[axis_x][axis_y][x2][y2])
+							{
+								visited[axis_x][axis_y][x2][y2] = true;
+								visited[x2][y2][axis_x][axis_y] = true;
 								queue.offer(new Robot(axis_x, axis_y, x2,y2, time+1));
 							}
 						}
 					}
 				}
-				//축이 밑에 있음
+				else//축이 밑에 있음
 				{
+					//시계방향
 					int x2 = move_x + 1;
 					int y2 = move_y + 1;
 
@@ -157,9 +202,28 @@ class Solution {
 						//축 대각선 방향 빈 공간인지 확인
 						if(map[move_x][axis_y+1] == 0)
 						{
-							if(map[x2][y2] == 0 &&!visited[x2][y2])
+							if(map[x2][y2] == 0 &&!visited[axis_x][axis_y][x2][y2])
 							{
-								visited[x2][y2] = true;
+								visited[axis_x][axis_y][x2][y2] = true;
+								visited[x2][y2][axis_x][axis_y] = true;
+								queue.offer(new Robot(axis_x, axis_y, x2,y2, time+1));
+							}
+						}
+					}
+
+					//반시계방향
+					x2 = move_x + 1;
+					y2 = move_y - 1;
+
+					if(0 <= x2 && x2 < N && 0 <= y2 && y2 < N)
+					{
+						//축 대각선 방향 빈 공간인지 확인
+						if(map[move_x][axis_y-1] == 0)
+						{
+							if(map[x2][y2] == 0 &&!visited[axis_x][axis_y][x2][y2])
+							{
+								visited[axis_x][axis_y][x2][y2] = true;
+								visited[x2][y2][axis_x][axis_y] = true;
 								queue.offer(new Robot(axis_x, axis_y, x2,y2, time+1));
 							}
 						}
@@ -167,6 +231,175 @@ class Solution {
 				}
 			}
 
+			//2번축
+			axis_x = pos_2_x;//축 x
+			axis_y = pos_2_y;//축 y
+			move_x = pos_1_x;//움직이는 x
+			move_y = pos_1_y;//움직이는 y
+
+			if(axis_x  == move_x) //가로 방향
+			{
+				//축이 더 뒤 열에 있는 경우
+				if(axis_y < move_y)
+				{
+					//시계 방향
+					int x2 = move_x + 1;
+					int y2 = move_y - 1;
+
+					if(0 <= x2 && x2 < N && 0 <= y2 && y2 < N)
+					{
+						//축 대각선 방향 빈 공간인지 확인
+						if(map[axis_x+1][move_y] == 0)
+						{
+							if(map[x2][y2] == 0 &&!visited[x2][y2][axis_x][axis_y])
+							{
+								visited[x2][y2][axis_x][axis_y] = true;
+								visited[axis_x][axis_y][x2][y2] = true;
+								queue.offer(new Robot(x2, y2, axis_x,axis_y, time+1));
+							}
+						}
+					}
+
+					//반시계 방향
+					x2 = move_x - 1;
+					y2 = move_y - 1;
+
+					if(0 <= x2 && x2 < N && 0 <= y2 && y2 < N)
+					{
+						//축 대각선 방향 빈 공간인지 확인
+						if(map[axis_x-1][move_y] == 0)
+						{
+							if(map[x2][y2] == 0 &&!visited[x2][y2][axis_x][axis_y])
+							{
+								visited[x2][y2][axis_x][axis_y] = true;
+								visited[axis_x][axis_y][x2][y2] = true;
+								queue.offer(new Robot(x2, y2, axis_x,axis_y, time+1));
+							}
+						}
+					}
+				}
+				//축이 더 앞열
+				else
+				{
+					//시계
+					int x2 = move_x - 1;
+					int y2 = move_y + 1;
+
+					if(0 <= x2 && x2 < N && 0 <= y2 && y2 < N)
+					{
+						//축 대각선 방향 빈 공간인지 확인
+						if(map[axis_x-1][move_y] == 0)
+						{
+							if(map[x2][y2] == 0 &&!visited[x2][y2][axis_x][axis_y])
+							{
+								visited[x2][y2][axis_x][axis_y] = true;
+								visited[axis_x][axis_y][x2][y2] = true;
+								queue.offer(new Robot(x2, y2, axis_x,axis_y, time+1));
+							}
+						}
+					}
+
+
+					//반시계
+					x2 = move_x + 1;
+					y2 = move_y + 1;
+
+					if(0 <= x2 && x2 < N && 0 <= y2 && y2 < N)
+					{
+						//축 대각선 방향 빈 공간인지 확인
+						if(map[axis_x+1][move_y] == 0)
+						{
+							if(map[x2][y2] == 0 &&!visited[x2][y2][axis_x][axis_y])
+							{
+								visited[x2][y2][axis_x][axis_y] = true;
+								visited[axis_x][axis_y][x2][y2] = true;
+								queue.offer(new Robot(x2, y2, axis_x,axis_y, time+1));
+							}
+						}
+					}
+				}
+			}
+			//세로 방향
+			else
+			{
+				//축이 위에 있음
+				if(axis_x < move_x)
+				{
+					//시계방향
+					int x2 = move_x - 1;
+					int y2 = move_y - 1;
+
+					if(0 <= x2 && x2 < N && 0 <= y2 && y2 < N)
+					{
+						//축 대각선 방향 빈 공간인지 확인
+						if(map[move_x][axis_y-1] == 0)
+						{
+							if(map[x2][y2] == 0 &&!visited[x2][y2][axis_x][axis_y])
+							{
+								visited[x2][y2][axis_x][axis_y] = true;
+								visited[axis_x][axis_y][x2][y2] = true;
+								queue.offer(new Robot(x2, y2, axis_x,axis_y, time+1));
+							}
+						}
+					}
+
+					//반시계방향
+					x2 = move_x - 1;
+					y2 = move_y + 1;
+
+					if(0 <= x2 && x2 < N && 0 <= y2 && y2 < N)
+					{
+						//축 대각선 방향 빈 공간인지 확인
+						if(map[move_x][axis_y+1] == 0)
+						{
+							if(map[x2][y2] == 0 &&!visited[x2][y2][axis_x][axis_y])
+							{
+								visited[x2][y2][axis_x][axis_y] = true;
+								visited[axis_x][axis_y][x2][y2] = true;
+								queue.offer(new Robot(x2, y2, axis_x,axis_y, time+1));
+							}
+						}
+					}
+				}
+				else//축이 밑에 있음
+				{
+					//시계방향
+					int x2 = move_x + 1;
+					int y2 = move_y + 1;
+
+					if(0 <= x2 && x2 < N && 0 <= y2 && y2 < N)
+					{
+						//축 대각선 방향 빈 공간인지 확인
+						if(map[move_x][axis_y+1] == 0)
+						{
+							if(map[x2][y2] == 0 &&!visited[x2][y2][axis_x][axis_y])
+							{
+								visited[x2][y2][axis_x][axis_y] = true;
+								visited[axis_x][axis_y][x2][y2] = true;
+								queue.offer(new Robot(x2, y2, axis_x,axis_y, time+1));
+							}
+						}
+					}
+
+					//반시계방향
+					x2 = move_x + 1;
+					y2 = move_y - 1;
+
+					if(0 <= x2 && x2 < N && 0 <= y2 && y2 < N)
+					{
+						//축 대각선 방향 빈 공간인지 확인
+						if(map[move_x][axis_y-1] == 0)
+						{
+							if(map[x2][y2] == 0 &&!visited[x2][y2][axis_x][axis_y])
+							{
+								visited[x2][y2][axis_x][axis_y] = true;
+								visited[axis_x][axis_y][x2][y2] = true;
+								queue.offer(new Robot(x2, y2, axis_x,axis_y, time+1));
+							}
+						}
+					}
+				}
+			}
 
 		}
 

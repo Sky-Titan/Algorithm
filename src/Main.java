@@ -14,6 +14,7 @@ public class Main {
 				{0, 0, 0, 0, 0}
 		};
 
+
 		System.out.println(Solution.solution(board));
 	}
 }
