@@ -6,15 +6,10 @@ public class Main {
 
 	public static void main(String[] args) {
 
-		int[][] board = {
-				{0, 0, 0, 1, 1},
-				{0, 0, 0, 1, 0},
-				{0, 1, 0, 1, 1},
-				{1, 1, 0, 0, 1},
-				{0, 0, 0, 0, 0}
-		};
+		Solution s = new Solution();
 
+		String[] gems = {"DIA", "RUBY", "RUBY", "DIA", "DIA", "EMERALD", "SAPPHIRE", "DIA"};
 
-		System.out.println(Solution.solution(board));
+		System.out.println(s.solution(gems));
 	}
 }
