@@ -54,19 +54,22 @@ public class Main {
 			BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 			BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(System.out));
 
-			//KMP
-			char[] text = br.readLine().toCharArray();
-			char[] pattern = br.readLine().toCharArray();
+			String text = br.readLine();
+			String pattern = br.readLine();
 
-			int p[] = new int[pattern.length];
+			int length = 0;
 
-			failureFunction(p, pattern);
-			ArrayList<Integer> position = kmp(text, pattern, p);
+			while(text.length() != length)
+			{
+				length = text.length();
 
-			bw.write(position.size()+"\n");
+				text = text.replaceAll(pattern,"");
+			}
 
-			for(int a : position)
-				bw.write(a+" ");
+			if(text.isEmpty())
+				bw.write("FRULA");
+			else
+				bw.write(text);
 
 			bw.close();
 		}
