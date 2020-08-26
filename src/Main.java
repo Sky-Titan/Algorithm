@@ -6,46 +6,19 @@ import java.util.*;
 
 public class Main {
 
-	static void failureFunction(int p[], char[] pattern)
+	static void failureFunction(int p[], StringBuilder pattern)
 	{
 		int j = 0;
 
-		for(int i = 1;i < pattern.length;i++)
+		for(int i = 1;i < pattern.length();i++)
 		{
-			while(j > 0 && pattern[i] != pattern[j])
+			while(j > 0 && pattern.charAt(i) != pattern.charAt(j))
 				j = p[j-1];
 
-			if(pattern[i] == pattern[j])
-				p[i] = ++j;
+			if(pattern.charAt(i) == pattern.charAt(j))
+				++j;
 		}
 	}
-
-	static ArrayList<Integer> kmp(char[] text, char[] pattern, int[] p)
-	{
-		int j = 0;
-
-		ArrayList<Integer> position = new ArrayList<>();
-
-		for(int i = 0;i < text.length;i++)
-		{
-			while(j > 0 && text[i] != pattern[j])
-				j = p[j-1];
-
-			if(text[i] == pattern[j])
-			{
-				if(j == pattern.length - 1)
-				{
-					position.add(i - pattern.length + 2);
-					j = p[j];
-				}
-				else
-					j++;
-			}
-		}
-
-		return position;
-	}
-
 
 	public static void main(String[] args) {
 
@@ -54,22 +27,67 @@ public class Main {
 			BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 			BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(System.out));
 
-			String text = br.readLine();
-			String pattern = br.readLine();
+			StringBuilder text = new StringBuilder(br.readLine());
+			StringBuilder pattern = new StringBuilder(br.readLine());
 
-			int length = 0;
+			//pattern 인덱스가 돌아갈 곳 지정
+			Stack<Integer> index_stack = new Stack<>();
 
-			while(text.length() != length)
+			//결과 문자열 저장
+			Stack<Character> char_stack = new Stack<>();
+
+			int p[] = new int[pattern.length()];
+
+			failureFunction(p, pattern);
+
+			int j = 0;
+
+			//text 길이만큼 순회
+			for(int i = 0;i < text.length();i++)
 			{
-				length = text.length();
+				while(j > 0 && text.charAt(i) != pattern.charAt(j))
+					j = p[j-1];
 
-				text = text.replaceAll(pattern,"");
+				//문자 push
+				char_stack.push(text.charAt(i));
+
+				//문자가 같은 경우
+				if(text.charAt(i) == pattern.charAt(j))
+				{
+					//패턴 매칭 완료
+					if(j == pattern.length() - 1)
+					{
+						//패턴 길이만큼 pop 함으로써 문자 삭제
+						char_stack.pop();
+						for(int k = 0;k < pattern.length()-1;k++)
+						{
+							index_stack.pop();
+							char_stack.pop();
+						}
+
+						//pattern 인덱스 j가 돌아갈 곳을 지정
+						if(!index_stack.isEmpty())
+							j = index_stack.peek();
+						else
+							j = 0;
+					}
+					//일부 일치
+					else
+						index_stack.push(++j);
+
+				}
+				//문자가 같지 않다면 현재 pattern index - 1 push
+				else
+					index_stack.push(j);
 			}
 
-			if(text.isEmpty())
-				bw.write("FRULA");
+			if(!char_stack.isEmpty())
+			{
+				for(char a: char_stack)
+					bw.write(a);
+			}
 			else
-				bw.write(text);
+				bw.write("FRULA");
 
 			bw.close();
 		}
