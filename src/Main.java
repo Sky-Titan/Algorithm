@@ -6,95 +6,109 @@ import java.util.*;
 
 public class Main {
 
-	static void failureFunction(int p[], StringBuilder pattern)
+	static void solution() throws Exception
 	{
-		int j = 0;
+		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+		BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(System.out));
 
-		for(int i = 1;i < pattern.length();i++)
+		int T = Integer.parseInt(br.readLine());
+
+		for(int t = 0;t < T;t++)
 		{
-			while(j > 0 && pattern.charAt(i) != pattern.charAt(j))
-				j = p[j-1];
+			int N = Integer.parseInt(br.readLine());
 
-			if(pattern.charAt(i) == pattern.charAt(j))
-				++j;
+			StringBuilder list[] = new StringBuilder[N];
+			Trie trie = new Trie();
+
+			for(int i = 0;i < N;i++)
+			{
+				list[i] = new StringBuilder(br.readLine());
+				trie.insertString(list[i]);
+			}
+
+			for(int i = 0;i < N;i++)
+			{
+				if(!trie.isConsistent(list[i]))
+				{
+					bw.write("NO\n");
+					break;
+				}
+
+				if(i == N-1)
+					bw.write("YES\n");
+			}
 		}
+		bw.close();
 	}
 
 	public static void main(String[] args) {
 
 		try
 		{
-			BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-			BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(System.out));
-
-			StringBuilder text = new StringBuilder(br.readLine());
-			StringBuilder pattern = new StringBuilder(br.readLine());
-
-			//pattern 인덱스가 돌아갈 곳 지정
-			Stack<Integer> index_stack = new Stack<>();
-
-			//결과 문자열 저장
-			Stack<Character> char_stack = new Stack<>();
-
-			int p[] = new int[pattern.length()];
-
-			failureFunction(p, pattern);
-
-			int j = 0;
-
-			//text 길이만큼 순회
-			for(int i = 0;i < text.length();i++)
-			{
-				while(j > 0 && text.charAt(i) != pattern.charAt(j))
-					j = p[j-1];
-
-				//문자 push
-				char_stack.push(text.charAt(i));
-
-				//문자가 같은 경우
-				if(text.charAt(i) == pattern.charAt(j))
-				{
-					//패턴 매칭 완료
-					if(j == pattern.length() - 1)
-					{
-						//패턴 길이만큼 pop 함으로써 문자 삭제
-						char_stack.pop();
-						for(int k = 0;k < pattern.length()-1;k++)
-						{
-							index_stack.pop();
-							char_stack.pop();
-						}
-
-						//pattern 인덱스 j가 돌아갈 곳을 지정
-						if(!index_stack.isEmpty())
-							j = index_stack.peek();
-						else
-							j = 0;
-					}
-					//일부 일치
-					else
-						index_stack.push(++j);
-
-				}
-				//문자가 같지 않다면 현재 pattern index - 1 push
-				else
-					index_stack.push(j);
-			}
-
-			if(!char_stack.isEmpty())
-			{
-				for(char a: char_stack)
-					bw.write(a);
-			}
-			else
-				bw.write("FRULA");
-
-			bw.close();
+			solution();
 		}
 		catch (Exception e)
 		{
 			e.printStackTrace();
 		}
-
 	}
+
+	static class Trie{
+
+		Node root = new Node();
+
+		public Trie()
+		{
+
+		}
+
+		public void insertString(StringBuilder str)
+		{
+			Node node = root;
+
+			for(int i = 0;i < str.length();i++)
+			{
+				char c = str.charAt(i);
+
+				node.children.putIfAbsent(c, new Node());
+				node = node.children.get(c);
+
+				if(i == str.length()-1)
+					node.isFinish = true;
+			}
+		}
+
+		public boolean isConsistent(StringBuilder str)
+		{
+			Node node = root;
+
+			for(int i = 0;i < str.length();i++)
+			{
+				char c = str.charAt(i);
+
+				node = node.children.get(c);
+
+				//아직 끝에 도달하지 않았는데 문자열이 존재한다면(접두어) 일관성 파괴
+				if(i < str.length()-1)
+				{
+					if(node.isFinish)
+						return false;
+				}
+			}
+
+			return true;
+		}
+	}
+
+	static class Node{
+
+		HashMap<Character, Node> children = new HashMap<>();
+		boolean isFinish = false;//현재까지의 문자열이 존재하는 지 판별
+
+		public Node()
+		{
+
+		}
+	}
+
 }
