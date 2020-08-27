@@ -13,28 +13,39 @@ public class Main {
 
 		int N = Integer.parseInt(br.readLine());
 
+		int M = Integer.parseInt(br.readLine());
 
-		for(int i = 0;i < N;i++)
+		StringBuilder text = new StringBuilder(br.readLine());
+
+		int count = 0;
+
+		int length = 0;
+
+		for(int i = 0;i < text.length() - 2;)
 		{
-			String str = br.readLine();
-
-			boolean visited[] = new boolean[26];
-			int sum = 2015;
-
-			for(int j = 0;j < str.length();j++)
+			if(text.charAt(i) == 'I' && text.charAt(i+1) == 'O' && text.charAt(i+2) == 'I')
 			{
-				if(!visited[str.charAt(j) - 'A'])
+				length++;
+				if(length == N)
 				{
-					sum -= str.charAt(j);
-					visited[str.charAt(j) - 'A'] = true;
+					length--;
+					count++;
 				}
+				i+=2;
 			}
-
-			bw.write(sum+"\n");
+			else
+			{
+				length = 0;
+				i++;
+			}
 		}
+
+		bw.write(count+"");
 
 		bw.close();
 	}
+
+
 
 	public static void main(String[] args) {
 
