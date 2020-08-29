@@ -20,48 +20,16 @@ class Solution {
 			visited[i] = false;
 		}
 
-
 		return max;
 	}
 
+	//모든 연산자 우선순위 경우의 수 만들기
 	static void recursive(int depth, int op_index, String expression, String[] operators)
 	{
-
 		if(depth == 3)
 		{
-			op_index = 0;
+			long result = calculate(expression, 0, operators);
 
-			while(!expression.contains(operators[op_index]))
-				op_index++;
-
-
-			StringTokenizer strtok = new StringTokenizer(expression, operators[op_index]);
-
-			System.out.println(Arrays.toString(operators));
-			String[] list = new String[strtok.countTokens()];
-
-			int k = 0;
-			while(strtok.hasMoreTokens())
-				list[k++] = strtok.nextToken();
-
-			long result = 0;
-
-			if(operators[op_index].equals("*"))
-				result = 1;
-
-			for(int i = 0;i < list.length;i++)
-			{
-				long value = calculate(list[i],op_index+1, operators);
-
-				if(operators[op_index].equals("+"))
-					result += value;
-				else if(operators[op_index].equals("-"))
-					result -= value;
-				else
-					result *= value;
-			}
-
-			System.out.println(result);
 			max = Math.max(max, Math.abs(result));
 		}
 		else
@@ -76,67 +44,77 @@ class Solution {
 					visited[i] = false;
 				}
 			}
-
 		}
 	}
 
+	//operators(연산자 우선순위)에 따라 expression 파싱하여 계산하기
 	static long calculate(String expression, int op_index, String[] operators)
 	{
-		if(expression.contains("+") || expression.contains("-") || expression.contains("*"))
+		long result = 0;
+
+		//연산자 기준으로 토크나이즈 한 string 리스트 가져오기
+		String[] list = getTokenizedList(expression, op_index, operators);
+
+		for(int i = 0;i < list.length;i++)
 		{
-			long result = 0;
+			long value = 0;
 
-			while(!expression.contains(operators[op_index]))
-				op_index++;
+			//연산자가 포함되어있다면 다시 한 번 파싱 필요
+			if(isOperatorInExpression(list[i]))
+				value = calculate(list[i], op_index + 1, operators);
+			//피연산자만 존재하는 경우
+			else
+				value = Integer.parseInt(list[i]);
 
-			if(op_index >= op_list.length)
-				return 0;
+			//연산 결과
+			result = getResult(result, value, operators, op_index, i);
+		}
 
-			if(operators[op_index].equals("*"))
-				result = 1;
+		return result;
+	}
 
-			StringTokenizer strtok = new StringTokenizer(expression, operators[op_index]);
+	//연산자 기준으로 토크나이즈 한 string list 얻기
+	static String[] getTokenizedList(String expression, int op_index, String[] operators)
+	{
+		StringTokenizer strtok = new StringTokenizer(expression, operators[op_index]);
 
-			String[] list = new String[strtok.countTokens()];
+		String[] list = new String[strtok.countTokens()];
 
-			int k = 0;
+		int k = 0;
 
-			while(strtok.hasMoreTokens())
-				list[k++] = strtok.nextToken();
+		while(strtok.hasMoreTokens())
+			list[k++] = strtok.nextToken();
 
-			for(int i = 0;i < list.length;i++)
-			{
-				if(list[i].contains("+") || list[i].contains("-") || list[i].contains("*"))
-				{
-					long value = calculate(list[i], op_index + 1, operators);
+		return list;
+	}
 
-					if(operators[op_index].equals("+"))
-						result += value;
-					else if(operators[op_index].equals("-"))
-						result -= value;
-					else
-						result *= value;
-				}
-				else
-				{
-					long value = Integer.parseInt(list[i]);
-
-					System.out.println("원자 "+value);
-					if(operators[op_index].equals("+"))
-						result += value;
-					else if(operators[op_index].equals("-"))
-						result -= value;
-					else
-						result *= value;
-				}
-
-			}
-			return result;
+	//연산 결과 얻기
+	static long getResult(long result, long value, String[] operators, int op_index, int i)
+	{
+		if(operators[op_index].equals("+"))
+			result += value;
+		else if(operators[op_index].equals("-"))
+		{
+			if(i==0)
+				result += value;
+			else
+				result -= value;
 		}
 		else
 		{
-			System.out.println("원자 "+expression);
-			return Integer.parseInt(expression);
+			if(i==0)
+				result = 1;
+			result *= value;
 		}
+		return result;
+	}
+
+
+	//expression 안에 아무 연산자가 존재하는지 판단
+	static boolean isOperatorInExpression(String expression)
+	{
+		if( expression.contains("+") || expression.contains("-") || expression.contains("*"))
+			return true;
+		return false;
 	}
 }

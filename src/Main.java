@@ -16,7 +16,7 @@ public class Main {
 		{
 			Solution s = new Solution();
 
-			String expression = "50*6-3*2";
+			String expression = "100-200*300-500+20";
 
 			System.out.println(s.solution(expression));
 		}
