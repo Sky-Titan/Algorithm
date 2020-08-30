@@ -1,3 +1,5 @@
+import org.omg.PortableInterceptor.INACTIVE;
+
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.InputStreamReader;
@@ -7,61 +9,76 @@ import java.util.*;
 public class Main {
 
 
-	public static String solution(String compressed)
+	static void solution() throws  Exception
 	{
-		String result = "";
+		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+		BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(System.out));
 
-		Stack<Integer> nubmer_stack = new Stack<>();
-		Stack<Character> char_stack = new Stack<>();
+		String str = br.readLine();
 
-		String num = "";
+		int N = str.length();
 
-		for(int i = 0;i < compressed.length();i++)
+		Deque[] deque = new ArrayDeque[N];
+
+		for(int i = 0;i < N;i++)
 		{
-			char c = compressed.charAt(i);
+			deque[i] = new ArrayDeque<Character>();
+			deque[i].offer(str.charAt(i));
+		}
 
-			if(Character.isDigit(c))
+		int M = Integer.parseInt(br.readLine());
+
+		int cursor = N;
+
+		for(int i = 0;i < M;i++)
+		{
+			StringTokenizer strtok = new StringTokenizer(br.readLine());
+
+			char order = strtok.nextToken().charAt(0);
+
+			if(order == 'L')
 			{
-				num += c;
+				if(cursor > 0)
+					cursor--;
 			}
-			else if(c=='(')
+			else if(order == 'D')
 			{
-				nubmer_stack.push(Integer.parseInt(num));
-				char_stack.push(c);
-				num = "";
+				if(cursor < N)
+					cursor++;
 			}
-			else if(c == ')')
+			//커서 왼쪽 문자 삭제 (덱 앞 삭제
+			else if(order == 'B')
 			{
-				String str = "";
-
-				char popped_c = ' ';
-
-				while( (popped_c = char_stack.pop()) != '(' )
-				{
-					str = popped_c + str;
-				}
-
-				int popped_num = nubmer_stack.pop();
-
-				for(int j=0;j<popped_num;j++)
-				{
-					for(int k = 0;k < str.length();k++)
-					{
-						char_stack.push(str.charAt(k));
-					}
-				}
+				if(cursor == 0)
+					deque[cursor].pollFirst();
+				else
+					deque[cursor-1].pollLast();
 			}
 			else
 			{
-				char_stack.push(c);
+				char c = strtok.nextToken().charAt(0);
+
+				if(cursor == 0)
+					deque[cursor].offerFirst(c);
+				else
+					deque[cursor-1].offerLast(c);
 			}
 		}
 
-		for(int i = 0;i < char_stack.size();i++)
-			result += char_stack.get(i);
+		for(int i = 0;i < N;i++)
+		{
+			while(!deque[i].isEmpty())
+			{
+				bw.write(deque[i].poll()+"");
+			}
+		}
 
-		return result;
+
+
+
+		bw.close();
 	}
+
 
 
 
@@ -69,29 +86,7 @@ public class Main {
 
 		try
 		{
-			System.out.println(solution("2(2(hi)2(co))x2(bo)"));
-		/*	Solution s = new Solution();
-
-			int n = 9;
-			int[][] path = {
-					{0,1}
-			,{0,3}
-			,{0,7}
-			,{8,1}
-			,{3,6}
-			,{1,2}
-			,{4,7}
-			,{7,5}
-			};
-
-			int[][] order = {
-					{8,5}
-			,{6,7}
-			,{4,1}
-			};
-
-
-			System.out.println(s.solution(n, path, order));*/
+			solution();
 		}
 		catch (Exception e)
 		{
