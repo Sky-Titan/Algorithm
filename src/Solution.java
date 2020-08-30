@@ -3,75 +3,103 @@ import java.util.*;
 
 class Solution {
 
-	public static int[] solution(String[] gems) {
-		int[] answer = new int[2];
+	static boolean[] visited;
 
-		HashMap<String, Integer> count = new HashMap<>();
+	static HashMap<Integer, Integer> order_map = new HashMap<>();
+	static int visit_count = 0;
 
-		for(String a : gems)
+	static boolean result = true;
+
+	static ArrayList<ArrayList<Integer>> tree = new ArrayList<>();
+	static ArrayList<ArrayList<Integer>> tree_nodircet = new ArrayList<>();
+
+	public static boolean solution(int n, int[][] path, int[][] order) {
+		boolean answer = true;
+
+		visited = new boolean[n];
+
+		for(int i = 0;i < order.length;i++)
 		{
-			count.putIfAbsent(a, 0);
+			order_map.putIfAbsent(order[i][0], order[i][1]);
 		}
 
-		int total_count = count.size();
-
-		int start = 0, end = 0;
-
-		int min_start = Integer.MAX_VALUE, min_end = Integer.MAX_VALUE;
-		int min_length = Integer.MAX_VALUE;
-
-		int gem_count = 0;
-
-		while(end < gems.length || start < gems.length)
+		for(int i = 0;i < n;i++)
 		{
-			//start 증가
-			if(gem_count >= total_count && start <= end)
-			{
-				count.replace(gems[start], count.get(gems[start])-1);
-
-				if(count.get(gems[start]) == 0)
-					gem_count--;
-				start++;
-			}
-			//end 증가
-			else if(gem_count < total_count && end < gems.length)
-			{
-				count.replace(gems[end], count.get(gems[end])+1);
-
-				//첫 방문
-				if(count.get(gems[end]) == 1)
-					gem_count++;
-				end++;
-			}
-
-
-			if(gem_count == total_count)
-			{
-				//System.out.println(String.valueOf(end-1) + " "+start);
-				if(min_length > end - 1 - start)
-				{
-					min_length = end - 1 - start;
-					min_start = start;
-					min_end = end - 1;
-				}
-				else if(min_length == end - 1 - start)
-				{
-					if(start < min_start)
-					{
-						min_length = end - 1 - start;
-						min_start = start;
-						min_end = end - 1;
-					}
-				}
-			}
-
-			if(end == gems.length && gem_count < total_count)
-				break;
+			tree.add(new ArrayList<>());
+			tree_nodircet.add(new ArrayList<>());
 		}
 
-		answer[0] = min_start+1;
-		answer[1] = min_end+1;
-		return answer;
+		for(int i = 0;i < path.length;i++)
+		{
+			for(int j = 0;j < path[i].length;j++)
+			{
+				tree.get(i).add(j);
+				tree.get(j).add(i);
+			}
+		}
+
+		Queue<Integer> queue = new LinkedList<>();
+		queue.offer(0);
+		visited[0] = true;
+
+		while(!queue.isEmpty())
+		{
+			int now = queue.poll();
+
+			for(int i = 0;i < tree.get(now).size();i++)
+			{
+				int next = tree.get(now).get(i);
+
+				if(!visited[next])
+				{
+					visited[next] = true;
+					queue.offer(next);
+					tree_nodircet.get(now).add(next);
+				}
+			}
+		}
+
+		for(int i = 0;i < order.length;i++)
+		{
+			tree_nodircet.get(order[i][0]).add(order[i][1]);
+		}
+
+		visited = new boolean[n];
+
+		for(int i = 0;i < n;i++)
+		{
+			boolean now_visited[] = new boolean[n];
+			if(!visited[i])
+			{
+				dfs(i, now_visited);
+			}
+		}
+
+
+		return result;
 	}
+
+	static void dfs(int now, boolean[] now_visited)
+	{
+		visited[now] = true;
+		now_visited[now] = true;
+
+		for(int i = 0;i < tree_nodircet.get(now).size();i++)
+		{
+			int next = tree_nodircet.get(now).get(i);
+
+			if(now_visited[next])
+			{
+				result = false;
+				return;
+			}
+			else
+			{
+				if(!visited[next])
+					dfs(next, now_visited);
+			}
+		}
+	}
+
 
 }
