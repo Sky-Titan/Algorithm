@@ -16,9 +16,9 @@ public class Main {
 		{
 			Solution s = new Solution();
 
-			String expression = "100-200*300-500+20";
+			String[] gems = {"ZZe", "ZZe", "ZZZ"};
 
-			System.out.println(s.solution(expression));
+			System.out.println(Arrays.toString(s.solution(gems)));
 		}
 		catch (Exception e)
 		{

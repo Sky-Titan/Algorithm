@@ -3,118 +3,75 @@ import java.util.*;
 
 class Solution {
 
-	static String op_list[] = {"+","-","*"};
-	static boolean visited[] = new boolean[3];
+	public static int[] solution(String[] gems) {
+		int[] answer = new int[2];
 
-	static long max = Long.MIN_VALUE;
+		HashMap<String, Integer> count = new HashMap<>();
 
-	public static long solution(String expression) {
-
-		String[] operators = new String[3];
-
-		for(int i = 0;i < 3;i++)
+		for(String a : gems)
 		{
-			operators[0] = op_list[i];
-			visited[i] = true;
-			recursive(1, 1, expression, operators);
-			visited[i] = false;
+			count.putIfAbsent(a, 0);
 		}
 
-		return max;
-	}
+		int total_count = count.size();
 
-	//모든 연산자 우선순위 경우의 수 만들기
-	static void recursive(int depth, int op_index, String expression, String[] operators)
-	{
-		if(depth == 3)
-		{
-			long result = calculate(expression, 0, operators);
+		int start = 0, end = 0;
 
-			max = Math.max(max, Math.abs(result));
-		}
-		else
+		int min_start = Integer.MAX_VALUE, min_end = Integer.MAX_VALUE;
+		int min_length = Integer.MAX_VALUE;
+
+		int gem_count = 0;
+
+		while(end < gems.length || start < gems.length)
 		{
-			for(int i = 0;i < op_list.length;i++)
+			//start 증가
+			if(gem_count >= total_count && start <= end)
 			{
-				if(!visited[i])
+				count.replace(gems[start], count.get(gems[start])-1);
+
+				if(count.get(gems[start]) == 0)
+					gem_count--;
+				start++;
+			}
+			//end 증가
+			else if(gem_count < total_count && end < gems.length)
+			{
+				count.replace(gems[end], count.get(gems[end])+1);
+
+				//첫 방문
+				if(count.get(gems[end]) == 1)
+					gem_count++;
+				end++;
+			}
+
+
+			if(gem_count == total_count)
+			{
+				//System.out.println(String.valueOf(end-1) + " "+start);
+				if(min_length > end - 1 - start)
 				{
-					visited[i] = true;
-					operators[op_index] = op_list[i];
-					recursive(depth+1, op_index+1, expression, operators);
-					visited[i] = false;
+					min_length = end - 1 - start;
+					min_start = start;
+					min_end = end - 1;
+				}
+				else if(min_length == end - 1 - start)
+				{
+					if(start < min_start)
+					{
+						min_length = end - 1 - start;
+						min_start = start;
+						min_end = end - 1;
+					}
 				}
 			}
-		}
-	}
 
-	//operators(연산자 우선순위)에 따라 expression 파싱하여 계산하기
-	static long calculate(String expression, int op_index, String[] operators)
-	{
-		long result = 0;
-
-		//연산자 기준으로 토크나이즈 한 string 리스트 가져오기
-		String[] list = getTokenizedList(expression, op_index, operators);
-
-		for(int i = 0;i < list.length;i++)
-		{
-			long value = 0;
-
-			//연산자가 포함되어있다면 다시 한 번 파싱 필요
-			if(isOperatorInExpression(list[i]))
-				value = calculate(list[i], op_index + 1, operators);
-			//피연산자만 존재하는 경우
-			else
-				value = Integer.parseInt(list[i]);
-
-			//연산 결과
-			result = getResult(result, value, operators, op_index, i);
+			if(end == gems.length && gem_count < total_count)
+				break;
 		}
 
-		return result;
+		answer[0] = min_start+1;
+		answer[1] = min_end+1;
+		return answer;
 	}
 
-	//연산자 기준으로 토크나이즈 한 string list 얻기
-	static String[] getTokenizedList(String expression, int op_index, String[] operators)
-	{
-		StringTokenizer strtok = new StringTokenizer(expression, operators[op_index]);
-
-		String[] list = new String[strtok.countTokens()];
-
-		int k = 0;
-
-		while(strtok.hasMoreTokens())
-			list[k++] = strtok.nextToken();
-
-		return list;
-	}
-
-	//연산 결과 얻기
-	static long getResult(long result, long value, String[] operators, int op_index, int i)
-	{
-		if(operators[op_index].equals("+"))
-			result += value;
-		else if(operators[op_index].equals("-"))
-		{
-			if(i==0)
-				result += value;
-			else
-				result -= value;
-		}
-		else
-		{
-			if(i==0)
-				result = 1;
-			result *= value;
-		}
-		return result;
-	}
-
-
-	//expression 안에 아무 연산자가 존재하는지 판단
-	static boolean isOperatorInExpression(String expression)
-	{
-		if( expression.contains("+") || expression.contains("-") || expression.contains("*"))
-			return true;
-		return false;
-	}
 }
