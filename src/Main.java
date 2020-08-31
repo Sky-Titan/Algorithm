@@ -1,5 +1,3 @@
-import org.omg.PortableInterceptor.INACTIVE;
-
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.InputStreamReader;
@@ -8,77 +6,61 @@ import java.util.*;
 
 public class Main {
 
-
 	static void solution() throws  Exception
 	{
 		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 		BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(System.out));
 
-		String str = br.readLine();
+		int N = Integer.parseInt(br.readLine());
 
-		int N = str.length();
+		int list[] = new int[N];
 
-		Deque[] deque = new ArrayDeque[N];
+		StringTokenizer strtok = new StringTokenizer(br.readLine());
 
 		for(int i = 0;i < N;i++)
-		{
-			deque[i] = new ArrayDeque<Character>();
-			deque[i].offer(str.charAt(i));
-		}
+			list[i] = Integer.parseInt(strtok.nextToken());
+
+		Arrays.sort(list);
 
 		int M = Integer.parseInt(br.readLine());
 
-		int cursor = N;
-
+		strtok = new StringTokenizer(br.readLine());
 		for(int i = 0;i < M;i++)
 		{
-			StringTokenizer strtok = new StringTokenizer(br.readLine());
+			int a = Integer.parseInt(strtok.nextToken());
 
-			char order = strtok.nextToken().charAt(0);
-
-			if(order == 'L')
-			{
-				if(cursor > 0)
-					cursor--;
-			}
-			else if(order == 'D')
-			{
-				if(cursor < N)
-					cursor++;
-			}
-			//커서 왼쪽 문자 삭제 (덱 앞 삭제
-			else if(order == 'B')
-			{
-				if(cursor == 0)
-					deque[cursor].pollFirst();
-				else
-					deque[cursor-1].pollLast();
-			}
+			if(binarySearch(list,a))
+				bw.write("1\n");
 			else
-			{
-				char c = strtok.nextToken().charAt(0);
-
-				if(cursor == 0)
-					deque[cursor].offerFirst(c);
-				else
-					deque[cursor-1].offerLast(c);
-			}
+				bw.write("0\n");
 		}
-
-		for(int i = 0;i < N;i++)
-		{
-			while(!deque[i].isEmpty())
-			{
-				bw.write(deque[i].poll()+"");
-			}
-		}
-
-
-
 
 		bw.close();
 	}
 
+	//list 안에 a가 존재하는지 확인
+	static boolean binarySearch(int[] list, int a)
+	{
+		//나올 수 있는 최소 index
+		int left = 0;
+
+		//나올 수 있는 최대 index
+		int right = list.length-1;
+
+		while(left <= right)
+		{
+			int mid = (left + right) / 2;
+
+			if(list[mid] == a)
+				return true;
+			else if(list[mid] > a)
+				right = mid - 1;
+			else
+				left = mid + 1;
+		}
+
+		return false;
+	}
 
 
 
