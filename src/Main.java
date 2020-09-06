@@ -8,135 +8,110 @@ import java.util.*;
 
 public class Main {
 
-	static void solution() throws  Exception
+	public static int solution(String s)
 	{
-		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-		BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(System.out));
+		boolean[][] isPenlin = new boolean[s.length()][s.length()];
 
-		StringTokenizer strtok = new StringTokenizer(br.readLine());
+		for(int i = 0;i < s.length();i++)
+			isPenlin[i][i] = true;
 
-		int N = Integer.parseInt(strtok.nextToken());
-		int M = Integer.parseInt(strtok.nextToken());
+		int i = 0;
+		int j = 0;
+		int k = 0;
+		int max = 0;
 
-		int[][] map = new int[N+1][M+1];
 
-		int x[] = {-1, 1, 0, 0};
-		int y[] = {0, 0, -1, 1};
-
-		for(int i = 1;i <= N;i++)
+		while(k < s.length())
 		{
-			String row = br.readLine();
+			i = k - 1;
 
-			for(int j = 1;j <= M;j++)
+			while(i >= 0)
 			{
-				map[i][j] = row.charAt(j-1)-'0';
-			}
-		}
-
-
-
-		int distance = bfs(map, N, M);
-
-		bw.write(distance+"");
-		bw.close();
-	}
-
-	static int bfs(int[][] map, int N,int M)
-	{
-		boolean visited[][][] = new boolean[N+1][M+1][2];
-
-		Queue<Position> queue = new LinkedList<>();
-		queue.offer(new Position(1, 1, 1, false));
-		visited[1][1][0] = true;
-		visited[1][1][1] = true;
-
-		int result = Integer.MAX_VALUE;
-
-		while(!queue.isEmpty())
-		{
-			Position now = queue.poll();
-
-			if(now.x == N && now.y == M)
-			{
-				result = Math.min(result, now.distance);
-			}
-
-			int x[] = {-1, 1, 0, 0};
-			int y[] = {0, 0, -1, 1};
-
-			for(int i = 0;i < x.length;i++)
-			{
-				int next_x = now.x + x[i];
-				int next_y = now.y + y[i];
-
-				if(0 < next_x && next_x <= N && 0 < next_y && next_y <= M)
+				if(i + 1 <= k - 1)
 				{
-					//안 깬놈
-					if(!now.destory)
+					if(isPenlin[i + 1][k - 1] && s.charAt(i) == s.charAt(k))
 					{
-						if(!visited[next_x][next_y][0])
-						{
-							visited[next_x][next_y][0] = true;
-
-							if(map[next_x][next_y] == 0)
-								queue.offer(new Position(next_x, next_y, now.distance+1, now.destory));
-							else
-								queue.offer(new Position(next_x, next_y, now.distance+1, true));
-						}
-					}
-					//벽 깨고 온 놈
-					else
-					{
-						if(!visited[next_x][next_y][1])
-						{
-							visited[next_x][next_y][1] = true;
-
-							if(map[next_x][next_y] == 0)
-								queue.offer(new Position(next_x, next_y, now.distance+1, now.destory));
-						}
+						isPenlin[i][k] = true;
+						//max = Math.max(k - i + 1, max);
 					}
 				}
+				else
+				{
+					if(s.charAt(i) == s.charAt(k))
+					{
+						isPenlin[i][k] = true;
+						//max = Math.max(k - i + 1, max);
+					}
+				}
+				i--;
 			}
+
+
+			j = k + 1;
+
+			while(j < s.length())
+			{
+				if(k + 1 <= j - 1)
+				{
+					if(isPenlin[k + 1][j - 1] && s.charAt(k) == s.charAt(j))
+					{
+						isPenlin[k][j] = true;
+						//max = Math.max(j - k + 1, max);
+					}
+				}
+				else
+				{
+					if(s.charAt(k) == s.charAt(j))
+					{
+						isPenlin[k][j] = true;
+						//max = Math.max(j - k + 1, max);
+					}
+				}
+				j++;
+			}
+
+			if(k > 0 && k < s.length() - 1)
+			{
+				i = k - 1;
+				j = k + 1;
+
+				while(i >= 0 || j < s.length())
+				{
+					if(isPenlin[i + 1][j - 1] && s.charAt(i) == s.charAt(j))
+					{
+						isPenlin[i][j] = true;
+						//max = Math.max(j - i + 1, max);
+					}
+
+					if(i == 0 && j  == s.length() - 1)
+						break;
+
+					if(i > 0)
+						i--;
+					if(j < s.length() - 1)
+						j++;
+				}
+			}
+			k++;
 		}
 
-		if(result == Integer.MAX_VALUE)
-			return -1;
-		return result;
-	}
+		for(i = 0;i < s.length();i++)
+			for(j = 0;j < s.length();j++)
+			{
+				if(isPenlin[i][j])
+					max = Math.max(max, j - i + 1);
+			}
 
-
-	static class Position{
-
-		int x, y, distance;
-		boolean destory = false;
-
-		public Position(int x, int y) {
-			this.x = x;
-			this.y = y;
-		}
-
-		public Position(int x, int y, int distance, boolean destory) {
-			this.x = x;
-			this.y = y;
-			this.distance = distance;
-			this.destory = destory;
-		}
-
-		@Override
-		public boolean equals(Object obj) {
-			Position pos = (Position)obj;
-
-			if(x == pos.x && y == pos.y)
-				return true;
-			return false;
-		}
+		return max;
 	}
 
 
 	public static void main(String[] args) {
 		try
 		{
-			solution();
+
+			System.out.println(solution("a"));
+
 		}
 		catch (Exception e)
 		{
