@@ -16,9 +16,14 @@ public class Main {
 		{
 			Solution s = new Solution();
 
-			String[] operations = {"I 4", "I 3", "I 2", "I 1", "D 1", "D 1", "D -1", "D -1", "I 5", "I 6"};
+			int[][] nodeinfo = {
+					{5,3},{11,5},{13,3},{3,5},{6,1},{1,3},{8,6},{7,2},{2,2}
+			};
 
-			System.out.println(Arrays.toString(s.solution(operations)));
+			int[][] result = s.solution(nodeinfo);
+
+			System.out.println(Arrays.toString(result[0]));
+			System.out.println(Arrays.toString(result[1]));
 		}
 		catch (Exception e)
 		{

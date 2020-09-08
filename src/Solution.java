@@ -1,87 +1,99 @@
-
-
-import java.util.*;
-
+import java.util.Arrays;
+import java.util.Comparator;
 
 class Solution {
 
-	HashMap<Integer, Integer> map = new HashMap<>();
+	int binaryTree[][] = new int[500001][2];//[][0] : x값, [][1] : key값
+	int count = 0;
+	int index = 0;
 
-	public int[] solution(String[] operations) {
-		int[] answer = new int[2];
+	public int[][] solution(int[][] nodeinfo) {
+		int[][] answer = new int[2][nodeinfo.length];
 
-		PriorityQueue<Integer> min_heap = new PriorityQueue<>();
-		PriorityQueue<Integer> max_heap = new PriorityQueue<>(new Comparator<Integer>() {
+		int nodes[][] = new int[nodeinfo.length][3];
+
+		for(int i = 0;i < nodeinfo.length;i++)
+		{
+			nodes[i][0] = nodeinfo[i][0];
+			nodes[i][1] = nodeinfo[i][1];
+			nodes[i][2] = i+1;
+		}
+
+		Arrays.sort(nodes, new Comparator<int[]>() {
 			@Override
-			public int compare(Integer o1, Integer o2) {
-				return o2 - o1;
+			public int compare(int[] o1, int[] o2) {
+				if(o2[1] > o1[1])
+					return 1;
+				else
+					return -1;
 			}
 		});
 
 
-		for(int i = 0;i < operations.length;i++)
+		for(int i = 0;i < nodes.length;i++)
 		{
-			String[] list = operations[i].split(" ");
+			int x = nodes[i][0];
+			int y = nodes[i][1];
 
-			//삽입
-			if(list[0].equals("I"))
-			{
-				int key = Integer.parseInt(list[1]);
-				min_heap.offer(key);
-				max_heap.offer(key);
-
-				map.putIfAbsent(key, 0);
-				map.computeIfPresent(key, (k, v) -> ++v);
-			}
-			else
-			{
-				if(!map.isEmpty())
-				{
-					//최대값 빼내기
-					if(list[1].equals("1"))
-					{
-						while(!max_heap.isEmpty() && map.get(max_heap.peek()) < 1)
-							max_heap.poll();
-
-						if(!max_heap.isEmpty())
-						{
-							map.computeIfPresent(max_heap.peek(), (k, v) -> --v);
-							max_heap.poll();
-						}
-					}
-					//최소값 빼내기
-					else if(list[1].equals("-1"))
-					{
-						while(!min_heap.isEmpty() && map.get(min_heap.peek()) < 1)
-							min_heap.poll();
-
-						if(!min_heap.isEmpty())
-						{
-							map.computeIfPresent(min_heap.peek(), (k, v) -> --v);
-							min_heap.poll();
-						}
-					}
-				}
-
-			}
+			insert(x, nodes[i][2]);
 		}
 
-		if(map.isEmpty() || max_heap.isEmpty() || min_heap.isEmpty())
+		preTraversal(1, answer);
+		index = 0;
+		postTraversal(1, answer);
+		return answer;
+	}
+
+	public void preTraversal(int current, int[][] answer)
+	{
+		if(current < binaryTree.length && binaryTree[current][1] != 0)
 		{
-			answer[0] = 0;
-			answer[1] = 0;
+			if(index < answer[0].length)
+				answer[0][index++] = binaryTree[current][1];
+			preTraversal(current * 2, answer);
+			preTraversal(current * 2 + 1, answer);
+		}
+	}
+
+	public void postTraversal(int current, int[][] answer)
+	{
+		if(current < binaryTree.length && binaryTree[current][1] != 0)
+		{
+			postTraversal(current * 2, answer);
+			postTraversal(current * 2 + 1, answer);
+			if(index < answer[1].length)
+				answer[1][index++] = binaryTree[current][1];
+		}
+	}
+
+	public void insert(int x, int key)
+	{
+		if(count == 0)
+		{
+			binaryTree[1][0] = x;
+			binaryTree[1][1] = key;
 		}
 		else
 		{
-			while(!max_heap.isEmpty() && map.get(max_heap.peek()) == 0)
-				max_heap.poll();
-			answer[0] = max_heap.poll();
+			int current = 1;
 
-			while(!min_heap.isEmpty() && map.get(min_heap.peek()) == 0)
-				min_heap.poll();
-			answer[1] = min_heap.poll();
+			while(current < binaryTree.length)
+			{
+				//왼쪽
+				if(binaryTree[current][0] > x)
+					current = current * 2;
+				else
+					current = current * 2 + 1;
+
+				if(current < binaryTree.length && binaryTree[current][1] == 0)
+				{
+					binaryTree[current][0] = x;
+					binaryTree[current][1] = key;
+					break;
+				}
+			}
 		}
 
-		return answer;
+		count++;
 	}
 }
