@@ -1,105 +1,87 @@
+
+
 import java.util.*;
 
 
 class Solution {
 
-	static boolean[] visited;
+	HashMap<Integer, Integer> map = new HashMap<>();
 
-	static HashMap<Integer, Integer> order_map = new HashMap<>();
-	static int visit_count = 0;
+	public int[] solution(String[] operations) {
+		int[] answer = new int[2];
 
-	static boolean result = true;
-
-	static ArrayList<ArrayList<Integer>> tree = new ArrayList<>();
-	static ArrayList<ArrayList<Integer>> tree_nodircet = new ArrayList<>();
-
-	public static boolean solution(int n, int[][] path, int[][] order) {
-		boolean answer = true;
-
-		visited = new boolean[n];
-
-		for(int i = 0;i < order.length;i++)
-		{
-			order_map.putIfAbsent(order[i][0], order[i][1]);
-		}
-
-		for(int i = 0;i < n;i++)
-		{
-			tree.add(new ArrayList<>());
-			tree_nodircet.add(new ArrayList<>());
-		}
-
-		for(int i = 0;i < path.length;i++)
-		{
-			for(int j = 0;j < path[i].length;j++)
-			{
-				tree.get(i).add(j);
-				tree.get(j).add(i);
+		PriorityQueue<Integer> min_heap = new PriorityQueue<>();
+		PriorityQueue<Integer> max_heap = new PriorityQueue<>(new Comparator<Integer>() {
+			@Override
+			public int compare(Integer o1, Integer o2) {
+				return o2 - o1;
 			}
-		}
+		});
 
-		Queue<Integer> queue = new LinkedList<>();
-		queue.offer(0);
-		visited[0] = true;
 
-		while(!queue.isEmpty())
+		for(int i = 0;i < operations.length;i++)
 		{
-			int now = queue.poll();
+			String[] list = operations[i].split(" ");
 
-			for(int i = 0;i < tree.get(now).size();i++)
+			//삽입
+			if(list[0].equals("I"))
 			{
-				int next = tree.get(now).get(i);
+				int key = Integer.parseInt(list[1]);
+				min_heap.offer(key);
+				max_heap.offer(key);
 
-				if(!visited[next])
-				{
-					visited[next] = true;
-					queue.offer(next);
-					tree_nodircet.get(now).add(next);
-				}
-			}
-		}
-
-		for(int i = 0;i < order.length;i++)
-		{
-			tree_nodircet.get(order[i][0]).add(order[i][1]);
-		}
-
-		visited = new boolean[n];
-
-		for(int i = 0;i < n;i++)
-		{
-			boolean now_visited[] = new boolean[n];
-			if(!visited[i])
-			{
-				dfs(i, now_visited);
-			}
-		}
-
-
-		return result;
-	}
-
-	static void dfs(int now, boolean[] now_visited)
-	{
-		visited[now] = true;
-		now_visited[now] = true;
-
-		for(int i = 0;i < tree_nodircet.get(now).size();i++)
-		{
-			int next = tree_nodircet.get(now).get(i);
-
-			if(now_visited[next])
-			{
-				result = false;
-				return;
+				map.putIfAbsent(key, 0);
+				map.computeIfPresent(key, (k, v) -> ++v);
 			}
 			else
 			{
-				if(!visited[next])
-					dfs(next, now_visited);
+				if(!map.isEmpty())
+				{
+					//최대값 빼내기
+					if(list[1].equals("1"))
+					{
+						while(!max_heap.isEmpty() && map.get(max_heap.peek()) < 1)
+							max_heap.poll();
+
+						if(!max_heap.isEmpty())
+						{
+							map.computeIfPresent(max_heap.peek(), (k, v) -> --v);
+							max_heap.poll();
+						}
+					}
+					//최소값 빼내기
+					else if(list[1].equals("-1"))
+					{
+						while(!min_heap.isEmpty() && map.get(min_heap.peek()) < 1)
+							min_heap.poll();
+
+						if(!min_heap.isEmpty())
+						{
+							map.computeIfPresent(min_heap.peek(), (k, v) -> --v);
+							min_heap.poll();
+						}
+					}
+				}
+
 			}
 		}
+
+		if(map.isEmpty() || max_heap.isEmpty() || min_heap.isEmpty())
+		{
+			answer[0] = 0;
+			answer[1] = 0;
+		}
+		else
+		{
+			while(!max_heap.isEmpty() && map.get(max_heap.peek()) == 0)
+				max_heap.poll();
+			answer[0] = max_heap.poll();
+
+			while(!min_heap.isEmpty() && map.get(min_heap.peek()) == 0)
+				min_heap.poll();
+			answer[1] = min_heap.poll();
+		}
+
+		return answer;
 	}
-
-
 }
