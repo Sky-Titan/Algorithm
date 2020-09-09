@@ -22,8 +22,8 @@ public class Main {
 
 			int[][] result = s.solution(nodeinfo);
 
-			System.out.println(Arrays.toString(result[0]));
-			System.out.println(Arrays.toString(result[1]));
+			for(int i = 0;i < result.length;i++)
+				System.out.println(Arrays.toString(result[i]));
 		}
 		catch (Exception e)
 		{
