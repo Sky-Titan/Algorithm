@@ -1,206 +1,194 @@
-
-
-import java.util.Arrays;
-import java.util.Comparator;
-import java.util.Stack;
-
 class Solution {
 
-	int index = 0;
+	final int YEAR = 0, MONTH = 1, DATE = 2, HOUR = 3, MIN = 4, SECOND = 5, PROCESS = 6;
+	String[] start;
 
-	Tree tree = new Tree();
+	String[][] finish_parsed_list, start_parsed_list;
 
-	public int[][] solution(int[][] nodeinfo) {
-		int[][] answer = new int[3][nodeinfo.length];
+	public int solution(String[] end) {
+		int answer = 0;
 
-		int nodes[][] = new int[nodeinfo.length][3];
+		start = new String[end.length];
+		finish_parsed_list = new String[end.length][7];
+		start_parsed_list = new String[end.length][7];
 
-		for(int i = 0;i < nodeinfo.length;i++)
+		for(int i = 0;i < start.length;i++)
 		{
-			nodes[i][0] = nodeinfo[i][0];
-			nodes[i][1] = nodeinfo[i][1];
-			nodes[i][2] = i+1;
+			finish_parsed_list[i] = parsing(end[i]);
+			start[i] = makeStart(end[i]);
+			start_parsed_list[i] = parsing(start[i]);
 		}
 
-		Arrays.sort(nodes, (o1, o2) -> o2[1] - o1[1]);
+		int max = 0;
 
-		for(int i = 0;i < nodes.length;i++)
+		for(int i = 0;i < start.length;i++)
 		{
-			int x = nodes[i][0];
-			int y = nodes[i][1];
-			int key = nodes[i][2];
+			int count = 1;
+			int count2 = 1;
 
-			tree.insert(x, key);
-		}
-
-		preTraversal(tree.root, answer);
-		index = 0;
-		inTraversal(tree.root, answer);
-		index = 0;
-		postTraversal(tree.root, answer);
-		return answer;
-	}
-
-	public void preTraversal(Node current, int[][] answer)
-	{
-		if(current != null)
-		{
-			if(index < answer[0].length)
-			answer[0][index++] = current.key;
-			preTraversal(current.left, answer);
-			preTraversal(current.right, answer);
-		}
-		/*
-		Stack<Node> stack = new Stack<>();
-		stack.push(current);
-
-		while(!stack.isEmpty())
-		{
-			Node node = stack.pop();
-
-			if(index < answer[0].length)
-				answer[0][index++] = node.key;
-			if(node.right != null)
-				stack.push(node.right);
-			if(node.left != null)
-				stack.push(node.left);
-		}*/
-	}
-
-	public void inTraversal(Node current, int[][] answer)
-	{
-		Stack<Node> stack = new Stack<>();
-		Stack<Node> stack_post = new Stack<>();
-
-
-		stack.push(current.right);
-		stack.push(current);
-		stack.push(current.left);
-
-		while(!stack.isEmpty())
-		{
-			Node node = stack.pop();
-			while (node.left != null)
+			for(int j = 0;j < start.length;j++)
 			{
-				stack.push(node.right);
-				stack.push(node);
-				node = node.left;
+				if(i!=j)
+				if(isIn(start_parsed_list[i], start_parsed_list[j], finish_parsed_list[j]) )
+					count++;
+
+				if(j > i)
+					if(isIn(finish_parsed_list[i], start_parsed_list[j],  finish_parsed_list[j]))
+						count2++;
 			}
-			System.out.print(node.key);
+
+			max = Math.max(max, count);
+			max = Math.max(max, count2);
 		}
 
-		while(!stack_post.isEmpty())
-		{
-			int key = stack_post.pop().key;
-			if(index < answer[2].length)
-				answer[2][index++] = key;
-		}
+
+		return max;
 	}
 
-	public void postTraversal(Node current, int[][] answer)
+	public boolean isIn(String[] start_parsed, String[] checked_start_parsed, String[] checked_finish_parsed)
 	{
-		if(current != null)
+		String[] end_parsed = start_parsed.clone();
+
+		int end_date = Integer.parseInt(end_parsed[DATE]);
+
+		int end_hour = Integer.parseInt(end_parsed[HOUR]);
+		int end_min = Integer.parseInt(end_parsed[MIN]);
+		double end_second = Double.parseDouble(end_parsed[SECOND]);
+
+		end_second = makeDouble((makeDouble (end_second) * 1000 + 999)/1000);
+		//System.out.println("start time : "+start_time+", checked time : "+checked_start_time +", end time : "+end_hour+":"+end_min+":"+end_second);
+		if(end_second >= 60)
 		{
-			postTraversal(current.left, answer);
-			postTraversal(current.right, answer);
-			if(index < answer[1].length)
-				answer[1][index++] = current.key;
-		}
-		/*
-		Stack<Node> stack = new Stack<>();
-		Stack<Node> stack_post = new Stack<>();
-
-
-		stack.push(current);
-
-		while(!stack.isEmpty())
-		{
-			Node node = stack.pop();
-
-			stack_post.push(node);
-
-			if(node.left != null)
-				stack.push(node.left);
-			if(node.right != null)
-				stack.push(node.right);
+			end_second -= 60;
+			end_min++;
 		}
 
-		while(!stack_post.isEmpty())
+		if(end_min >= 60)
 		{
-			int key = stack_post.pop().key;
-			if(index < answer[1].length)
-				answer[1][index++] = key;
+			end_min -= 60;
+			end_hour ++;
 		}
 
-		 */
+		if(end_hour >= 24)
+		{
+			end_hour -= 24;
+			end_date++;
+		}
+
+		end_parsed[SECOND] = end_second+"";
+		end_parsed[MIN] = end_min+"";
+		end_parsed[HOUR] = end_hour+"";
+		end_parsed[DATE] = end_date+"";
+
+
+		if(isFirst(checked_start_parsed, start_parsed) && isFirst(end_parsed, checked_finish_parsed))
+			return true;
+		else if(isFirst(start_parsed, checked_start_parsed) && isFirst(checked_start_parsed, end_parsed))
+			return true;
+		else if(isFirst(start_parsed, checked_finish_parsed) && isFirst(checked_finish_parsed, end_parsed))
+			return true;
+
+		return false;
 	}
 
+	public boolean isFirst(String[] first, String[] second)
+	{
+		int first_date = Integer.parseInt(first[DATE]);
 
+		int first_hour = Integer.parseInt(first[HOUR]);
+		int first_min = Integer.parseInt(first[MIN]);
+		double first_second = Double.parseDouble(first[SECOND]);
 
-	static class Tree{
+		//두번째
+		int second_date = Integer.parseInt(second[DATE]);
 
-		Node root;
+		int second_hour = Integer.parseInt(second[HOUR]);
+		int second_min = Integer.parseInt(second[MIN]);
+		double second_second = Double.parseDouble(second[SECOND]);
 
-		public Tree()
+		if(first_date > second_date)
+		 	return false;
+		else if(first_date == second_date)
 		{
-		}
-
-		public void insert(int x, int key)
-		{
-			if(root == null)
+			if(first_hour > second_hour)
+				return false;
+			else if(first_hour == second_hour)
 			{
-				root = new Node(x, key);
-			}
-			else
-			{
-				Node node = root;
-
-				while(node != null)
+				if(first_min > second_min)
+					return false;
+				else if(first_min == second_min)
 				{
-					if(node.x > x)
-					{
-						if(node.left != null)
-							node = node.left;
-						else
-						{
-							node.left = new Node(x, key);
-							return;
-						}
-					}
-					else
-					{
-						if(node.right != null)
-							node = node.right;
-						else
-						{
-							node.right = new Node(x, key);
-							return;
-						}
-					}
+					if(first_second > second_second)
+						return false;
 				}
 			}
 		}
+
+		return true;
 	}
 
-	static class Node{
-		int key;
-		int x;
-		Node left;
-		Node right;
+	public String makeStart(String line)
+	{
+		String[] parsed = parsing(line);
 
-		public Node()
+		int year = Integer.parseInt(parsed[YEAR]);
+		int month = Integer.parseInt(parsed[MONTH]);
+		int date = Integer.parseInt(parsed[DATE]);
+
+
+		int hour = Integer.parseInt(parsed[HOUR]);
+		int min = Integer.parseInt(parsed[MIN]);
+		double second = Double.parseDouble(parsed[SECOND]);
+
+		String process_time_str = parsed[PROCESS];
+
+		double process_time = Double.parseDouble(process_time_str);
+
+		second = makeDouble((makeDouble(second) * 1000 - makeDouble(process_time) * 1000 + 1)/1000);
+		//System.out.println("parsing : "+line+", "+second);
+		if(second < 0)
 		{
-
+			second += 60;
+			min -= 1;
 		}
 
-		public Node(int key)
+		if(min < 0)
 		{
-			this.key = key;
+			min += 60;
+			hour -= 1;
 		}
 
-		public Node(int x, int key) {
-			this.key = key;
-			this.x = x;
+		if(hour < 0)
+		{
+			hour += 24;
+			date -= 1;
 		}
+
+		return year+"-"+month+"-"+date+" "+hour+":"+min+":"+second+" "+process_time;
+	}
+
+	public String[] parsing(String line)
+	{
+		String[] result = new String[7];
+
+		String[] times = line.split(" ");
+		String days = times[0];
+
+		String[] days_list = days.split("-");
+		System.arraycopy(days_list, 0, result,0, days_list.length);
+
+		String end_time_str = times[1];
+		String process_time_str = times[2];
+
+		String end_time_list[] = end_time_str.split(":");
+		System.arraycopy(end_time_list, 0, result, 3, end_time_list.length);
+		result[6] = process_time_str.substring(0, process_time_str.length()-1);
+
+		return result;
+	}
+
+	public Double makeDouble(Double origin)
+	{
+		return Math.floor(origin * 1000) / 1000;
 	}
 }
