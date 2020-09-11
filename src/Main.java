@@ -14,11 +14,9 @@ public class Main {
 		{
 			Solution s = new Solution();
 
-			String[] files = {
-					"F-5 Freedom Fighter", "B-50 Superfortress", "A-10 Thunderbolt II", "F-14 Tomcat"
-			};
-			System.out.println(Arrays.toString(s.solution(files)));
+			int n = 2, t = 1,  m = 2, p = 1;
 
+			System.out.println(s.solution(n, t, m, p));
 		}
 		catch (Exception e)
 		{

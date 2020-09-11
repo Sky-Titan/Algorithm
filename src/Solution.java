@@ -1,63 +1,51 @@
-import java.util.Arrays;
-
 class Solution {
 
-	public String[] solution(String[] files) {
-		String[] answer = {};
+	public String solution(int n, int t, int m, int p) {
 
-		String[][] parsed = new String[files.length][3];
+		//n : 진법 2~16, t : 구할 숫자 개수 , m : 참여 인원 , p : 내 순서
+		StringBuilder stringBuilder = new StringBuilder();
 
-		for(int i = 0;i < files.length;i++)
+		for(int i = 0;i < t*m;i++)
 		{
-			String name = files[i];
-
-			parsed[i][0] = "";
-			parsed[i][1] = "";
-			parsed[i][2] = "";
-
-			int index = 0;
-
-			//head추출
-			String head = "";
-
-			while(!Character.isDigit(name.charAt(index)))
-				head += name.charAt(index++);
-
-			//number 추출
-			String number = "";
-
-			while(index < name.length() && Character.isDigit(name.charAt(index)))
-				number += name.charAt(index++);
-
-
-			//tail추출
-			String tail = "";
-			if(index < name.length())
-				tail = name.substring(index);
-
-			parsed[i][0] = head;
-			parsed[i][1] = number;
-			parsed[i][2] = tail;
+			stringBuilder.append(makingNumber(i, n));
 		}
 
-		Arrays.sort(parsed, (o1, o2) -> {
+		StringBuilder result = new StringBuilder();
+		int count = 0;
 
-			int head = o1[0].compareToIgnoreCase(o2[0]);
-			if(head == 0)
+		for(int i = 0;count < t;i++)
+		{
+			if(i % m == p - 1)
 			{
-				int number = Integer.parseInt(o1[1]) - Integer.parseInt(o2[1]);
-
-				return number;
+				result.append(stringBuilder.charAt(i));
+				count++;
 			}
+		}
+
+		return result.toString();
+	}
+
+	public String makingNumber(int number, int to)
+	{
+		//to : 진법
+		StringBuilder answer = new StringBuilder();
+
+		while(number >= to)
+		{
+			int n = number % to;
+
+			if(n < 10)
+				answer.insert(0, n);
 			else
-				return head;
-		});
+				answer.insert(0, (char)(n + 55));
+			number /= to;
+		}
 
-		answer = new String[files.length];
+		if(number < 10)
+			answer.insert(0, number);
+		else
+			answer.insert(0, (char)(number + 55));
 
-		for(int i = 0;i < files.length;i++)
-			answer[i] = parsed[i][0] + parsed[i][1] + parsed[i][2];
-
-		return answer;
+		return answer.toString();
 	}
 }
