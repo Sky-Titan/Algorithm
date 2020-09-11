@@ -14,8 +14,10 @@ public class Main {
 		{
 			Solution s = new Solution();
 
-			String msg = "KAKAO";
-			System.out.println(Arrays.toString(s.solution(msg)));
+			String[] files = {
+					"F-5 Freedom Fighter", "B-50 Superfortress", "A-10 Thunderbolt II", "F-14 Tomcat"
+			};
+			System.out.println(Arrays.toString(s.solution(files)));
 
 		}
 		catch (Exception e)

@@ -1,47 +1,62 @@
-import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.Arrays;
 
 class Solution {
 
-	HashMap<String, Integer> dictionary = new HashMap<>();
+	public String[] solution(String[] files) {
+		String[] answer = {};
 
+		String[][] parsed = new String[files.length][3];
 
-	public int[] solution(String msg) {
-		int[] answer = {};
-
-		ArrayList<Integer> result = new ArrayList<>();
-
-		for(char i = 'A';i <= 'Z';i++)
-			dictionary.putIfAbsent(i+"", i - 'A' + 1);
-
-		String now = "";
-		int index = 0;
-
-		for(int i = 0;i < msg.length();i++)
+		for(int i = 0;i < files.length;i++)
 		{
-			char c = msg.charAt(i);
+			String name = files[i];
 
-			now += c;
+			parsed[i][0] = "";
+			parsed[i][1] = "";
+			parsed[i][2] = "";
 
-			//사전에 있으면 색인 출력
-			if(dictionary.containsKey(now))
-				index = dictionary.get(now);
-			//사전에 없으면 색인 등록 후 한칸 뒤로
-			else
-			{
-				result.add(index);
+			int index = 0;
 
-				dictionary.putIfAbsent(now, dictionary.size() + 1);
-				now = "";
-				i--;
-			}
+			//head추출
+			String head = "";
+
+			while(!Character.isDigit(name.charAt(index)))
+				head += name.charAt(index++);
+
+			//number 추출
+			String number = "";
+
+			while(index < name.length() && Character.isDigit(name.charAt(index)))
+				number += name.charAt(index++);
+
+
+			//tail추출
+			String tail = "";
+			if(index < name.length())
+				tail = name.substring(index);
+
+			parsed[i][0] = head;
+			parsed[i][1] = number;
+			parsed[i][2] = tail;
 		}
 
-		result.add(index);
+		Arrays.sort(parsed, (o1, o2) -> {
 
-		answer = new int[result.size()];
-		for(int i = 0;i < result.size();i++)
-			answer[i] = result.get(i);
+			int head = o1[0].compareToIgnoreCase(o2[0]);
+			if(head == 0)
+			{
+				int number = Integer.parseInt(o1[1]) - Integer.parseInt(o2[1]);
+
+				return number;
+			}
+			else
+				return head;
+		});
+
+		answer = new String[files.length];
+
+		for(int i = 0;i < files.length;i++)
+			answer[i] = parsed[i][0] + parsed[i][1] + parsed[i][2];
 
 		return answer;
 	}
