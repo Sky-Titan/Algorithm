@@ -1,81 +1,48 @@
+import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Set;
 
 class Solution {
 
-	HashMap<String, Integer> A = new HashMap();
-	HashMap<String, Integer> B = new HashMap();
-	int intersection_size = 0;
-	int union_size = 0;
+	HashMap<String, Integer> dictionary = new HashMap<>();
 
-	public int solution(String str1, String str2) {
-		int answer = 0;
 
-		str1 = str1.toUpperCase();
-		str2 = str2.toUpperCase();
+	public int[] solution(String msg) {
+		int[] answer = {};
 
-		for(int i = 0;i < str1.length() - 1;i++)
+		ArrayList<Integer> result = new ArrayList<>();
+
+		for(char i = 'A';i <= 'Z';i++)
+			dictionary.putIfAbsent(i+"", i - 'A' + 1);
+
+		String now = "";
+		int index = 0;
+
+		for(int i = 0;i < msg.length();i++)
 		{
-			if(Character.isAlphabetic(str1.charAt(i)) && Character.isAlphabetic(str1.charAt(i + 1)))
-			{
-				String s = str1.charAt(i) +"" + str1.charAt(i + 1)+"";
+			char c = msg.charAt(i);
 
-				A.putIfAbsent(s, 0);
-				A.computeIfPresent(s, (s1, integer) -> integer+1);
-			}
-		}
-		for(int i = 0;i < str2.length() - 1;i++)
-		{
-			if(Character.isAlphabetic(str2.charAt(i)) && Character.isAlphabetic(str2.charAt(i + 1)))
-			{
-				String s = str2.charAt(i) +"" + str2.charAt(i + 1)+"";
+			now += c;
 
-				B.putIfAbsent(s, 0);
-				B.computeIfPresent(s, (s1, integer) -> integer+1);
-			}
-
-		}
-
-		if(A.size() == 0 && B.size() == 0)
-			return 65536;
-
-		Set<String> A_keySet = A.keySet();
-		Iterator<String> iterator = A_keySet.iterator();
-
-		while(iterator.hasNext())
-		{
-			String s = iterator.next();
-
-			if(B.containsKey(s))
-			{
-				if(A.get(s) < B.get(s))
-				{
-					intersection_size += A.get(s);
-					union_size += B.get(s);
-				}
-				else
-				{
-					intersection_size += B.get(s);
-					union_size += A.get(s);
-				}
-			}
+			//사전에 있으면 색인 출력
+			if(dictionary.containsKey(now))
+				index = dictionary.get(now);
+			//사전에 없으면 색인 등록 후 한칸 뒤로
 			else
-				union_size += A.get(s);
+			{
+				result.add(index);
+
+				dictionary.putIfAbsent(now, dictionary.size() + 1);
+				now = "";
+				i--;
+			}
 		}
 
-		Set<String> B_keySet = B.keySet();
-		iterator = B_keySet.iterator();
+		result.add(index);
 
-		while(iterator.hasNext())
-		{
-			String s = iterator.next();
+		answer = new int[result.size()];
+		for(int i = 0;i < result.size();i++)
+			answer[i] = result.get(i);
 
-			if(!A.containsKey(s))
-				union_size += B.get(s);
-		}
-
-		answer = (int) (((double)intersection_size / (double) union_size) * 65536);
 		return answer;
 	}
 }

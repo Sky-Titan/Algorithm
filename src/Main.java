@@ -14,9 +14,8 @@ public class Main {
 		{
 			Solution s = new Solution();
 
-			String str1 = "FRANCE";
-			String str2 = "french";
-			System.out.println(s.solution(str1, str2));
+			String msg = "KAKAO";
+			System.out.println(Arrays.toString(s.solution(msg)));
 
 		}
 		catch (Exception e)
