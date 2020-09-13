@@ -14,15 +14,15 @@ public class Main {
 		{
 			Solution s = new Solution();
 
-			int n = 2, t = 1,  m = 2, p = 1;
-
-			System.out.println(s.solution(n, t, m, p));
+			int[] cards = {
+					12, 7, 11, 6, 2, 12
+			};
+			System.out.println(s.solution(cards));
 		}
 		catch (Exception e)
 		{
 			e.printStackTrace();
 		}
 	}
-
 
 }
