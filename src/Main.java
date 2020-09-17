@@ -7,176 +7,143 @@ import java.util.*;
 
 public class Main {
 
-	static int map[][];
-	static int x[] = {-1, 1, 0, 0};
-	static int y[] = {0, 0, -1, 1};
+	static boolean visited[][];
+	static int count = 0;
 
 	public static void solution() throws Exception
 	{
 		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 		BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(System.out));
 
-		int N = Integer.parseInt(br.readLine());
+		String[] list = br.readLine().split(" ");
+		int N = Integer.parseInt(list[0]);
+		int M = Integer.parseInt(list[1]);
 
-		map = new int[N][N];
 
-		Fish baby = new Fish();
+		list = br.readLine().split(" ");
 
-		int fish_count = 0;
+		int start_x = Integer.parseInt(list[0]);
+		int start_y = Integer.parseInt(list[1]);
+		int start_dir = Integer.parseInt(list[2]);
+
+		int map[][] = new int[N][M];
 
 		for(int i = 0;i < N;i++)
 		{
-			String[] list = br.readLine().split(" ");
+			list = br.readLine().split(" ");
 
-			for(int j = 0;j < N;j++)
-			{
+			for(int j = 0;j < M;j++)
 				map[i][j] = Integer.parseInt(list[j]);
+		}
 
-				if(map[i][j] == 9)
+		visited = new boolean[N+1][M+1];
+
+		Queue<Position> queue = new LinkedList<>();
+		queue.offer(new Position(start_x, start_y, start_dir, 1));
+		visited[start_x][start_y] = true;
+
+		while (!queue.isEmpty())
+		{
+			Position now = queue.poll();
+			int dir = now.dir;
+
+			count = now.count;
+
+			boolean go_back = true;
+
+			for(int i = 0;i < 4;i++)
+			{
+				dir = turnLeft(dir);
+
+				int next[] = getFront(now.x, now.y, dir);
+
+				if(0 <= next[0] && next[0] < N && 0 <= next[1] && next[1] < M)
 				{
-					baby.x = i;
-					baby.y = j;
-					baby.size = 2;
+					if(!visited[next[0]][next[1]] && map[next[0]][next[1]] == 0)
+					{
+						visited[next[0]][next[1]] = true;
+						queue.offer(new Position(next[0], next[1], dir,now.count + 1));
+						go_back = false;
+						break;
+					}
 				}
-				else if(map[i][j] > 0)
-					fish_count ++;
+			}
 
+			//네방향 모두 갈 수 없는 경우 뒤돌아가야함
+			if(go_back)
+			{
+				int next[] = getBack(now.x, now.y, now.dir);
+				if(0 <= next[0] && next[0] < N && 0 <= next[1] && next[1] < M)
+				{
+					//벽이 아닌 경우에만
+					if (map[next[0]][next[1]] == 0)
+						queue.offer(new Position(next[0],next[1], now.dir, now.count));
+				}
 			}
 		}
 
-		int time = 0;
+		bw.write(count+"");
 
-		ArrayList<Fish> result = new ArrayList<>();
-
-		Queue<Fish> queue = new LinkedList<>();
-		queue.offer(baby);
-
-		//물고기들이 아직 존재하는 이상 계속
-		while (fish_count > 0)
-		{
-			bfs(result, N ,queue);
-
-			//더 이상 먹을 수 있는 물고기 없음
-			if(result.isEmpty())
-				break;
-
-			int min_index = getMinIndex(result);
-
-			fish_count--;
-
-			//그 다음 탐색을 시작할 물고기 위치
-			queue.offer(result.get(min_index));
-
-			time = result.get(min_index).time;
-
-			result.clear();
-		}
-
-		bw.write(time+"");
 		bw.close();
 		br.close();
 	}
 
-	public static void bfs(ArrayList<Fish> result, int N, Queue<Fish> queue)
+	public static int turnLeft(int dir)
 	{
-		boolean[][] visited = new boolean[N][N];
-
-		visited[queue.peek().x][queue.peek().y] = true;
-		map[queue.peek().x][queue.peek().y] = 0;
-
-		int min_time = Integer.MAX_VALUE;
-
-		//현재 위치에서 갈 수 있는 최단 거리의 물고기들을 구한다.
-		while(!queue.isEmpty())
-		{
-			Fish now = queue.poll();
-
-			//최소 시간보다 시간이 더걸린다면 더 탐색할 필요 없음
-			if(min_time < now.time)
-				continue;
-
-			if(0 < map[now.x][now.y] && map[now.x][now.y] < now.size)
-			{
-				if(min_time == Integer.MAX_VALUE)
-					min_time = now.time;
-
-				now.eat++;
-				if(now.eat == now.size)
-				{
-					now.size ++;
-					now.eat = 0;
-				}
-
-				result.add(now);
-				continue;
-			}
-
-			for(int i = 0;i < 4;i++)
-			{
-				int next_x = now.x + x[i];
-				int next_y = now.y + y[i];
-
-				if(0 <= next_x && next_x < N && 0 <= next_y && next_y < N)
-				{
-					if(!visited[next_x][next_y] && now.size >= map[next_x][next_y])
-					{
-						visited[next_x][next_y] = true;
-						queue.offer(new Fish(next_x, next_y, now.size, now.time + 1, now.eat));
-					}
-				}
-			}
-		}
+		if(dir == 0)
+			return 3;
+		return dir - 1;
 	}
 
-	public static int getMinIndex(ArrayList<Fish> result)
+	public static int[] getBack(int x, int y, int dir)
 	{
-		int min_index = 0;
+		int next[] = {x, y};
 
-		//거리가 가장 짧고, 가장 위에 있고 가장 왼쪽에 있는 것을 맨 앞으로
-		for(int i = 0;i < result.size();i++)
-		{
-			if(result.get(min_index).time == result.get(i).time)
-			{
-				if(result.get(min_index).x > result.get(i).x)
-					min_index = i;
-				else if(result.get(min_index).x == result.get(i).x)
-				{
-					if(result.get(min_index).y > result.get(i).y)
-						min_index = i;
-				}
-			}
-			else
-				break;
-		}
-		return min_index;
+		//북
+		if(dir == 0)
+			next[0] ++;
+			//동
+		else if(dir == 1)
+			next[1] --;
+			//남
+		else if(dir == 2)
+			next[0] --;
+		else
+			next[1] ++;
+		return next;
+	}
+
+	public static int[] getFront(int x, int y, int dir)
+	{
+		int next[] = {x, y};
+
+		//북
+		if(dir == 0)
+			next[0] --;
+		//동
+		else if(dir == 1)
+			next[1] ++;
+		//남
+		else if(dir == 2)
+			next[0] ++;
+		else
+			next[1] --;
+		return next;
 	}
 
 
-	static class Fish{
+	static class Position{
+		int x, y, dir;
+		int count;
 
-		int x, y;
-		int size;
-		int eat = 0;
-		int time = 0;
-
-		public Fish() {
-		}
-
-		public Fish(int x, int y, int size) {
+		public Position(int x, int y, int dir, int count) {
 			this.x = x;
 			this.y = y;
-			this.size = size;
+			this.dir = dir;
+			this.count = count;
 		}
-
-		public Fish(int x, int y, int size, int time, int eat) {
-			this.x = x;
-			this.y = y;
-			this.size = size;
-			this.time = time;
-			this.eat = eat;
-		}
-
 	}
+
 
 	public static void main(String[] args) {
 		try
