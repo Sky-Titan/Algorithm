@@ -3,39 +3,22 @@ import org.junit.jupiter.api.Test;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 class MainTest {
 
-    public String makingNumber(int number, int to)
-    {
-        //to : 진법
-        StringBuilder answer = new StringBuilder();
 
-        while(number >= to)
-        {
-            int n = number % to;
-
-            if(n < 10)
-                answer.insert(0, n);
-            else
-                answer.insert(0, (char)(n + 55));
-            number /= to;
-        }
-
-        if(number < 10)
-            answer.insert(0, number);
-        else
-            answer.insert(0, (char)(number + 55));
-
-        return answer.toString();
-    }
     @Test
     public void test(){
 
-        assertEquals("8", makingNumber(8, 9));
+        Main.Fish fish = new Main.Fish(0, 1, 2);
+        Main.Fish fish1 = new Main.Fish(0, 1, 3);
 
+        HashSet<Main.Fish> set = new HashSet<>();
+        set.add(fish);
+        System.out.println(set.contains(fish));
 
     }
 
