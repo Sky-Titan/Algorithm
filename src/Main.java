@@ -7,141 +7,250 @@ import java.util.*;
 
 public class Main {
 
+	static int map[][];
 
-	static int map[][] = new int[101][101];
+	static int cases[] = {0, 4, 2, 4, 4, 1};
+	static ArrayList<Position> cameras = new ArrayList<>();
+	static int min = Integer.MAX_VALUE;
 
 	public static void solution() throws Exception
 	{
 		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 		BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(System.out));
 
-		int N = Integer.parseInt(br.readLine());
+		String[] list = br.readLine().split(" ");
 
-		ArrayList[] dragonCurves = new ArrayList[N];
+		int N = Integer.parseInt(list[0]);
+		int M = Integer.parseInt(list[1]);
+
+		map = new int[N][M];
 
 		for(int i = 0;i < N;i++)
 		{
-			dragonCurves[i] = new ArrayList<Position>();
+			list = br.readLine().split(" ");
 
-			String[] list = br.readLine().split(" ");
-			int x = Integer.parseInt(list[0]);
-			int y = Integer.parseInt(list[1]);
-			int d = Integer.parseInt(list[2]);
-			int g = Integer.parseInt(list[3]);
-
-			dragonCurves[i].add(new Position(x, y));
-			makeDragonCurve(dragonCurves[i], d, g);
-		}
-
-		int count = 0;
-
-		for(int i = 0;i < 100;i++)
-		{
-			for(int j = 0;j < 100;j++)
+			for(int j = 0;j < M;j++)
 			{
-				if(map[i][j] == 1 && map[i+1][j] == 1 && map[i][j+1] == 1 && map[i+1][j+1] == 1)
-					count++;
+				map[i][j] = Integer.parseInt(list[j]);
+				if(0 < map[i][j] && map[i][j] < 6)
+					cameras.add(new Position(i, j));
 			}
 		}
+		findAllCases(0, N, M);
 
-		bw.write(count+"");
+		if(min == Integer.MAX_VALUE)
+			bw.write("0");
+		else
+			bw.write(min+"");
 		bw.close();
 		br.close();
 	}
 
-	public static void makeDragonCurve(ArrayList<Position> dragonCurve, int d, int g)
+	static void findAllCases(int camera, int N, int M)
 	{
-		//0세대 드래곤 커브 만들기
-		map[dragonCurve.get(0).x][dragonCurve.get(0).y] = 1;
+		if(camera == cameras.size())
+		{
+			int count = 0;
 
-		//x증가 방향 -> 남쪽
-		if(d == 0)
-		{
-			map[dragonCurve.get(0).x + 1][dragonCurve.get(0).y] = 1;
-			dragonCurve.add(new Position(dragonCurve.get(0).x + 1, dragonCurve.get(0).y));
+			for(int i = 0;i < N;i++)
+			{
+				for(int j = 0;j < M;j++)
+				{
+					if(map[i][j] == 0)
+						count++;
+				}
+			}
+			min = Math.min(min, count);
 		}
-		//y감소 방향 -> 서쪽
-		else if(d == 1)
-		{
-			map[dragonCurve.get(0).x][dragonCurve.get(0).y - 1] = 1;
-			dragonCurve.add(new Position(dragonCurve.get(0).x, dragonCurve.get(0).y - 1));
-		}
-		//x감소 방향 -> 북쪽
-		else if(d == 2)
-		{
-			map[dragonCurve.get(0).x - 1][dragonCurve.get(0).y] = 1;
-			dragonCurve.add(new Position(dragonCurve.get(0).x - 1, dragonCurve.get(0).y));
-		}
-		//y증가 방향 -> 동쪽
 		else
 		{
-			map[dragonCurve.get(0).x][dragonCurve.get(0).y + 1] = 1;
-			dragonCurve.add(new Position(dragonCurve.get(0).x, dragonCurve.get(0).y + 1));
-		}
+			int camera_number = map[cameras.get(camera).x][cameras.get(camera).y];
+			Stack<Position> recover_stack = new Stack<>();
 
-		//g세대 만큼
-		for(int i = 0;i < g;i++)
-		{
-			//기준점은 끝점 기준
-			int size = dragonCurve.size();
-			int ref_x = dragonCurve.get(size - 1).x;
-			int ref_y = dragonCurve.get(size - 1).y;
-
-			//회전하게 되면 첫 시작점의 회전점이 다음 끝점이 되어야함
-			for(int j = size - 2;j >= 0;j--)
+			for(int i = 0;i < cases[camera_number];i++)
 			{
-				int turn_pos[] = turnPosition(ref_x, ref_y, dragonCurve.get(j).x, dragonCurve.get(j).y);
-				map[turn_pos[0]][turn_pos[1]] = 1;
-				dragonCurve.add(new Position(turn_pos[0], turn_pos[1]));
+				makeMap(cameras.get(camera).x, cameras.get(camera).y, i, camera_number, recover_stack);
+
+				findAllCases(camera + 1, N, M);
+
+				recoverMap(recover_stack);
 			}
 		}
-
 	}
 
-	public static int[] turnPosition(int ref_x, int ref_y, int x, int y)
+	//카메라 타입에 따라서 감시영역 지정
+	static void makeMap(int x, int y, int index, int camera_number, Stack<Position> recover_stack)
 	{
-		int turn_pos[] = new int[2];
-
-		//주의 : 반시계 방향으로 회전 (이유 : 예시의 좌표계는 y가 가로줄 담당, x가 세로줄 담당 -> 여기서는 x가 가로줄 담당, y가 세로줄 담당이어서 거꾸로
-
-		//+ + -> + -
-		if(ref_x > x && ref_y > y)
+		//1번 카메라
+		if(camera_number == 1)
 		{
-			turn_pos[0] = ref_x + Math.abs(ref_y - y);
-			turn_pos[1] = ref_y - Math.abs(ref_x - x);
+			setObservation(x, y, index, recover_stack);
 		}
-		//+ - -> - -
-		else if(ref_x > x && ref_y <= y)
+		else if(camera_number == 2)
 		{
-			turn_pos[0] = ref_x - Math.abs(ref_y - y);
-			turn_pos[1] = ref_y - Math.abs(ref_x - x);
-
+			//남북
+			if(index == 0)
+			{
+				setObservation(x, y, 2, recover_stack);
+				setObservation(x, y, 3, recover_stack);
+			}
+			//동서
+			else
+			{
+				setObservation(x, y, 0, recover_stack);
+				setObservation(x, y, 1, recover_stack);
+			}
 		}
-		//- - -> - +
-		else if(ref_x <= x && ref_y <= y)
+		else if(camera_number == 3)
 		{
-			turn_pos[0] = ref_x - Math.abs(ref_y - y);
-			turn_pos[1] = ref_y + Math.abs(ref_x - x);
+			//북동
+			if(index == 0)
+			{
+				setObservation(x, y, 3, recover_stack);
+				setObservation(x, y, 0, recover_stack);
+			}
+			//동남
+			else if(index == 1)
+			{
+				setObservation(x, y, 0, recover_stack);
+				setObservation(x, y, 2, recover_stack);
+			}
+			//남서
+			else if(index == 2)
+			{
+				setObservation(x, y, 2, recover_stack);
+				setObservation(x, y, 1, recover_stack);
+			}
+			//서북
+			else
+			{
+				setObservation(x, y, 1, recover_stack);
+				setObservation(x, y, 3, recover_stack);
+			}
 		}
-		//- + -> + +
+		else if(camera_number == 4)
+		{
+			//서북동
+			if(index == 0)
+			{
+				setObservation(x, y, 1, recover_stack);
+				setObservation(x, y, 3, recover_stack);
+				setObservation(x, y, 0, recover_stack);
+			}
+			//북동남
+			else if(index == 1)
+			{
+				setObservation(x, y, 3, recover_stack);
+				setObservation(x, y, 0, recover_stack);
+				setObservation(x, y, 2, recover_stack);
+			}
+			//동남서
+			else if(index == 2)
+			{
+				setObservation(x, y, 0, recover_stack);
+				setObservation(x, y, 2, recover_stack);
+				setObservation(x, y, 1, recover_stack);
+			}
+			//남서북
+			else
+			{
+				setObservation(x, y, 2, recover_stack);
+				setObservation(x, y, 1, recover_stack);
+				setObservation(x, y, 3, recover_stack);
+			}
+		}
 		else
 		{
-			turn_pos[0] = ref_x + Math.abs(ref_y - y);
-			turn_pos[1] = ref_y + Math.abs(ref_x - x);
+			for(int i = 0;i < 4;i++)
+				setObservation(x, y, i, recover_stack);
 		}
+	}
 
-		return turn_pos;
+	//원래대로 복구
+	public static void recoverMap(Stack<Position> recover_stack)
+	{
+		while(!recover_stack.isEmpty())
+		{
+			Position p = recover_stack.pop();
+			map[p.x][p.y] = 0;
+		}
+	}
+
+	//감시 영역 지정
+	public static void setObservation(int x, int y, int index, Stack<Position> recover_stack)
+	{
+		//동
+		if(index == 0)
+		{
+			for(int j = y + 1;j < map[x].length;j++)
+			{
+				//감시영역 지정
+				if(map[x][j] == 0)
+				{
+					map[x][j] = -1;
+					recover_stack.push(new Position(x, j));
+				}
+				//벽이면 멈춤
+				else if(map[x][j] == 6)
+					break;
+			}
+		}
+		//서
+		else if(index == 1)
+		{
+			for(int j = y - 1;j >= 0;j--)
+			{
+				//감시영역 지정
+				if(map[x][j] == 0)
+				{
+					map[x][j] = -1;
+					recover_stack.push(new Position(x, j));
+				}
+				else if(map[x][j] == 6)
+					break;
+			}
+		}
+		//남
+		else if(index == 2)
+		{
+			for(int i = x + 1;i < map.length;i++)
+			{
+				//감시영역 지정
+				if(map[i][y] == 0)
+				{
+					map[i][y] = -1;
+					recover_stack.push(new Position(i, y));
+				}
+				else if(map[i][y] == 6)
+					break;
+			}
+		}
+		//북
+		else
+		{
+			for(int i = x - 1;i >= 0;i--)
+			{
+				//감시영역 지정
+				if(map[i][y] == 0)
+				{
+					map[i][y] = -1;
+					recover_stack.push(new Position(i, y));
+				}
+				else if(map[i][y] == 6)
+					break;
+			}
+		}
 	}
 
 	static class Position{
 		int x, y;
 
-		public Position(int x, int y)
-		{
+		public Position(int x, int y) {
 			this.x = x;
 			this.y = y;
 		}
 	}
+
 
 	public static void main(String[] args) {
 		try
