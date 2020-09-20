@@ -1,73 +1,57 @@
-
-import kotlin.collections.HashSet
-import kotlin.math.abs
-import kotlin.math.min
+import java.util.*
+import kotlin.collections.ArrayList
 
 fun solution(){
 
-    var isBroken = BooleanArray(10)
+    var N = readLine()!!.toInt()
+    var M = readLine()!!.toInt()
 
-    val N_str = readLine()!!
-    val N = N_str.toInt()
-    val M = readLine()!!.toInt()
+    var recommendation = IntArray(101)
+    var time = IntArray(101)
 
-
-    //부서진 버튼이 있다면
-    if(M > 0)
-    {
-        var str = readLine()!!
-
-        for(i in 0 until str.length step 2)
-            isBroken[str[i] - '0'] = true
-    }
-
-    var range = (0..9).filter { i -> !isBroken[i] }
-
-    var range_set = HashSet<Int>(range)
-
-    var max_value = getMaxValue(N, range_set)
-
-    var min = abs(N - 100)
-
-    for(i in (0 .. max_value).filter { i ->
-        for(c in i.toString())
-        {
-            if(!range_set.contains(c-'0'))
-                return@filter false
+    var queue = PriorityQueue<Int>(
+        {o1, o2 ->
+            if(recommendation[o1] == recommendation[o2])
+                time[o1] - time[o2]
+            else
+                recommendation[o1] - recommendation[o2]
         }
-        true
-    })
+    )
+
+    var str = readLine()!!.split(" ")
+
+    for(i in 0 until str.size)
     {
-        var str = i.toString()
+        var student = str[i].toInt()
 
-        min = min(str.length + abs(N - i), min)
+        recommendation[student] ++
 
-        if(i == N)
-            break
-    }
-
-    print(min)
-
-}
-
-fun getMaxValue(N : Int, range_set : HashSet<Int>) : Int
-{
-    for(i in N .. 1000000)
-    {
-        var isFinish = true
-        for(c in i.toString())
+        if(!queue.contains(student))
         {
-            if(!range_set.contains(c-'0'))
-            {
-                isFinish = false
-                break
-            }
-        }
+            //새로 게시됨 -> 게시 시간 갱신
+            time[student] = i
 
-        if(isFinish)
-            return i
+            //사진틀 꽉참
+            if(queue.size == N)
+                recommendation[queue.poll()] = 0
+            queue.offer(student)
+
+        }
+        //이미 게시되어있음
+        else
+        {
+            //새로 삽입해서 다시 정렬되도록
+            queue.remove(student)
+            queue.offer(student)
+        }
     }
-    return 1000000
+
+    var result = ArrayList<Int>(queue)
+
+    result.sort()
+
+    for(a in result)
+        print("$a ")
 }
 
 
