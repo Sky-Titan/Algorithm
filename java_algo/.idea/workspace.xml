@@ -20,62 +20,16 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="1feed273-fc32-4673-a950-ffb5fec46d1e" name="Default Changelist" comment="카카오 2018 n진수게임">
-      <change beforePath="$PROJECT_DIR$/../.classpath" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../.idea/dictionaries/june.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../.idea/encodings.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../.idea/misc.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../.idea/modules.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../.idea/modules.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../.idea/vcs.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../.idea/vcs.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../.project" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../.settings/org.eclipse.jdt.core.prefs" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Algorithm.iml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../bin/DynamicProgramming$Position.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../bin/DynamicProgramming.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../bin/Graph$Computer.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../bin/Graph$Edge.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../bin/Graph$Festival.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../bin/Graph$Position.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../bin/Graph.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../bin/Kakao.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../bin/Knapsack.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../bin/Main.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../bin/MainTest.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../bin/Samsung$AccessPoint.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../bin/Samsung$Atomic.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../bin/Samsung$Cell.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../bin/Samsung$Dust.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../bin/Samsung$Horse.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../bin/Samsung$PinBall.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../bin/Samsung$Position.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../bin/Samsung$Shark.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../bin/Samsung$Shark17143.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../bin/Samsung$Virus.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../bin/Samsung$YutMap.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../bin/Samsung.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../bin/Simulation$DoublePosition.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../bin/Simulation$Position.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../bin/Simulation.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../bin/Solution.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../bin/StringProcess.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../lib/apiguardian-api-1.0.0.jar" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../lib/junit-jupiter-5.4.2.jar" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../lib/junit-jupiter-api-5.4.2.jar" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../lib/junit-jupiter-engine-5.4.2.jar" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../lib/junit-jupiter-params-5.4.2.jar" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../lib/junit-platform-commons-1.4.2.jar" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../lib/junit-platform-engine-1.4.2.jar" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../lib/opentest4j-1.1.1.jar" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../src/DynamicProgramming.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../src/Graph.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../src/Kakao.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../src/Knapsack.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../src/Main.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../src/Samsung.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../src/Simulation.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../src/Solution.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../src/StringProcess.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../test/MainTest.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../kt_algo/.gradle/6.3/executionHistory/executionHistory.bin" beforeDir="false" afterPath="$PROJECT_DIR$/../kt_algo/.gradle/6.3/executionHistory/executionHistory.bin" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../kt_algo/.gradle/6.3/executionHistory/executionHistory.lock" beforeDir="false" afterPath="$PROJECT_DIR$/../kt_algo/.gradle/6.3/executionHistory/executionHistory.lock" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../kt_algo/.gradle/6.3/fileHashes/fileHashes.bin" beforeDir="false" afterPath="$PROJECT_DIR$/../kt_algo/.gradle/6.3/fileHashes/fileHashes.bin" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../kt_algo/.gradle/6.3/fileHashes/fileHashes.lock" beforeDir="false" afterPath="$PROJECT_DIR$/../kt_algo/.gradle/6.3/fileHashes/fileHashes.lock" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../kt_algo/.gradle/buildOutputCleanup/buildOutputCleanup.lock" beforeDir="false" afterPath="$PROJECT_DIR$/../kt_algo/.gradle/buildOutputCleanup/buildOutputCleanup.lock" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../kt_algo/.gradle/buildOutputCleanup/outputFiles.bin" beforeDir="false" afterPath="$PROJECT_DIR$/../kt_algo/.gradle/buildOutputCleanup/outputFiles.bin" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../kt_algo/.gradle/checksums/checksums.lock" beforeDir="false" afterPath="$PROJECT_DIR$/../kt_algo/.gradle/checksums/checksums.lock" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../kt_algo/.gradle/checksums/md5-checksums.bin" beforeDir="false" afterPath="$PROJECT_DIR$/../kt_algo/.gradle/checksums/md5-checksums.bin" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../kt_algo/.gradle/checksums/sha1-checksums.bin" beforeDir="false" afterPath="$PROJECT_DIR$/../kt_algo/.gradle/checksums/sha1-checksums.bin" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../kt_algo/.idea/gradle.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../kt_algo/.idea/gradle.xml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
