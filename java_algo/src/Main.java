@@ -7,52 +7,103 @@ import java.util.*;
 
 public class Main {
 
-	static int S[], P[], card[];
 	static BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 	static BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(System.out));
 
+	static int max = 0;
+	static int N = 0;
+	static char [][] map;
+
 	public static void solution() throws Exception
 	{
-		int N = Integer.parseInt(br.readLine());
+		N = Integer.parseInt(br.readLine());
 
-		S = new int[N];
-		P = new int[N];
-		card = new int[N];
-
-		String[] list = br.readLine().split(" ");
+		map = new char[N][N];
 
 		for(int i = 0;i < N;i++)
 		{
-			P[i] = Integer.parseInt(list[i]);
-			card[i] = i % 3;
+			String str = br.readLine();
+			for(int j = 0;j < N;j++)
+				map[i][j] = str.charAt(j);
 		}
 
-		list = br.readLine().split(" ");
-
 		for(int i = 0;i < N;i++)
-			S[i] = Integer.parseInt(list[i]);
+		{
+			for(int j = 0;j < N;j++)
+			{
+				//오른쪽
+				if(j < N -1)
+				{
+					swap(i, j, i, j + 1);
+					max = Math.max(max, countContinuousRow(i));
+					max = Math.max(max, countContinuousColumn(j + 1));
+					max = Math.max(max, countContinuousColumn(j));
+					swap(i, j, i, j + 1);
+				}
 
+				if(i < N - 1)
+				{
+					//아래쪽
+					swap(i, j,i + 1,j);
+					max = Math.max(max, countContinuousRow(i));
+					max = Math.max(max, countContinuousRow(i + 1));
+					max = Math.max(max, countContinuousColumn(j));
+					swap(i, j,i + 1,j);
+				}
+			}
+		}
+		bw.write(max+"");
+	}
+
+	public static int countContinuousRow(int x)
+	{
 		int count = 0;
 
-		while(!Arrays.equals(card, P))
+		int color = map[x][0];
+
+		for(int j = 0;j < N;j++)
 		{
-			int temp[] = card.clone();
-
-			//i번째 위치의 카드를 S[i] 위치로
-			for(int i = 0;i < N;i++)
-				card[i] = temp[S[i]];
-
-			//이미 존재하는 조합 -> 사이클 존재 -> 절대 못구함
-			if(count > 120119)
+			if(color == map[x][j])
+				count++;
+			else
 			{
-				bw.write("-1");
-				return;
+				color = map[x][j];
+				count = 1;
 			}
-
-			count++;
+			max = Math.max(count, max);
 		}
 
-		bw.write(count+"");
+		return max;
+	}
+
+	public static int countContinuousColumn(int y)
+	{
+		int count = 0;
+		int max = 0;
+
+		int color = map[0][y];
+
+		for(int i = 0;i < N;i++)
+		{
+			if(color == map[i][y])
+				count++;
+			else
+			{
+				color = map[i][y];
+				count = 1;
+			}
+			max = Math.max(count, max);
+		}
+
+		return max;
+	}
+
+
+	public static void swap(int x1, int y1, int x2, int y2)
+	{
+		char temp = map[x1][y1];
+		map[x1][y1] = map[x2][y2];
+		map[x2][y2] = temp;
 	}
 
 
