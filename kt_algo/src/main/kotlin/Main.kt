@@ -1,21 +1,26 @@
 import java.util.*
 import kotlin.collections.ArrayList
+import kotlin.math.max
 
 
 fun solution() {
 
+    var N = readLine()!!.toInt()
 
-    var list = arrayOf("a", "b", "c", "d")
+    var ropes = Array<Int> (N, { readLine()!!.toInt()})
 
-    list.forEach { println(it) }
+    ropes.sortDescending()
 
-    /*결과
-    a
-    b
-    c
-    d
-     */
+    var count = 1
+    var max = 0
 
+    for(weight in ropes)
+    {
+        var total = weight * count
+        max = max(total, max)
+        count++
+    }
+    print(max)
 }
 
 
