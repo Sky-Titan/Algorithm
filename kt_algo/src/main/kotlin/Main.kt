@@ -1,26 +1,40 @@
-import java.util.*
-import kotlin.collections.ArrayList
-import kotlin.math.max
 
 
 fun solution() {
 
     var N = readLine()!!.toInt()
 
-    var ropes = Array<Int> (N, { readLine()!!.toInt()})
+    var result = 665
+    var count = 0
 
-    ropes.sortDescending()
-
-    var count = 1
-    var max = 0
-
-    for(weight in ropes)
+    while(count < N)
     {
-        var total = weight * count
-        max = max(total, max)
-        count++
+        result++
+        if(isRight(result))
+            count++
     }
-    print(max)
+    print(result)
+
+}
+
+//세상의 종말 수가 맞는지 확인
+fun isRight(current : Int) : Boolean
+{
+    var str = current.toString()
+
+    var count = 0
+
+    for(i in 0 until str.length)
+    {
+        if(str[i] == '6')
+            count++
+        else
+            count = 0
+
+        if(count == 3)
+            return true
+    }
+    return false
 }
 
 
