@@ -1,186 +1,281 @@
-import javafx.geometry.Pos;
 
-import javax.swing.*;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.util.*;
-import java.util.stream.IntStream;
+
 
 public class Main {
 
 	static BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 	static BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(System.out));
 
-	static int N, M, D;
-	static int map[][];
-	static int max = 0;
+	static int N, M;
+	static boolean visited[][][][];
+	static char[][] map;
 
 	public static void solution() throws Exception
 	{
 		String[] list = br.readLine().split(" ");
 		N = Integer.parseInt(list[0]);
 		M = Integer.parseInt(list[1]);
-		D = Integer.parseInt(list[2]);
 
-		map = new int[N][M];
+		map = new char[N][M];
+		visited = new boolean[N][M][N][M];
+
+		Balls start = new Balls(0,0,0,0,0);
+
 		for(int i = 0;i < N;i++)
 		{
-			list = br.readLine().split(" ");
+			String line = br.readLine();
 			for(int j = 0;j < M;j++)
-				map[i][j] = Integer.parseInt(list[j]);
+			{
+				map[i][j] = line.charAt(j);
+
+				if(map[i][j] == 'R')
+				{
+					start.r_x = i;
+					start.r_y = j;
+					map[i][j] = '.';
+				}
+				else if(map[i][j] == 'B')
+				{
+					start.b_x = i;
+					start.b_y = j;
+					map[i][j] = '.';
+				}
+			}
 		}
 
-		dfs(0, new ArrayList<>());
-		bw.write(max+"");
-
-
+		bw.write(bfs(start)+"");
 	}
 
-	public static void dfs(int index, ArrayList<Position> archers)
+	static int bfs(Balls start)
 	{
-		if(archers.size() == 3)
+		Queue<Balls> queue = new LinkedList<>();
+		visited[start.r_x][start.r_y][start.b_x][start.b_y] = true;
+		queue.offer(start);
+
+		while(!queue.isEmpty())
 		{
-			//시뮬레이션
-			int sim_map[][] = new int[N][M];
+			Balls now = queue.poll();
 
-			for(int i = 0;i < N;i++)
-				sim_map[i] = map[i].clone();
+			//종료
+			if(now.count > 10)
+				return -1;
+			if(map[now.r_x][now.r_y] == 'O')
+				return now.count;
 
-			ArrayList<Position> enemyList = new ArrayList<>();
-
-			int count = 0;
-
-			//모든 맵이 0될 때 까지
-			while(!isFinish(sim_map))
+			//상하좌우 기울이기
+			for(int i = 0;i < 4;i++)
 			{
-				//죽일 적들 골라오기
-				for(int i = 0;i < 3;i++)
+				int next[] = tilt(now, i);
+				//System.out.println(now.toString());
+				if(isInBoundary(next))
 				{
-					Position enemy = selectEnemy(sim_map, archers.get(i).x, archers.get(i).y);
+					//방문 x && 파란 볼이 구멍에 안빠지면
+					if(!visited[next[0]][next[1]][next[2]][next[3]] && map[next[2]][next[3]] != 'O')
+					{
+						visited[next[0]][next[1]][next[2]][next[3]] = true;
+						queue.offer(new Balls(next[0],next[1], next[2], next[3], now.count + 1));
+					}
+				}
+			}
+		}
 
-					//죽일 수 있는 적이 없음
-					if(enemy.x == archers.get(i).x && enemy.y == archers.get(i).y)
-						continue;
+		return -1;
+	}
 
-					//중복 아닌 것만
-					if(!enemyList.contains(enemy))
-						enemyList.add(enemy);
+	static boolean isInBoundary(int next[])
+	{
+		if(0 <= next[0] && next[0] < N && 0 <= next[1] && next[1] < M
+				&& 0 <= next[2] && next[2] < N && 0 <= next[3] && next[3] < M)
+			return true;
+		return false;
+	}
+
+	static int[] tilt(Balls now, int dir)
+	{
+		int next[] = {now.r_x, now.r_y, now.b_x, now.b_y};
+
+		//상하 좌우
+		if(dir == 0)
+		{
+			//빨간공 먼저 기울이기
+			if(now.r_x < now.b_x)
+			{
+				for(int i = now.r_x;i >= 0 && map[i][now.r_y] != '#'; i--)
+				{
+					next[0] = i;
+					if(map[next[0]][next[1]] == 'O')
+						break;
 				}
 
-				count += enemyList.size();
-				killEnemy(enemyList, sim_map);
-				//System.out.println(Arrays.deepToString(sim_map));
-				moveEnemy(sim_map);
-
+				for(int i = now.b_x;i >= 0 && (map[i][now.b_y] != '#' && (next[0] != i || next[1] != now.b_y)) || map[i][now.b_y] == 'O'; i--)
+				{
+					next[2] = i;
+					if(map[next[2]][next[3]] == 'O')
+						break;
+				}
 			}
-			//System.out.println();
-			max = Math.max(max, count);
+			else
+			{
+				for(int i = now.b_x;i >= 0 && map[i][now.b_y] != '#'; i--)
+				{
+					next[2] = i;
+					if(map[next[2]][next[3]] == 'O')
+						break;
+				}
+
+				for(int i = now.r_x;i >= 0 && (map[i][now.r_y] != '#' && (next[2] != i || next[3] != now.r_y)) || map[i][now.r_y] == 'O'; i--)
+				{
+					next[0] = i;
+					if(map[next[0]][next[1]] == 'O')
+						break;
+				}
+			}
 		}
+		//하
+		else if(dir == 1)
+		{
+			//빨간공 먼저
+			if(now.r_x > now.b_x)
+			{
+				for(int i = now.r_x;i < N && map[i][now.r_y] != '#'; i++)
+				{
+					next[0] = i;
+					if(map[next[0]][next[1]] == 'O')
+						break;
+				}
+
+				for(int i = now.b_x;i < N && (map[i][now.b_y] != '#' && (next[0] != i || next[1] != now.b_y)) || map[i][now.b_y] == 'O'; i++)
+				{
+					next[2] = i;
+					if(map[next[2]][next[3]] == 'O')
+						break;
+				}
+			}
+			else
+			{
+				for(int i = now.b_x;i < N && map[i][now.b_y] != '#'; i++)
+				{
+					next[2] = i;
+					if(map[next[2]][next[3]] == 'O')
+						break;
+				}
+
+				for(int i = now.r_x;i < N && (map[i][now.r_y] != '#'&& (next[2] != i || next[3] != now.r_y)) || map[i][now.r_y] == 'O'; i++)
+				{
+					next[0] = i;
+					if(map[next[0]][next[1]] == 'O')
+						break;
+				}
+			}
+		}
+		//좌
+		else if(dir == 2)
+		{
+			//빨간공 먼저
+			if(now.r_y < now.b_y)
+			{
+				for(int j = now.r_y;j >= 0 && map[now.r_x][j] != '#'; j--)
+				{
+					next[1] = j;
+					if(map[next[0]][next[1]] == 'O')
+						break;
+				}
+
+				for(int j = now.b_y;j >= 0 && (map[now.b_x][j] != '#' && (next[0] != now.b_x || next[1] != j)) || map[now.b_x][j] == 'O'; j--)
+				{
+					next[3] = j;
+					if(map[next[2]][next[3]] == 'O')
+						break;
+				}
+			}
+			else
+			{
+				for(int j = now.b_y;j >= 0 && map[now.b_x][j] != '#'; j--)
+				{
+					next[3] = j;
+					if(map[next[2]][next[3]] == 'O')
+						break;
+				}
+
+				for(int j = now.r_y;j >= 0 && (map[now.r_x][j] != '#' && (next[2] != now.r_x || next[3] != j)) || map[now.r_x][j] == 'O'; j--)
+				{
+					next[1] = j;
+					if(map[next[0]][next[1]] == 'O')
+						break;
+				}
+			}
+		}
+		//우
 		else
 		{
-			for(int j = index; j < M;j++)
+			//빨간공 먼저
+			if(now.r_y > now.b_y)
 			{
-				archers.add(new Position(N, j));
-				dfs(j + 1,archers);
-				archers.remove(archers.size() - 1);
-			}
-		}
-	}
-
-	//가장가까운 적 고르기 -> 없으면 내 위치 그냥 반환
-	public static Position selectEnemy(int map[][], int x, int y)
-	{
-		int min = D;
-
-		PriorityQueue<Position> queue = new PriorityQueue<Position>((o1, o2) -> {
-			int dis1 = Math.abs(x - o1.x) + Math.abs(y - o1.y);
-			int dis2 = Math.abs(x - o2.x) + Math.abs(y - o2.y);
-
-			if(dis1 == dis2)
-				return o1.y - o2.y;
-			else
-				return dis1 - dis2;
-		});
-		for(int i = N - 1;i >= 0;i--)
-		{
-			for(int j = 0;j < M;j++)
-			{
-				int dis = Math.abs(x - i) + Math.abs(y - j);
-				if(map[i][j] == 1 && dis  <= min)
+				for(int j = now.r_y;j < M && map[now.r_x][j] != '#'; j++)
 				{
-					min = dis;
-					queue.offer(new Position(i,j));
+					next[1] = j;
+					if(map[next[0]][next[1]] == 'O')
+						break;
+				}
+
+				for(int j = now.b_y;j < M && (map[now.b_x][j] != '#' && (next[0] != now.b_x || next[1] != j)) || map[now.b_x][j] == 'O'; j++)
+				{
+					next[3] = j;
+					if(map[next[2]][next[3]] == 'O')
+						break;
+				}
+			}
+			else
+			{
+				for(int j = now.b_y;j < M && map[now.b_x][j] != '#'; j++)
+				{
+					next[3] = j;
+					if(map[next[2]][next[3]] == 'O')
+						break;
+				}
+
+				for(int j = now.r_y;j < M && (map[now.r_x][j] != '#' && (next[2] != now.r_x || next[3] != j)) || map[now.r_x][j] == 'O'; j++)
+				{
+					next[1] = j;
+					if(map[next[0]][next[1]] == 'O')
+						break;
 				}
 			}
 		}
 
-		if(queue.isEmpty())
-			return new Position(x, y);
-		return queue.poll();
+		return next;
 	}
 
-	public static void killEnemy(ArrayList<Position> enemyList, int[][] map)
+
+	static class Balls
 	{
-		for(int i = 0;i < enemyList.size();i++)
-		{
-			Position now = enemyList.get(i);
-			map[now.x][now.y] = 0;
-		}
-		enemyList.clear();
-	}
+		int r_x, r_y, b_x, b_y, count;
 
-	public static void moveEnemy(int[][] map)
-	{
-		for(int i = N - 1;i >= 0;i--)
-		{
-			for(int j = 0;j < M;j++)
-			{
-				if(i == 0)
-					map[i][j] = 0;
-				else
-					map[i][j] = map[i-1][j];
-			}
-		}
-	}
-
-	public static boolean isFinish(int[][] map)
-	{
-		for(int i = 0;i < N;i++)
-		{
-			for(int j = 0;j < M;j++)
-			{
-				if(map[i][j] > 0)
-					return false;
-			}
-		}
-		return true;
-	}
-
-	static class Position{
-		int x, y;
-
-		public Position(int x, int y)
-		{
-			this.x = x;
-			this.y = y;
+		public Balls(int r_x, int r_y, int b_x, int b_y, int count) {
+			this.r_x = r_x;
+			this.r_y = r_y;
+			this.b_x = b_x;
+			this.b_y = b_y;
+			this.count = count;
 		}
 
 		@Override
-		public boolean equals(Object obj) {
-			Position other=  (Position) obj;
-			return other.x == x && other.y == y;
+		public String toString() {
+			return "("+r_x+", "+r_y+"), ("+b_x+", "+b_y+"), count : "+count;
 		}
 	}
+
 
 
 	public static void main(String[] args) {
 		try
 		{
-			//solution();
-			String 박준현 = "박준현";
-			System.out.println(박준현);
+			solution();
 			bw.close();
 			br.close();
 		}
