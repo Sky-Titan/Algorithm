@@ -11,267 +11,115 @@ public class Main {
 	static BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 	static BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(System.out));
 
-	static int N, M;
-	static boolean visited[][][][];
-	static char[][] map;
+	static int V, E;
+	static int start, finish;
+	static int dist[];
+	static ArrayList<ArrayList<Edge>> graph = new ArrayList<>();
+
 
 	public static void solution() throws Exception
 	{
-		String[] list = br.readLine().split(" ");
-		N = Integer.parseInt(list[0]);
-		M = Integer.parseInt(list[1]);
+		V = Integer.parseInt(br.readLine());
+		E = Integer.parseInt(br.readLine());
 
-		map = new char[N][M];
-		visited = new boolean[N][M][N][M];
 
-		Balls start = new Balls(0,0,0,0,0);
+		for(int i = 0;i <= V;i++)
+			graph.add(new ArrayList<>());
 
-		for(int i = 0;i < N;i++)
+		for(int i = 0;i < E;i++)
 		{
-			String line = br.readLine();
-			for(int j = 0;j < M;j++)
-			{
-				map[i][j] = line.charAt(j);
+			String[] list = br.readLine().split(" ");
+			int from = Integer.parseInt(list[0]);
+			int to = Integer.parseInt(list[1]);
+			int weight = Integer.parseInt(list[2]);
 
-				if(map[i][j] == 'R')
-				{
-					start.r_x = i;
-					start.r_y = j;
-					map[i][j] = '.';
-				}
-				else if(map[i][j] == 'B')
-				{
-					start.b_x = i;
-					start.b_y = j;
-					map[i][j] = '.';
-				}
-			}
+			graph.get(from).add(new Edge(from, to, weight));
+			graph.get(to).add(new Edge(to, from, weight));
 		}
 
-		bw.write(bfs(start)+"");
+		String[] list = br.readLine().split(" ");
+		start = Integer.parseInt(list[0]);
+		finish = Integer.parseInt(list[1]);
+
+		dist = new int[V+1];
+		for(int i = 0; i <= V;i++)
+		{
+			if(i == start)
+				dist[i] = 0;
+			else
+				dist[i] = Integer.MAX_VALUE;
+		}
+
+		bw.write(dijkstra()+"");
 	}
 
-	static int bfs(Balls start)
+	static int dijkstra()
 	{
-		Queue<Balls> queue = new LinkedList<>();
-		visited[start.r_x][start.r_y][start.b_x][start.b_y] = true;
+		PriorityQueue<Integer> nodes = new PriorityQueue<>((o1, o2) -> dist[o1] - dist[o2]);
+		Queue<Integer> queue = new LinkedList<>();
 		queue.offer(start);
 
-		while(!queue.isEmpty())
+		boolean visited[] = new boolean[V+1];
+		visited[start] = true;
+
+		while (!queue.isEmpty())
 		{
-			Balls now = queue.poll();
+			int now = queue.poll();
+			//System.out.println(now);
+			int min_index = 0;
+			int min = Integer.MAX_VALUE;
 
-			//종료
-			if(now.count > 10)
-				return -1;
-			if(map[now.r_x][now.r_y] == 'O')
-				return now.count;
-
-			//상하좌우 기울이기
-			for(int i = 0;i < 4;i++)
+			for(int i = 0;i < graph.get(now).size();i++)
 			{
-				int next[] = tilt(now, i);
-				//System.out.println(now.toString());
-				if(isInBoundary(next))
+				Edge e = graph.get(now).get(i);
+
+				if(dist[e.to] > dist[now] + e.weight)
+					dist[e.to] = dist[now] + e.weight;
+
+				if(min > dist[e.to] && !visited[e.to])
 				{
-					//방문 x && 파란 볼이 구멍에 안빠지면
-					if(!visited[next[0]][next[1]][next[2]][next[3]] && map[next[2]][next[3]] != 'O')
-					{
-						visited[next[0]][next[1]][next[2]][next[3]] = true;
-						queue.offer(new Balls(next[0],next[1], next[2], next[3], now.count + 1));
-					}
+					min = dist[e.to];
+					min_index = e.to;
 				}
+			}
+
+			if(min_index != 0)
+				nodes.offer(min_index);
+
+			if(!nodes.isEmpty())
+			{
+				visited[nodes.peek()] = true;
+				queue.offer(nodes.poll());
 			}
 		}
 
-		return -1;
-	}
-
-	static boolean isInBoundary(int next[])
-	{
-		if(0 <= next[0] && next[0] < N && 0 <= next[1] && next[1] < M
-				&& 0 <= next[2] && next[2] < N && 0 <= next[3] && next[3] < M)
-			return true;
-		return false;
-	}
-
-	static int[] tilt(Balls now, int dir)
-	{
-		int next[] = {now.r_x, now.r_y, now.b_x, now.b_y};
-
-		//상하 좌우
-		if(dir == 0)
-		{
-			//빨간공 먼저 기울이기
-			if(now.r_x < now.b_x)
-			{
-				for(int i = now.r_x;i >= 0 && map[i][now.r_y] != '#'; i--)
-				{
-					next[0] = i;
-					if(map[next[0]][next[1]] == 'O')
-						break;
-				}
-
-				for(int i = now.b_x;i >= 0 && (map[i][now.b_y] != '#' && (next[0] != i || next[1] != now.b_y)) || map[i][now.b_y] == 'O'; i--)
-				{
-					next[2] = i;
-					if(map[next[2]][next[3]] == 'O')
-						break;
-				}
-			}
-			else
-			{
-				for(int i = now.b_x;i >= 0 && map[i][now.b_y] != '#'; i--)
-				{
-					next[2] = i;
-					if(map[next[2]][next[3]] == 'O')
-						break;
-				}
-
-				for(int i = now.r_x;i >= 0 && (map[i][now.r_y] != '#' && (next[2] != i || next[3] != now.r_y)) || map[i][now.r_y] == 'O'; i--)
-				{
-					next[0] = i;
-					if(map[next[0]][next[1]] == 'O')
-						break;
-				}
-			}
-		}
-		//하
-		else if(dir == 1)
-		{
-			//빨간공 먼저
-			if(now.r_x > now.b_x)
-			{
-				for(int i = now.r_x;i < N && map[i][now.r_y] != '#'; i++)
-				{
-					next[0] = i;
-					if(map[next[0]][next[1]] == 'O')
-						break;
-				}
-
-				for(int i = now.b_x;i < N && (map[i][now.b_y] != '#' && (next[0] != i || next[1] != now.b_y)) || map[i][now.b_y] == 'O'; i++)
-				{
-					next[2] = i;
-					if(map[next[2]][next[3]] == 'O')
-						break;
-				}
-			}
-			else
-			{
-				for(int i = now.b_x;i < N && map[i][now.b_y] != '#'; i++)
-				{
-					next[2] = i;
-					if(map[next[2]][next[3]] == 'O')
-						break;
-				}
-
-				for(int i = now.r_x;i < N && (map[i][now.r_y] != '#'&& (next[2] != i || next[3] != now.r_y)) || map[i][now.r_y] == 'O'; i++)
-				{
-					next[0] = i;
-					if(map[next[0]][next[1]] == 'O')
-						break;
-				}
-			}
-		}
-		//좌
-		else if(dir == 2)
-		{
-			//빨간공 먼저
-			if(now.r_y < now.b_y)
-			{
-				for(int j = now.r_y;j >= 0 && map[now.r_x][j] != '#'; j--)
-				{
-					next[1] = j;
-					if(map[next[0]][next[1]] == 'O')
-						break;
-				}
-
-				for(int j = now.b_y;j >= 0 && (map[now.b_x][j] != '#' && (next[0] != now.b_x || next[1] != j)) || map[now.b_x][j] == 'O'; j--)
-				{
-					next[3] = j;
-					if(map[next[2]][next[3]] == 'O')
-						break;
-				}
-			}
-			else
-			{
-				for(int j = now.b_y;j >= 0 && map[now.b_x][j] != '#'; j--)
-				{
-					next[3] = j;
-					if(map[next[2]][next[3]] == 'O')
-						break;
-				}
-
-				for(int j = now.r_y;j >= 0 && (map[now.r_x][j] != '#' && (next[2] != now.r_x || next[3] != j)) || map[now.r_x][j] == 'O'; j--)
-				{
-					next[1] = j;
-					if(map[next[0]][next[1]] == 'O')
-						break;
-				}
-			}
-		}
-		//우
-		else
-		{
-			//빨간공 먼저
-			if(now.r_y > now.b_y)
-			{
-				for(int j = now.r_y;j < M && map[now.r_x][j] != '#'; j++)
-				{
-					next[1] = j;
-					if(map[next[0]][next[1]] == 'O')
-						break;
-				}
-
-				for(int j = now.b_y;j < M && (map[now.b_x][j] != '#' && (next[0] != now.b_x || next[1] != j)) || map[now.b_x][j] == 'O'; j++)
-				{
-					next[3] = j;
-					if(map[next[2]][next[3]] == 'O')
-						break;
-				}
-			}
-			else
-			{
-				for(int j = now.b_y;j < M && map[now.b_x][j] != '#'; j++)
-				{
-					next[3] = j;
-					if(map[next[2]][next[3]] == 'O')
-						break;
-				}
-
-				for(int j = now.r_y;j < M && (map[now.r_x][j] != '#' && (next[2] != now.r_x || next[3] != j)) || map[now.r_x][j] == 'O'; j++)
-				{
-					next[1] = j;
-					if(map[next[0]][next[1]] == 'O')
-						break;
-				}
-			}
-		}
-
-		return next;
+		return dist[finish];
 	}
 
 
-	static class Balls
-	{
-		int r_x, r_y, b_x, b_y, count;
+	static class Edge implements Comparable<Edge>{
+		int from, to, weight;
 
-		public Balls(int r_x, int r_y, int b_x, int b_y, int count) {
-			this.r_x = r_x;
-			this.r_y = r_y;
-			this.b_x = b_x;
-			this.b_y = b_y;
-			this.count = count;
+		public Edge(int from, int to, int weight) {
+			this.from = from;
+			this.to = to;
+			this.weight = weight;
 		}
 
 		@Override
-		public String toString() {
-			return "("+r_x+", "+r_y+"), ("+b_x+", "+b_y+"), count : "+count;
+		public boolean equals(Object obj) {
+			Edge other = (Edge) obj;
+
+			if((from == other.from && to == other.to) || (from == other.to && to == other.from))
+				return true;
+			return false;
+		}
+
+		@Override
+		public int compareTo(Edge o) {
+			return weight - o.weight;
 		}
 	}
-
-
-
 	public static void main(String[] args) {
 		try
 		{
