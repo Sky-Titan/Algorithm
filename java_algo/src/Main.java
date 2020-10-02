@@ -1,4 +1,3 @@
-
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.InputStreamReader;
@@ -13,113 +12,73 @@ public class Main {
 
 	static int V, E;
 	static int start, finish;
-	static int dist[];
-	static ArrayList<ArrayList<Edge>> graph = new ArrayList<>();
 
+	static ArrayList<ArrayList<Integer>> graph = new ArrayList<>();
+	static boolean visited[];
 
 	public static void solution() throws Exception
 	{
 		V = Integer.parseInt(br.readLine());
+
+		StringTokenizer strtok = new StringTokenizer(br.readLine());
+		start = Integer.parseInt(strtok.nextToken());
+		finish = Integer.parseInt(strtok.nextToken());
+
 		E = Integer.parseInt(br.readLine());
 
+		visited = new boolean[V+1];
 
 		for(int i = 0;i <= V;i++)
 			graph.add(new ArrayList<>());
 
 		for(int i = 0;i < E;i++)
 		{
-			String[] list = br.readLine().split(" ");
-			int from = Integer.parseInt(list[0]);
-			int to = Integer.parseInt(list[1]);
-			int weight = Integer.parseInt(list[2]);
+			strtok = new StringTokenizer(br.readLine());
+			int from = Integer.parseInt(strtok.nextToken());
+			int to = Integer.parseInt(strtok.nextToken());
 
-			graph.get(from).add(new Edge(from, to, weight));
-			graph.get(to).add(new Edge(to, from, weight));
+			graph.get(from).add(to);
+			graph.get(to).add(from);
 		}
 
-		String[] list = br.readLine().split(" ");
-		start = Integer.parseInt(list[0]);
-		finish = Integer.parseInt(list[1]);
-
-		dist = new int[V+1];
-		for(int i = 0; i <= V;i++)
-		{
-			if(i == start)
-				dist[i] = 0;
-			else
-				dist[i] = Integer.MAX_VALUE;
-		}
-
-		bw.write(dijkstra()+"");
-	}
-
-	static int dijkstra()
-	{
-		PriorityQueue<Integer> nodes = new PriorityQueue<>((o1, o2) -> dist[o1] - dist[o2]);
-		Queue<Integer> queue = new LinkedList<>();
-		queue.offer(start);
-
-		boolean visited[] = new boolean[V+1];
+		Queue<Position> queue = new LinkedList<>();
+		queue.offer(new Position(start, 0));
 		visited[start] = true;
 
-		while (!queue.isEmpty())
+		while(!queue.isEmpty())
 		{
-			int now = queue.poll();
-			//System.out.println(now);
-			int min_index = 0;
-			int min = Integer.MAX_VALUE;
+			Position now = queue.poll();
 
-			for(int i = 0;i < graph.get(now).size();i++)
+			if(now.node == finish)
 			{
-				Edge e = graph.get(now).get(i);
+				bw.write(now.count+"");
+				return;
+			}
 
-				if(dist[e.to] > dist[now] + e.weight)
-					dist[e.to] = dist[now] + e.weight;
+			for(int i = 0;i < graph.get(now.node).size();i++)
+			{
+				int next = graph.get(now.node).get(i);
 
-				if(min > dist[e.to] && !visited[e.to])
+				if(!visited[next])
 				{
-					min = dist[e.to];
-					min_index = e.to;
+					visited[next] = true;
+					queue.offer(new Position(next, now.count + 1));
 				}
 			}
-
-			if(min_index != 0)
-				nodes.offer(min_index);
-
-			if(!nodes.isEmpty())
-			{
-				visited[nodes.peek()] = true;
-				queue.offer(nodes.poll());
-			}
 		}
-
-		return dist[finish];
+		bw.write("-1");
 	}
 
+	static class Position{
+		int node;
+		int count;
 
-	static class Edge implements Comparable<Edge>{
-		int from, to, weight;
-
-		public Edge(int from, int to, int weight) {
-			this.from = from;
-			this.to = to;
-			this.weight = weight;
-		}
-
-		@Override
-		public boolean equals(Object obj) {
-			Edge other = (Edge) obj;
-
-			if((from == other.from && to == other.to) || (from == other.to && to == other.from))
-				return true;
-			return false;
-		}
-
-		@Override
-		public int compareTo(Edge o) {
-			return weight - o.weight;
+		public Position(int node, int count) {
+			this.node = node;
+			this.count = count;
 		}
 	}
+
 	public static void main(String[] args) {
 		try
 		{
