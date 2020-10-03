@@ -11,20 +11,15 @@ public class Main {
 	static BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(System.out));
 
 	static HashSet<Position> visited = new HashSet<>();
-	static int map[][] = new int[3][3];
+	static int end[] = {8, 0, 1, 2, 3, 4, 5, 6, 7};
+
+	//최종 목적지
+	static Position finish = new Position(end, 0);
 
 	public static void solution() throws Exception
 	{
+		//초기 상태 (input)
 		int init[] = new int[9];
-
-		int end[] = new int[9];
-		end[0] = 8;
-
-		for(int i = 1;i < 9;i++)
-			end[i] = i - 1;
-
-		//되야할 경우
-		Position finish = new Position(end, 0);
 
 		for(int i = 0;i < 3;i++)
 		{
@@ -32,11 +27,17 @@ public class Main {
 			for(int j = 0;j < 3;j++)
 			{
 				int num = Integer.parseInt(strtok.nextToken());
-				int pos = i * 3 + j;
+				int pos = toOneDimension(i, j);
 				init[num] = pos;
 			}
 		}
 
+		bw.write(bfs(init)+"");
+
+	}
+
+	static int bfs(int[] init)
+	{
 		Queue<Position> queue = new LinkedList<>();
 		queue.offer(new Position(init, 0));
 		visited.add(queue.peek());
@@ -47,18 +48,16 @@ public class Main {
 		while(!queue.isEmpty())
 		{
 			Position now = queue.poll();
-			int current = now.pos[0];
+			int current_index = now.pos[0];
 
 			//종료
-			if(now.hashCode() == finish.hashCode())
-			{
-				bw.write(now.count+"");
-				return;
-			}
+			if(now.equals(finish))
+				return now.count;
 
-			int r = current / 3;
-			int c = current % 3;
+			int r = getRow(current_index);
+			int c = getColumn(current_index);
 
+			//상하좌우
 			for(int i = 0;i < 4;i++)
 			{
 				int next_r = r + x[i];
@@ -66,10 +65,10 @@ public class Main {
 
 				if(0 <= next_r && next_r < 3 && 0 <= next_c && next_c < 3)
 				{
-					int next = next_r * 3 + next_c;
-					swap(now.pos, next);
+					int next_index = toOneDimension(next_r, next_c);
 
-					//System.out.println(visited.contains(now));
+					swap(now.pos, next_index);
+
 					if(!visited.contains(now))
 					{
 						Position next_pos = new Position(now.pos.clone(), now.count + 1);
@@ -77,22 +76,40 @@ public class Main {
 						queue.offer(next_pos);
 					}
 
-					swap(now.pos, current);
+					swap(now.pos, current_index);
 				}
 			}
 		}
-		bw.write("-1");
+		return -1;
 	}
 
-	static void swap(int[] pos, int next)
+	//2차원 배열 -> 1차원 배열 index로
+	static int toOneDimension(int x, int y)
 	{
+		return x * 3 + y;
+	}
+
+	static int getRow(int index)
+	{
+		return index / 3;
+	}
+
+	static int getColumn(int index)
+	{
+		return index % 3;
+	}
+
+
+	static void swap(int[] pos, int next_index)
+	{
+		//next 위치에 해당하는 번호와 0의 위치를 swap
 		for(int i = 0;i < 9;i++)
 		{
-			if(pos[i] == next)
+			if(pos[i] == next_index)
 			{
 				pos[i] = pos[0];
-				pos[0] = next;
-				break;
+				pos[0] = next_index;
+				return;
 			}
 		}
 	}
