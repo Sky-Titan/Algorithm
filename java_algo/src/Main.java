@@ -10,128 +10,86 @@ public class Main {
 	static BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 	static BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(System.out));
 
-	static HashSet<Position> visited = new HashSet<>();
-	static int end[] = {8, 0, 1, 2, 3, 4, 5, 6, 7};
-
-	//최종 목적지
-	static Position finish = new Position(end, 0);
+	static int N, K;
+	static String[] words;
+	static int max = 0;
 
 	public static void solution() throws Exception
 	{
-		//초기 상태 (input)
-		int init[] = new int[9];
+		StringTokenizer strtok = new StringTokenizer(br.readLine());
+		N = Integer.parseInt(strtok.nextToken());
+		K = Integer.parseInt(strtok.nextToken());
 
-		for(int i = 0;i < 3;i++)
+		words = new String[N];
+
+		for(int i = 0;i < N;i++)
 		{
-			StringTokenizer strtok = new StringTokenizer(br.readLine());
-			for(int j = 0;j < 3;j++)
-			{
-				int num = Integer.parseInt(strtok.nextToken());
-				int pos = toOneDimension(i, j);
-				init[num] = pos;
-			}
+			words[i] = br.readLine();
 		}
 
-		bw.write(bfs(init)+"");
+		//5글자보다 작으면 a c t n i도 못읽음
+		if(K < 5)
+		{
+			bw.write("0");
+			return;
+		}
 
+		//5글자 이상 가르칠 수 있다면 무조건 a c t n i부터 가르침
+		int result = 0;
+		result |= (1 << ('a'- 'a'));
+		result |= (1 << ('c'- 'a'));
+		result |= (1 << ('t'- 'a'));
+		result |= (1 << ('n'- 'a'));
+		result |= (1 << ('i'- 'a'));
+
+		backTracking(0, 5, result);
+		bw.write(max+"");
 	}
 
-	static int bfs(int[] init)
+	static void backTracking(int index, int depth, int result)
 	{
-		Queue<Position> queue = new LinkedList<>();
-		queue.offer(new Position(init, 0));
-		visited.add(queue.peek());
-
-		int x[] = {-1, 1, 0, 0};//상하좌우
-		int y[] = {0, 0, -1, 1};
-
-		while(!queue.isEmpty())
+		if(depth == K)
 		{
-			Position now = queue.poll();
-			int current_index = now.pos[0];
+			//읽을 수 없는 단어가 나올 때마다 1개씩 깎음
+			int count = N;
 
-			//종료
-			if(now.equals(finish))
-				return now.count;
-
-			int r = getRow(current_index);
-			int c = getColumn(current_index);
-
-			//상하좌우
-			for(int i = 0;i < 4;i++)
+			for(int i = 0;i < N;i++)
 			{
-				int next_r = r + x[i];
-				int next_c = c + y[i];
+				String word = words[i];
 
-				if(0 <= next_r && next_r < 3 && 0 <= next_c && next_c < 3)
+				for(int j = 0;j < word.length();j++)
 				{
-					int next_index = toOneDimension(next_r, next_c);
-
-					swap(now.pos, next_index);
-
-					if(!visited.contains(now))
+					//가르친 단어 x
+					if(!isCharacterIn(word.charAt(j), result))
 					{
-						Position next_pos = new Position(now.pos.clone(), now.count + 1);
-						visited.add(next_pos);
-						queue.offer(next_pos);
+						count--;
+						break;
 					}
+				}
+			}
 
-					swap(now.pos, current_index);
+			max = Math.max(count, max);
+		}
+		else
+		{
+			for(int i = index;i < 26;i++)
+			{
+				if(!isCharacterIn((char)(i+'a'),result))
+				{
+					result |= (1 << i);
+					backTracking(i + 1, depth + 1, result);
+					result &= ~(1 << i);
 				}
 			}
 		}
-		return -1;
 	}
 
-	//2차원 배열 -> 1차원 배열 index로
-	static int toOneDimension(int x, int y)
+	//해당 글자를 가르쳤는지 확인
+	static boolean isCharacterIn(char c, int result)
 	{
-		return x * 3 + y;
-	}
-
-	static int getRow(int index)
-	{
-		return index / 3;
-	}
-
-	static int getColumn(int index)
-	{
-		return index % 3;
-	}
-
-
-	static void swap(int[] pos, int next_index)
-	{
-		//next 위치에 해당하는 번호와 0의 위치를 swap
-		for(int i = 0;i < 9;i++)
-		{
-			if(pos[i] == next_index)
-			{
-				pos[i] = pos[0];
-				pos[0] = next_index;
-				return;
-			}
-		}
-	}
-
-	static class Position{
-		int[] pos;//i의 현재 위치 비트마스크들
-		int count = 0;
-
-		public Position(int[] pos, int count) {
-			this.pos = pos;
-			this.count = count;
-		}
-
-		@Override
-		public boolean equals(Object obj) {
-			return Arrays.equals(pos, ((Position)obj).pos);
-		}
-
-		@Override
-		public int hashCode() {
-			return Arrays.hashCode(pos);
-		}
+		if((result & (1 << (c-'a'))) > 0)
+			return true;
+		return false;
 	}
 
 	public static void main(String[] args) {
