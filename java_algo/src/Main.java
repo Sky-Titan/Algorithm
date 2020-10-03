@@ -10,72 +10,110 @@ public class Main {
 	static BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 	static BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(System.out));
 
-	static int V, E;
-	static int start, finish;
-
-	static ArrayList<ArrayList<Integer>> graph = new ArrayList<>();
-	static boolean visited[];
+	static HashSet<Position> visited = new HashSet<>();
+	static int map[][] = new int[3][3];
 
 	public static void solution() throws Exception
 	{
-		V = Integer.parseInt(br.readLine());
+		int init[] = new int[9];
 
-		StringTokenizer strtok = new StringTokenizer(br.readLine());
-		start = Integer.parseInt(strtok.nextToken());
-		finish = Integer.parseInt(strtok.nextToken());
+		int end[] = new int[9];
+		end[0] = 8;
 
-		E = Integer.parseInt(br.readLine());
+		for(int i = 1;i < 9;i++)
+			end[i] = i - 1;
 
-		visited = new boolean[V+1];
+		//되야할 경우
+		Position finish = new Position(end, 0);
 
-		for(int i = 0;i <= V;i++)
-			graph.add(new ArrayList<>());
-
-		for(int i = 0;i < E;i++)
+		for(int i = 0;i < 3;i++)
 		{
-			strtok = new StringTokenizer(br.readLine());
-			int from = Integer.parseInt(strtok.nextToken());
-			int to = Integer.parseInt(strtok.nextToken());
-
-			graph.get(from).add(to);
-			graph.get(to).add(from);
+			StringTokenizer strtok = new StringTokenizer(br.readLine());
+			for(int j = 0;j < 3;j++)
+			{
+				int num = Integer.parseInt(strtok.nextToken());
+				int pos = i * 3 + j;
+				init[num] = pos;
+			}
 		}
 
 		Queue<Position> queue = new LinkedList<>();
-		queue.offer(new Position(start, 0));
-		visited[start] = true;
+		queue.offer(new Position(init, 0));
+		visited.add(queue.peek());
+
+		int x[] = {-1, 1, 0, 0};//상하좌우
+		int y[] = {0, 0, -1, 1};
 
 		while(!queue.isEmpty())
 		{
 			Position now = queue.poll();
+			int current = now.pos[0];
 
-			if(now.node == finish)
+			//종료
+			if(now.hashCode() == finish.hashCode())
 			{
 				bw.write(now.count+"");
 				return;
 			}
 
-			for(int i = 0;i < graph.get(now.node).size();i++)
-			{
-				int next = graph.get(now.node).get(i);
+			int r = current / 3;
+			int c = current % 3;
 
-				if(!visited[next])
+			for(int i = 0;i < 4;i++)
+			{
+				int next_r = r + x[i];
+				int next_c = c + y[i];
+
+				if(0 <= next_r && next_r < 3 && 0 <= next_c && next_c < 3)
 				{
-					visited[next] = true;
-					queue.offer(new Position(next, now.count + 1));
+					int next = next_r * 3 + next_c;
+					swap(now.pos, next);
+
+					//System.out.println(visited.contains(now));
+					if(!visited.contains(now))
+					{
+						Position next_pos = new Position(now.pos.clone(), now.count + 1);
+						visited.add(next_pos);
+						queue.offer(next_pos);
+					}
+
+					swap(now.pos, current);
 				}
 			}
 		}
 		bw.write("-1");
 	}
 
-	static class Position{
-		int node;
-		int count;
+	static void swap(int[] pos, int next)
+	{
+		for(int i = 0;i < 9;i++)
+		{
+			if(pos[i] == next)
+			{
+				pos[i] = pos[0];
+				pos[0] = next;
+				break;
+			}
+		}
+	}
 
-		public Position(int node, int count) {
-			this.node = node;
+	static class Position{
+		int[] pos;//i의 현재 위치 비트마스크들
+		int count = 0;
+
+		public Position(int[] pos, int count) {
+			this.pos = pos;
 			this.count = count;
+		}
+
+		@Override
+		public boolean equals(Object obj) {
+			return Arrays.equals(pos, ((Position)obj).pos);
+		}
+
+		@Override
+		public int hashCode() {
+			return Arrays.hashCode(pos);
 		}
 	}
 
