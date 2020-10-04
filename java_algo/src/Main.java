@@ -1,3 +1,5 @@
+import com.sun.javafx.image.BytePixelSetter;
+
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.InputStreamReader;
@@ -10,86 +12,100 @@ public class Main {
 	static BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 	static BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(System.out));
 
-	static int N, K;
-	static String[] words;
-	static int max = 0;
+	static int V, E;
+	static int K;
+	static ArrayList<ArrayList<Edge>> graph = new ArrayList<>();
+	static int dist[];
+	static int INF = 3000001;
 
 	public static void solution() throws Exception
 	{
 		StringTokenizer strtok = new StringTokenizer(br.readLine());
-		N = Integer.parseInt(strtok.nextToken());
-		K = Integer.parseInt(strtok.nextToken());
+		V = Integer.parseInt(strtok.nextToken());
+		E = Integer.parseInt(strtok.nextToken());
+		K = Integer.parseInt(br.readLine());//시작정점 번호
 
-		words = new String[N];
+		dist = new int[V+1];
 
-		for(int i = 0;i < N;i++)
+		for(int i = 0;i <= V;i++)
 		{
-			words[i] = br.readLine();
+			graph.add(new ArrayList<>());
+			if(i != K)
+				dist[i] = INF;
 		}
 
-		//5글자보다 작으면 a c t n i도 못읽음
-		if(K < 5)
+		for(int i = 0;i < E;i++)
 		{
-			bw.write("0");
-			return;
+			strtok = new StringTokenizer(br.readLine());
+
+			int from = Integer.parseInt(strtok.nextToken());
+			int to = Integer.parseInt(strtok.nextToken());
+			int weight = Integer.parseInt(strtok.nextToken());
+
+			graph.get(from).add(new Edge(from, to, weight));
 		}
 
-		//5글자 이상 가르칠 수 있다면 무조건 a c t n i부터 가르침
-		int result = 0;
-		result |= (1 << ('a'- 'a'));
-		result |= (1 << ('c'- 'a'));
-		result |= (1 << ('t'- 'a'));
-		result |= (1 << ('n'- 'a'));
-		result |= (1 << ('i'- 'a'));
+		dijkstra();
 
-		backTracking(0, 5, result);
-		bw.write(max+"");
-	}
-
-	static void backTracking(int index, int depth, int result)
-	{
-		if(depth == K)
+		for(int i = 1;i <= V;i++)
 		{
-			//읽을 수 없는 단어가 나올 때마다 1개씩 깎음
-			int count = N;
-
-			for(int i = 0;i < N;i++)
-			{
-				String word = words[i];
-
-				for(int j = 0;j < word.length();j++)
-				{
-					//가르친 단어 x
-					if(!isCharacterIn(word.charAt(j), result))
-					{
-						count--;
-						break;
-					}
-				}
-			}
-
-			max = Math.max(count, max);
-		}
-		else
-		{
-			for(int i = index;i < 26;i++)
-			{
-				if(!isCharacterIn((char)(i+'a'),result))
-				{
-					result |= (1 << i);
-					backTracking(i + 1, depth + 1, result);
-					result &= ~(1 << i);
-				}
-			}
+			if(dist[i] == INF)
+				bw.write("INF\n");
+			else
+				bw.write(dist[i]+"\n");
 		}
 	}
 
-	//해당 글자를 가르쳤는지 확인
-	static boolean isCharacterIn(char c, int result)
+	static void dijkstra()
 	{
-		if((result & (1 << (c-'a'))) > 0)
-			return true;
-		return false;
+		PriorityQueue<Node> queue = new PriorityQueue<>((o1, o2) -> o1.distance - o2.distance);
+		queue.offer(new Node(K, dist[K]));
+
+		boolean visited[] = new boolean[V+1];
+
+		while (!queue.isEmpty())
+		{
+			Node now = queue.poll();
+
+			//최단거리 갱신되기전 것이기에 pass
+			if(visited[now.num])
+				continue;
+			visited[now.num] = true;
+
+			for(int i = 0;i < graph.get(now.num).size();i++)
+			{
+				Edge e = graph.get(now.num).get(i);
+
+				//최단거리 갱신될 때마다 방문가능한 목록에 노드 추가
+				if(dist[e.to] > dist[now.num] + e.weight)
+				{
+					dist[e.to] = dist[now.num] + e.weight;
+
+					if(!visited[e.to])
+						queue.offer(new Node(e.to, dist[e.to]));
+				}
+			}
+		}
+	}
+
+	static class Node {
+		int num, distance;
+
+		public Node(int num, int distance) {
+			this.num = num;
+			this.distance = distance;
+		}
+	}
+
+	static class Edge {
+		int from, to, weight;
+
+		public Edge(int from, int to, int weight) {
+			this.from = from;
+			this.to = to;
+			this.weight = weight;
+		}
+
 	}
 
 	public static void main(String[] args) {
