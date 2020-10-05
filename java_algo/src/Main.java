@@ -1,5 +1,3 @@
-import com.sun.javafx.image.BytePixelSetter;
-
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.InputStreamReader;
@@ -12,101 +10,79 @@ public class Main {
 	static BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 	static BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(System.out));
 
-	static int V, E;
-	static int K;
-	static ArrayList<ArrayList<Edge>> graph = new ArrayList<>();
-	static int dist[];
-	static int INF = 3000001;
-
 	public static void solution() throws Exception
 	{
-		StringTokenizer strtok = new StringTokenizer(br.readLine());
-		V = Integer.parseInt(strtok.nextToken());
-		E = Integer.parseInt(strtok.nextToken());
-		K = Integer.parseInt(br.readLine());//시작정점 번호
+		int T = Integer.parseInt(br.readLine());
 
-		dist = new int[V+1];
-
-		for(int i = 0;i <= V;i++)
+		for(int t = 0;t < T;t++)
 		{
-			graph.add(new ArrayList<>());
-			if(i != K)
-				dist[i] = INF;
-		}
+			StringTokenizer strtok = new StringTokenizer(br.readLine());
+			int N = Integer.parseInt(strtok.nextToken());//정점 수
+			int K = Integer.parseInt(strtok.nextToken());//간선 수
+			int constrcut_time[] = new int[N+1];
+			int inEdge[] = new int[N+1];
 
-		for(int i = 0;i < E;i++)
-		{
+			ArrayList<ArrayList<Integer>> graph = new ArrayList<>();
 			strtok = new StringTokenizer(br.readLine());
 
-			int from = Integer.parseInt(strtok.nextToken());
-			int to = Integer.parseInt(strtok.nextToken());
-			int weight = Integer.parseInt(strtok.nextToken());
+			for(int i = 0;i <= N;i++)
+			{
+				graph.add(new ArrayList<>());
+				if(i > 0)
+					constrcut_time[i] = Integer.parseInt(strtok.nextToken());
+			}
 
-			graph.get(from).add(new Edge(from, to, weight));
+			for(int i = 0;i < K;i++)
+			{
+				strtok = new StringTokenizer(br.readLine());
+				int from = Integer.parseInt(strtok.nextToken());
+				int to = Integer.parseInt(strtok.nextToken());
+
+				graph.get(from).add(to);
+				inEdge[to] ++;
+			}
+			int W = Integer.parseInt(br.readLine());
+			bw.write(topologicalSort(N, W, constrcut_time, graph, inEdge)+"\n");
 		}
 
-		dijkstra();
 
-		for(int i = 1;i <= V;i++)
-		{
-			if(dist[i] == INF)
-				bw.write("INF\n");
-			else
-				bw.write(dist[i]+"\n");
-		}
 	}
 
-	static void dijkstra()
+	static int topologicalSort(int N, int W, int[] complete_time, ArrayList<ArrayList<Integer>> graph, int inEdge[])
 	{
-		PriorityQueue<Node> queue = new PriorityQueue<>((o1, o2) -> o1.distance - o2.distance);
-		queue.offer(new Node(K, dist[K]));
+		//완료시간이 늦는 건물이 가장 마지막에 나오도록
+		PriorityQueue<Integer> queue = new PriorityQueue<>((o1, o2) -> complete_time[o1] - complete_time[o2]);
 
-		boolean visited[] = new boolean[V+1];
+		for(int i = 1;i <= N;i++)
+		{
+			if(inEdge[i] == 0)
+				queue.offer(i);
+		}
 
 		while (!queue.isEmpty())
 		{
-			Node now = queue.poll();
+			int now = queue.poll();
 
-			//최단거리 갱신되기전 것이기에 pass
-			if(visited[now.num])
-				continue;
-			visited[now.num] = true;
+			if(now == W)
+				break;
 
-			for(int i = 0;i < graph.get(now.num).size();i++)
+			for(int i = 0;i < graph.get(now).size();i++)
 			{
-				Edge e = graph.get(now.num).get(i);
+				int next = graph.get(now).get(i);
 
-				//최단거리 갱신될 때마다 방문가능한 목록에 노드 추가
-				if(dist[e.to] > dist[now.num] + e.weight)
+				inEdge[next]--;
+
+				if(inEdge[next] == 0)
 				{
-					dist[e.to] = dist[now.num] + e.weight;
-
-					if(!visited[e.to])
-						queue.offer(new Node(e.to, dist[e.to]));
+					//next를 짓는데 필요한 건물 중 가장 늦게 건설된 건물의 건설 완료시간을 더한다.
+					complete_time[next] += complete_time[now];
+					queue.offer(next);
 				}
 			}
 		}
+		return complete_time[W];
 	}
 
-	static class Node {
-		int num, distance;
-
-		public Node(int num, int distance) {
-			this.num = num;
-			this.distance = distance;
-		}
-	}
-
-	static class Edge {
-		int from, to, weight;
-
-		public Edge(int from, int to, int weight) {
-			this.from = from;
-			this.to = to;
-			this.weight = weight;
-		}
-
-	}
 
 	public static void main(String[] args) {
 		try
