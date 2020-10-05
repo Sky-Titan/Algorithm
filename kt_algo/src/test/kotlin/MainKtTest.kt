@@ -6,28 +6,59 @@ import java.util.*
 
 internal class MainKtTest{
 
+    var N = 5
     @Test
     fun test(){
-        var isPrime = BooleanArray(10001)
+        var map = arrayOf(
+                arrayOf(4, 4, 4, 4, 4),
+                arrayOf(2, 2, 2, 2, 2),
+                arrayOf(1, 1, 1, 1, 1),
+                arrayOf(1, 1, 1, 1, 1),
+                arrayOf(0, 0, 0, 0, 0))
 
-        for(i in 2 .. 10000)
+        moveMap(UP, map)
+        println(Arrays.deepToString(map))
+    }
+    fun moveMap(dir : Int, map : Array<Array<Int>>)
+    {
+        //상
+        if(dir == UP)
         {
-            if(!isPrime[i])
+            for(j in 0 until N)
             {
-                for(j in 2 * i .. 10000 step i)
-                    isPrime[j] = true
+                for(i in N - 1 downTo 1)
+                {
+                    if(map[i - 1][j] > 0)
+                    {
+                        //더블
+                        if(map[i][j] == map[i - 1][j])
+                        {
+                            map[i - 1][j] *= 2
+                            map[i][j] = 0
+                        }
+                    }
+                    else
+                    {
+                        map[i - 1][j] = map[i][j]
+                        map[i][j] = 0
+                    }
+                }
             }
         }
-        isPrime.forEachIndexed { index, b -> isPrime[index] = !b}
-
-        var isPrime2 = BooleanArray(10001, { true })
-
-        for(i in 2 .. 10000)
+        else if(dir == DOWN)
         {
-            for(j in 2 * i .. 10000 step i)
-                isPrime2[j] = false
+
+        }
+        else if(dir == LEFT)
+        {
+
+        }
+        else
+        {
+
         }
     }
+
 }
 
 
