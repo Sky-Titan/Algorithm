@@ -4,83 +4,74 @@ import java.io.InputStreamReader
 import java.io.OutputStreamWriter
 
 import java.util.*
+import kotlin.collections.ArrayList
 
 var br = BufferedReader(InputStreamReader(System.`in`))
 var bw = BufferedWriter(OutputStreamWriter(System.out))
 
-var x = arrayOf(-1, 1, 0, 0)
-var y = arrayOf(0, 0, -1, 1)
-
-var N = 0
-var M = 0
-lateinit var map : Array<Array<Int>>
-lateinit var dist : Array<Array<Int>>
-
-var wall_max = 0
+var N = 0//정점 수
+var M = 0//간선 수
+var graph = ArrayList<ArrayList<Int>>()
+lateinit var visited : BooleanArray
+var result = 0
 
 fun solution() {
 
     var strtok = StringTokenizer(br.readLine())
-    M = strtok.nextToken().toInt()
     N = strtok.nextToken().toInt()
+    M = strtok.nextToken().toInt()
 
-    map = Array(N+1, {Array(M+1, {0})})
 
-    for(i in 1..N)
+    visited = BooleanArray(N)
+
+    for(i in 0 until N)
+        graph.add(ArrayList())
+
+    for(i in 0 until M)
     {
-        var str = br.readLine()
+        strtok = StringTokenizer(br.readLine())
+        var from = strtok.nextToken().toInt()
+        var to = strtok.nextToken().toInt()
 
-        for(j in 1..M)
-        {
-            map[i][j] = (str[j - 1] - '0')
-            wall_max++
-        }
+        graph.get(from).add(to)
+        graph.get(to).add(from)
     }
 
+    for(i in 0 until N)
+    {
+        if(!visited[i])
+        {
+            visited[i] = true
+            dfs(i, 0, visited)
+            visited[i] = false
+        }
+        if(result == 1)
+            break
+    }
 
-    dist = Array(N+1, {Array(M+1, {wall_max})})
-    dist[1][1] = 0
-    dijkstra()
-
-    bw.write(dist[N][M].toString())
+    bw.write(result.toString())
 }
 
-fun dijkstra()
+fun dfs(now : Int, depth : Int, visited : BooleanArray)
 {
-    var queue = PriorityQueue<Position>(kotlin.Comparator { o1, o2 -> o1.destory - o2.destory })
-    queue.offer(Position(1, 1, 0))
-    var visited = Array(N + 1, {Array(M + 1, {false})})
-
-    while (!queue.isEmpty())
+    if(depth == 4)
     {
-        var now = queue.poll()
+        result = 1
+        return
+    }
 
-        if(visited[now.x][now.y])
-            continue
-        visited[now.x][now.y] = true
+    for(i in 0 until graph[now].size)
+    {
+        var next = graph[now][i]
 
-        for(i in 0..3)
+        if(!visited[next])
         {
-            var next_x = now.x + x[i]
-            var next_y = now.y + y[i]
-
-            if(next_x in 1..N && next_y in 1..M)
-            {
-                if(dist[next_x][next_y] > dist[now.x][now.y] + map[now.x][now.y])
-                {
-                    dist[next_x][next_y] = dist[now.x][now.y] + map[now.x][now.y]
-
-                    if(!visited[next_x][next_y])
-                        queue.offer(Position(next_x, next_y, dist[next_x][next_y]))
-                }
-            }
+            visited[next] = true
+            dfs(next, depth + 1, visited)
+            visited[next] = false
         }
     }
 }
-
-
-data class Position(var x : Int, var y : Int, var destory : Int)
-
 
 fun main() {
     solution()
