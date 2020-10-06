@@ -2,105 +2,85 @@ import java.io.BufferedReader
 import java.io.BufferedWriter
 import java.io.InputStreamReader
 import java.io.OutputStreamWriter
-import java.lang.StringBuilder
+
 import java.util.*
 
 var br = BufferedReader(InputStreamReader(System.`in`))
 var bw = BufferedWriter(OutputStreamWriter(System.out))
 
+var x = arrayOf(-1, 1, 0, 0)
+var y = arrayOf(0, 0, -1, 1)
+
+var N = 0
+var M = 0
+lateinit var map : Array<Array<Int>>
+lateinit var dist : Array<Array<Int>>
+
+var wall_max = 0
 
 fun solution() {
 
-    var T = br.readLine().toInt()
+    var strtok = StringTokenizer(br.readLine())
+    M = strtok.nextToken().toInt()
+    N = strtok.nextToken().toInt()
 
-    for(t in 0 until T)
+    map = Array(N+1, {Array(M+1, {0})})
+
+    for(i in 1..N)
     {
-        var strtok = StringTokenizer(br.readLine())
-        var A = strtok.nextToken().toInt()
-        var B = strtok.nextToken().toInt()
+        var str = br.readLine()
 
-        var visited = BooleanArray(10000)
-
-        var queue : Queue<Register> = LinkedList()
-        queue.offer(Register(A, ""))
-        visited[A] = true
-
-        while(!queue.isEmpty())
+        for(j in 1..M)
         {
-            var now = queue.poll()
+            map[i][j] = (str[j - 1] - '0')
+            wall_max++
+        }
+    }
 
-            //목적지 도착
-            if(now.register_value == B)
+
+    dist = Array(N+1, {Array(M+1, {wall_max})})
+    dist[1][1] = 0
+    dijkstra()
+
+    bw.write(dist[N][M].toString())
+}
+
+fun dijkstra()
+{
+    var queue = PriorityQueue<Position>(kotlin.Comparator { o1, o2 -> o1.destory - o2.destory })
+    queue.offer(Position(1, 1, 0))
+    var visited = Array(N + 1, {Array(M + 1, {false})})
+
+    while (!queue.isEmpty())
+    {
+        var now = queue.poll()
+
+        if(visited[now.x][now.y])
+            continue
+        visited[now.x][now.y] = true
+
+        for(i in 0..3)
+        {
+            var next_x = now.x + x[i]
+            var next_y = now.y + y[i]
+
+            if(next_x in 1..N && next_y in 1..M)
             {
-                bw.write(now.orders)
-                bw.newLine()
-                break
-            }
+                if(dist[next_x][next_y] > dist[now.x][now.y] + map[now.x][now.y])
+                {
+                    dist[next_x][next_y] = dist[now.x][now.y] + map[now.x][now.y]
 
-            //1. D
-            var next = (now.register_value * 2) % 10000
-
-            if(!visited[next])
-            {
-                visited[next] = true
-                queue.offer(Register(next, now.orders + "D"))
-            }
-
-            //2. S
-            next = now.register_value - 1
-            if(next == -1)
-                next = 9999
-
-            if(!visited[next])
-            {
-                visited[next] = true
-                queue.offer(Register(next, now.orders + "S"))
-            }
-
-            //3. L
-            next = rotationNumbers(now.register_value, 'L')
-
-            if(!visited[next])
-            {
-                visited[next] = true
-                queue.offer(Register(next, now.orders + "L"))
-            }
-
-            //4. R
-            next = rotationNumbers(now.register_value, 'R')
-
-            if(!visited[next])
-            {
-                visited[next] = true
-                queue.offer(Register(next, now.orders + "R"))
+                    if(!visited[next_x][next_y])
+                        queue.offer(Position(next_x, next_y, dist[next_x][next_y]))
+                }
             }
         }
-
     }
 }
 
-fun rotationNumbers(origin_num : Int, dir : Char) : Int
-{
-    var origin_num = origin_num
 
-    if(dir == 'L')
-    {
-        var d1 = origin_num / 1000
-        origin_num -= d1 * 1000
-        origin_num *= 10
-        origin_num += d1
-    }
-    else
-    {
-        var d4 = origin_num % 10
-        origin_num /= 10
-        origin_num += d4 * 1000
-    }
-    return origin_num
-}
+data class Position(var x : Int, var y : Int, var destory : Int)
 
-
-data class Register(var register_value:Int, var orders: String)
 
 fun main() {
     solution()
