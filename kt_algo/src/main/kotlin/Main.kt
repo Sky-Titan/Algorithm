@@ -4,74 +4,61 @@ import java.io.InputStreamReader
 import java.io.OutputStreamWriter
 
 import java.util.*
-import kotlin.collections.ArrayList
 
 var br = BufferedReader(InputStreamReader(System.`in`))
 var bw = BufferedWriter(OutputStreamWriter(System.out))
 
-var N = 0//정점 수
-var M = 0//간선 수
-var graph = ArrayList<ArrayList<Int>>()
-lateinit var visited : BooleanArray
-var result = 0
+var N = 0
+var color_count = IntArray(2)
+val BLUE = 1
+val WHITE = 0
 
 fun solution() {
 
-    var strtok = StringTokenizer(br.readLine())
-    N = strtok.nextToken().toInt()
-    M = strtok.nextToken().toInt()
+    N = br.readLine().toInt()
 
+    var map = Array(N, {Array(N, {0})})
 
-    visited = BooleanArray(N)
-
-    for(i in 0 until N)
-        graph.add(ArrayList())
-
-    for(i in 0 until M)
-    {
-        strtok = StringTokenizer(br.readLine())
-        var from = strtok.nextToken().toInt()
-        var to = strtok.nextToken().toInt()
-
-        graph.get(from).add(to)
-        graph.get(to).add(from)
+    map.forEach {
+        var strtok = StringTokenizer(br.readLine())
+        it.forEachIndexed { index, i -> it[index] = strtok.nextToken().toInt() }
     }
 
-    for(i in 0 until N)
-    {
-        if(!visited[i])
-        {
-            visited[i] = true
-            dfs(i, 0, visited)
-            visited[i] = false
-        }
-        if(result == 1)
-            break
-    }
+    countSquares(0, 0, N, map)
 
-    bw.write(result.toString())
+    bw.write("${color_count[WHITE]}\n")
+    bw.write("${color_count[BLUE]}\n")
 }
 
-fun dfs(now : Int, depth : Int, visited : BooleanArray)
+fun countSquares(x : Int, y : Int, length : Int, map: Array<Array<Int>>)
 {
-    if(depth == 4)
-    {
-        result = 1
-        return
-    }
+    var color = map[x][y]
+    var isAllSame = true
 
-    for(i in 0 until graph[now].size)
+    for(i in x until x + length)
     {
-        var next = graph[now][i]
-
-        if(!visited[next])
+        for(j in y until y + length)
         {
-            visited[next] = true
-            dfs(next, depth + 1, visited)
-            visited[next] = false
+            if(color != map[i][j])
+            {
+                isAllSame = false
+                break
+            }
         }
     }
+
+    if(isAllSame)
+        color_count[color]++
+    else
+    {
+        countSquares(x, y, length / 2, map)
+        countSquares(x + length / 2, y, length / 2, map)
+        countSquares(x, y + length / 2, length / 2, map)
+        countSquares(x + length / 2, y + length / 2, length / 2, map)
+    }
+
 }
+
 
 fun main() {
     solution()
