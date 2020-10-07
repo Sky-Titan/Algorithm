@@ -4,59 +4,99 @@ import java.io.InputStreamReader
 import java.io.OutputStreamWriter
 
 import java.util.*
+import java.util.function.BiFunction
+import kotlin.collections.HashMap
+import kotlin.math.max
+import kotlin.math.min
+import kotlin.text.StringBuilder
 
 var br = BufferedReader(InputStreamReader(System.`in`))
 var bw = BufferedWriter(OutputStreamWriter(System.out))
 
-var N = 0
-var color_count = IntArray(2)
-val BLUE = 1
-val WHITE = 0
 
 fun solution() {
 
-    N = br.readLine().toInt()
+    var N = br.readLine().toInt()
 
-    var map = Array(N, {Array(N, {0})})
-
-    map.forEach {
-        var strtok = StringTokenizer(br.readLine())
-        it.forEachIndexed { index, i -> it[index] = strtok.nextToken().toInt() }
-    }
-
-    countSquares(0, 0, N, map)
-
-    bw.write("${color_count[WHITE]}\n")
-    bw.write("${color_count[BLUE]}\n")
-}
-
-fun countSquares(x : Int, y : Int, length : Int, map: Array<Array<Int>>)
-{
-    var color = map[x][y]
-    var isAllSame = true
-
-    for(i in x until x + length)
+    var count_visited = HashMap<Int, Int>()
+    for(n in 0 until N)
     {
-        for(j in y until y + length)
+        var strtok = StringTokenizer(br.readLine())
+        var num = strtok.nextToken()
+        var strikes = strtok.nextToken().toInt()
+        var balls = strtok.nextToken().toInt()
+
+        //백의 자리수
+        for(i in 1..9)
         {
-            if(color != map[i][j])
+            //십의 자리수
+            for(j in (1..9).filter { i != it })
             {
-                isAllSame = false
-                break
+                //일의 자리수
+                for(k in (1..9).filter { i != it && j != it })
+                {
+                    var s = 0//스트라이크
+                    var b = 0//볼
+
+                    //볼 스트라이크 수 세기
+                    for(index in 0..2)
+                    {
+                        if(i == getInt(num[index]))
+                        {
+                            if(index == 0)
+                                s++
+                            else
+                                b++
+                        }
+
+                        if(j == getInt(num[index]))
+                        {
+                            if(index == 1)
+                                s++
+                            else
+                                b++
+                        }
+
+                        if(k == getInt(num[index]))
+                        {
+                            if(index == 2)
+                                s++
+                            else
+                                b++
+                        }
+                    }
+
+                    //동일하다면 추가
+                    if(s == strikes && b == balls)
+                    {
+                        var key = i * 100 + j * 10 + k
+
+                        count_visited.putIfAbsent(key, 0)
+                        count_visited.computeIfPresent(key, BiFunction { t, u -> u + 1 })
+                    }
+                }
             }
         }
     }
 
-    if(isAllSame)
-        color_count[color]++
-    else
+    var count = 0
+
+    var keySet = count_visited.keys
+    var iterator = keySet.iterator()
+
+    while(iterator.hasNext())
     {
-        countSquares(x, y, length / 2, map)
-        countSquares(x + length / 2, y, length / 2, map)
-        countSquares(x, y + length / 2, length / 2, map)
-        countSquares(x + length / 2, y + length / 2, length / 2, map)
+        var key = iterator.next()
+        if(count_visited[key] == N)
+            count++
     }
 
+    bw.write(count.toString())
+}
+
+fun getInt(char : Char) : Int
+{
+    return char - '0'
 }
 
 
