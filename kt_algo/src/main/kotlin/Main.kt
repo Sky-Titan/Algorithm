@@ -101,7 +101,13 @@ fun getInt(char : Char) : Int
 
 
 fun main() {
-    solution()
+    //solution()
+
+    var s = Solution()
+    var number = "1"
+    var k = 1
+
+    println(s.solution(number, k))
     br.close()
     bw.close()
 }
