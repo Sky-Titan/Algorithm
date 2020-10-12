@@ -5,6 +5,7 @@ import java.io.OutputStreamWriter
 
 import java.util.*
 import java.util.function.BiFunction
+import kotlin.collections.ArrayList
 import kotlin.collections.HashMap
 import kotlin.math.max
 import kotlin.math.min
@@ -13,101 +14,48 @@ import kotlin.text.StringBuilder
 var br = BufferedReader(InputStreamReader(System.`in`))
 var bw = BufferedWriter(OutputStreamWriter(System.out))
 
+var N : Long = 0
+var K : Long = 0
 
 fun solution() {
 
-    var N = br.readLine().toInt()
+    N = br.readLine().toLong()
+    K = br.readLine().toLong()
 
-    var count_visited = HashMap<Int, Int>()
-    for(n in 0 until N)
+    var left : Long = 1
+    var right : Long = N * N
+
+    var answer : Long = 0
+    while(left <= right)
     {
-        var strtok = StringTokenizer(br.readLine())
-        var num = strtok.nextToken()
-        var strikes = strtok.nextToken().toInt()
-        var balls = strtok.nextToken().toInt()
+        var mid = (left + right) / 2
+        var cnt : Long = 0
 
-        //백의 자리수
-        for(i in 1..9)
+        for(i in 1..N)
         {
-            //십의 자리수
-            for(j in (1..9).filter { i != it })
-            {
-                //일의 자리수
-                for(k in (1..9).filter { i != it && j != it })
-                {
-                    var s = 0//스트라이크
-                    var b = 0//볼
-
-                    //볼 스트라이크 수 세기
-                    for(index in 0..2)
-                    {
-                        if(i == getInt(num[index]))
-                        {
-                            if(index == 0)
-                                s++
-                            else
-                                b++
-                        }
-
-                        if(j == getInt(num[index]))
-                        {
-                            if(index == 1)
-                                s++
-                            else
-                                b++
-                        }
-
-                        if(k == getInt(num[index]))
-                        {
-                            if(index == 2)
-                                s++
-                            else
-                                b++
-                        }
-                    }
-
-                    //동일하다면 추가
-                    if(s == strikes && b == balls)
-                    {
-                        var key = i * 100 + j * 10 + k
-
-                        count_visited.putIfAbsent(key, 0)
-                        count_visited.computeIfPresent(key, BiFunction { t, u -> u + 1 })
-                    }
-                }
-            }
+            var num : Long = mid / i
+            if(num > N)
+                num = N
+            cnt += num
         }
+
+        if(cnt >= K)
+        {
+            answer = mid
+            right = mid - 1
+        }
+        else
+            left = mid + 1
     }
+    bw.write(answer.toString())
 
-    var count = 0
-
-    var keySet = count_visited.keys
-    var iterator = keySet.iterator()
-
-    while(iterator.hasNext())
-    {
-        var key = iterator.next()
-        if(count_visited[key] == N)
-            count++
-    }
-
-    bw.write(count.toString())
-}
-
-fun getInt(char : Char) : Int
-{
-    return char - '0'
 }
 
 
 fun main() {
-    //solution()
+    solution()
 
-    var s = Solution()
-    var number = "1"
-    var k = 1
 
-    println(s.solution(number, k))
     br.close()
     bw.close()
 }
