@@ -2,53 +2,64 @@ import java.io.BufferedReader
 import java.io.BufferedWriter
 import java.io.InputStreamReader
 import java.io.OutputStreamWriter
-
 import java.util.*
-import java.util.function.BiFunction
 import kotlin.collections.ArrayList
-import kotlin.collections.HashMap
-import kotlin.math.max
+
 import kotlin.math.min
-import kotlin.text.StringBuilder
 
 var br = BufferedReader(InputStreamReader(System.`in`))
 var bw = BufferedWriter(OutputStreamWriter(System.out))
 
-var N : Long = 0
-var K : Long = 0
+var V = 0
+var E = 0
+
+var graph = ArrayList<ArrayList<Int>>()
+lateinit var inEdge : IntArray
 
 fun solution() {
 
-    N = br.readLine().toLong()
-    K = br.readLine().toLong()
+    var strtok = StringTokenizer(br.readLine())
+    V = strtok.nextToken().toInt()
+    E = strtok.nextToken().toInt()
 
-    var left : Long = 1
-    var right : Long = N * N
+    inEdge = IntArray(V+1)
 
-    var answer : Long = 0
-    while(left <= right)
+    for(i in 0..V)
+        graph.add(ArrayList())
+
+    for(i in 0 until E)
     {
-        var mid = (left + right) / 2
-        var cnt : Long = 0
+        strtok = StringTokenizer(br.readLine())
+        var A = strtok.nextToken().toInt()
+        var B = strtok.nextToken().toInt()
 
-        for(i in 1..N)
-        {
-            var num : Long = mid / i
-            if(num > N)
-                num = N
-            cnt += num
-        }
-
-        if(cnt >= K)
-        {
-            answer = mid
-            right = mid - 1
-        }
-        else
-            left = mid + 1
+        inEdge[B]++
+        graph.get(A).add(B)
     }
-    bw.write(answer.toString())
 
+    topologicalSort()
+}
+
+fun topologicalSort()
+{
+    var queue : Queue<Int> = LinkedList()
+    for(i in (1..V).filter { inEdge[it] == 0 })
+        queue.offer(i)
+
+    while(!queue.isEmpty())
+    {
+        var now = queue.poll()
+
+        bw.write("$now ")
+
+        for(next in graph[now])
+        {
+            inEdge[next]--
+
+            if(inEdge[next] == 0)
+                queue.offer(next)
+        }
+    }
 }
 
 
