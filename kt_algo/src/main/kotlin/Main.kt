@@ -3,77 +3,58 @@ import java.io.BufferedWriter
 import java.io.InputStreamReader
 import java.io.OutputStreamWriter
 import java.util.*
-import kotlin.collections.ArrayList
+import kotlin.math.min
 
 var br = BufferedReader(InputStreamReader(System.`in`))
 var bw = BufferedWriter(OutputStreamWriter(System.out))
 
-var N = 0
 
-lateinit var dp : IntArray
-lateinit var times : IntArray
-
-
-var graph = ArrayList<ArrayList<Int>>()
-lateinit var inEdge : IntArray
 
 fun solution() {
 
-    N = br.readLine().toInt()
-    inEdge = IntArray(N+1)
-    dp = IntArray(N+1)
-    times = IntArray(N+1)
+    var T = br.readLine().toInt()
 
-    for(i in 0..N)
-        graph.add(ArrayList())
-
-    for(from in 1..N)
+    for(t in 0 until T)
     {
+        var K = br.readLine().toInt()
         var strtok = StringTokenizer(br.readLine())
-        var time = strtok.nextToken().toInt()
-        times[from] = time
 
-        while(strtok.hasMoreTokens())
+        var sum = IntArray(K + 1, {0})
+        var cost = IntArray(K + 1, {
+
+            if(it > 0)
+                strtok.nextToken().toInt()
+            else
+                0
+        })
+
+        for(i in 1..K)
+            sum[i] = sum[i-1] + cost[i]
+
+        var dp = Array(K + 1, {i -> IntArray(K + 1, { 0 })})
+
+        for(size in 1 until K)
         {
-            var to = strtok.nextToken().toInt()
-            if(to == -1)
-                break
+            for(i in 1 .. K - size)
+            {
+                var j = i + size
+                dp[i][j] = Int.MAX_VALUE
 
-            inEdge[to]++
-            graph.get(from).add(to)
+                for(k in i until j)
+                {
+                    dp[i][j] = min(dp[i][j], dp[i][k] + dp[k+1][j] + sum[j] - sum[i-1])
+                }
+            }
         }
+
+
+        bw.write(dp[1][K].toString())
+        bw.newLine()
     }
 
-    topologicalSort()
 }
 
-fun topologicalSort()
-{
-    var queue :Queue<Int> = LinkedList()
 
-    for(i in (1..N).filter { inEdge[it] == 0 })
-    {
-        dp[i] = times[i]
-        queue.offer(i)
-    }
-
-    while(!queue.isEmpty())
-    {
-        var now = queue.poll()
-
-        bw.write("$now ")
-
-        for(next in graph[now])
-        {
-            inEdge[next.to]--
-
-            if(inEdge[next] == 0)
-                queue.offer(next)
-        }
-    }
-}
-
-data class Edge(var from : Int, var to : Int, var time : Int)
 
 
 fun main() {
