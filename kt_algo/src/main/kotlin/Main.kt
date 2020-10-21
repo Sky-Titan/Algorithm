@@ -3,78 +3,53 @@ import java.io.BufferedWriter
 import java.io.InputStreamReader
 import java.io.OutputStreamWriter
 import java.util.*
-import kotlin.collections.ArrayList
+import kotlin.collections.HashMap
+import kotlin.math.max
 
 var br = BufferedReader(InputStreamReader(System.`in`))
 var bw = BufferedWriter(OutputStreamWriter(System.out))
 
-var N = 0
-
-lateinit var dp : IntArray
-lateinit var times : IntArray
-
-
-var graph = ArrayList<ArrayList<Int>>()
-lateinit var inEdge : IntArray
-
 fun solution() {
 
-    N = br.readLine().toInt()
-    inEdge = IntArray(N+1)
-    dp = IntArray(N+1)
-    times = IntArray(N+1)
+    var N = br.readLine().toInt()
 
-    for(i in 0..N)
-        graph.add(ArrayList())
+    var max_length = 0
 
-    for(from in 1..N)
+    var words = Array(N, {
+        var str = br.readLine()
+        max_length = max(max_length, str.length)
+        StringBuilder(str)
+    })
+
+    var num_list = IntArray(26)
+
+    for(i in 0 until N)
     {
-        var strtok = StringTokenizer(br.readLine())
-        var time = strtok.nextToken().toInt()
-        times[from] = time
+        var ten = 1
 
-        while(strtok.hasMoreTokens())
+        for(j in words[i].length - 1 downTo 0)
         {
-            var to = strtok.nextToken().toInt()
-            if(to == -1)
-                break
-
-            inEdge[to]++
-            graph.get(from).add(to)
+            num_list[words[i][j] - 'A'] += ten
+            ten *= 10
         }
     }
 
-    topologicalSort()
-}
+    //내림차순 정렬
+    num_list.sortDescending()
 
-fun topologicalSort()
-{
-    var queue :Queue<Int> = LinkedList()
+    var result = 0
 
-    for(i in (1..N).filter { inEdge[it] == 0 })
-    {
-        dp[i] = times[i]
-        queue.offer(i)
+    //정렬된 수들에 9부터 할당해서 곱하기
+    var i = 9
+
+    num_list.forEach {
+        result += i * it
+        i--
     }
 
-    while(!queue.isEmpty())
-    {
-        var now = queue.poll()
+    bw.write(result.toString())
 
-        bw.write("$now ")
-
-        for(next in graph[now])
-        {
-            inEdge[next.to]--
-
-            if(inEdge[next] == 0)
-                queue.offer(next)
-        }
-    }
 }
-
-data class Edge(var from : Int, var to : Int, var time : Int)
-
 
 fun main() {
     solution()
