@@ -15,6 +15,13 @@ var bw = BufferedWriter(OutputStreamWriter(System.out))
 
 fun solution() {
 
+    var N = br.readLine().toInt()
+
+    var list = IntArray(N, {br.readLine().toInt()})
+
+    list.sortDescending()
+
+
 
 }
 
