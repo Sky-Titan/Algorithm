@@ -3,8 +3,10 @@ import java.io.BufferedWriter
 import java.io.InputStreamReader
 import java.io.OutputStreamWriter
 import java.util.*
+import kotlin.collections.ArrayList
 
 import kotlin.collections.HashMap
+import kotlin.collections.HashSet
 import kotlin.math.max
 
 import kotlin.math.min
@@ -15,66 +17,86 @@ var bw = BufferedWriter(OutputStreamWriter(System.out))
 
 fun solution() {
 
-    var N = br.readLine().toInt()
+    var strtok = StringTokenizer(br.readLine())
 
-    var list = IntArray(N, {br.readLine().toInt()})
+    var N = strtok.nextToken().toInt()//정점
+    var M = strtok.nextToken().toInt()//간선
 
-    list.sortDescending()
+    var graph = ArrayList<ArrayList<Int>>()
 
-    var result = 0
+    for(i in 0..N)
+        graph.add(ArrayList())
 
-    var i = 0
+    var inEdge = Array(N + 1, {0})
 
-    while(i < N && list[i] > 0)
+    for(i in 0 until M)
     {
-        if(i == N - 1)
+        strtok = StringTokenizer(br.readLine())
+        var from = strtok.nextToken().toInt()
+        var to = strtok.nextToken().toInt()
+
+        graph.get(from).add(to)
+        inEdge[to]++
+    }
+
+    strtok = StringTokenizer(br.readLine())
+    var start = strtok.nextToken().toInt()
+    var end = strtok.nextToken().toInt()
+    var K = strtok.nextToken().toInt()
+
+    var mid_set = HashSet<Int>()
+
+    for(i in 0 until K)
+        mid_set.add(br.readLine().toInt())
+
+    var count = Array(N + 1, {Array(2, {0})})//0 : 방문한 교차로 수, 1 : 교차로를 거친 경로 수
+
+    var queue : Queue<Int> = LinkedList()
+
+    for(i in 1 .. N)
+    {
+        if(inEdge[i] == 0)
+            queue.offer(i)
+    }
+    count[start][1] = 1
+
+
+    while(!queue.isEmpty())
+    {
+        var now = queue.poll()
+
+        //교차로
+        if(mid_set.contains(now))
+            count[now][0] ++
+
+        if(now == end)
+            break
+
+        for(i in 0 until graph.get(now).size)
         {
-            result += list[i]
-            i++
-        }
-        else
-        {
-            if(list[i] * list[i + 1] > list[i] + list[i + 1])
+            var to = graph.get(now).get(i)
+
+            inEdge[to]--
+
+            //크다면 교체
+            if(count[now][0] > count[to][0])
             {
-                result += list[i] * list[i + 1]
-                i += 2
+                count[to][0] = count[now][0]
+                count[to][1] = count[now][1]
             }
-            else
-            {
-                result += list[i]
-                i++
-            }
+            else if(count[now][0] == count[to][0])
+                count[to][1] += count[now][1]
+
+            if(inEdge[to] == 0)
+                queue.offer(to)
         }
     }
 
-    i = N - 1
-
-    while(i >= 0 && list[i] < 0)
-    {
-        if(i == 0)
-        {
-            result += list[i]
-            i--
-        }
-        else
-        {
-            if(list[i] * list[i - 1] > list[i] + list[i - 1])
-            {
-                result += list[i] * list[i - 1]
-                i -= 2
-            }
-            else
-            {
-                result += list[i]
-                i--
-            }
-        }
-
-    }
-    bw.write(result.toString())
+    if(count[end][0] == K)
+        bw.write(count[end][1].toString())
+    else
+        bw.write("0")
 }
-
-
 
 fun main() {
     solution()
