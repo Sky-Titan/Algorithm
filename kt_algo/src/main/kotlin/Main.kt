@@ -5,99 +5,129 @@ import java.io.OutputStreamWriter
 import java.util.*
 
 import kotlin.collections.ArrayList
-
 import kotlin.collections.HashMap
-import kotlin.collections.HashSet
-import kotlin.math.max
-
 import kotlin.math.min
 
 var br = BufferedReader(InputStreamReader(System.`in`))
 var bw = BufferedWriter(OutputStreamWriter(System.out))
 
+var graph : ArrayList<ArrayList<Edge>> = ArrayList()
+var dist = HashMap<Int,IntArray>()
+val INF = 200000001
+var v1 = 0
+var v2 = 0
+var N = 0
+var E = 0
+//dist[1] dist[v1] dist[v2]
 
 fun solution() {
 
     var strtok = StringTokenizer(br.readLine())
+    N = strtok.nextToken().toInt()
+    E = strtok.nextToken().toInt()
 
-    var N = strtok.nextToken().toInt()//정점
-    var M = strtok.nextToken().toInt()//간선
-
-    var graph = ArrayList<ArrayList<Int>>()
-
-    for(i in 0..N)
+    for(i in 0 .. N)
         graph.add(ArrayList())
 
-    var inEdge = Array(N + 1, {0})
-
-    for(i in 0 until M)
+    for(i in 0 until E)
     {
         strtok = StringTokenizer(br.readLine())
-        var from = strtok.nextToken().toInt()
-        var to = strtok.nextToken().toInt()
+        var a = strtok.nextToken().toInt()
+        var b = strtok.nextToken().toInt()
+        var c = strtok.nextToken().toInt()
 
-        graph.get(from).add(to)
-        inEdge[to]++
+        graph.get(a).add(Edge(a, b, c))
+        graph.get(b).add(Edge(b, a, c))
     }
 
     strtok = StringTokenizer(br.readLine())
-    var start = strtok.nextToken().toInt()
-    var end = strtok.nextToken().toInt()
-    var K = strtok.nextToken().toInt()
+    v1 = strtok.nextToken().toInt()
+    v2 = strtok.nextToken().toInt()
 
-    //교차로 집합
-    var mid_set = HashSet<Int>()
+    dist.putIfAbsent(1 , IntArray(N + 1, {INF}))
+    dist.putIfAbsent(v1, IntArray(N + 1 , {INF}))
+    dist.putIfAbsent(v2, IntArray(N + 1 , {INF}))
 
-    for(i in 0 until K)
-        mid_set.add(br.readLine().toInt())
-
-    var count = Array(N + 1, {Array(2, {0})})//0 : 방문한 교차로 수, 1 : 교차로를 거친 경로 수
-
-    var queue : Queue<Int> = LinkedList()
-
-    for(i in 1 .. N)
-    {
-        if(inEdge[i] == 0)
-            queue.offer(i)
+    dist[1]?.get(2)
+    //1 -> v1, 1->v2
+    graph.get(1).forEach { edge ->
+        if(edge.to == v1)
+        {
+            dist[1]?.set(v1, edge.weight)
+            dist[v1]?.set(1, edge.weight)
+        }
+        else if(edge.to == v2)
+        {
+            dist[1]?.set(v2, edge.weight)
+            dist[v2]?.set(1, edge.weight)
+        }
     }
-    count[start][1] = 1
+
+    //v1 -> v2, v1 -> N
+    graph.get(v1).forEach { edge ->
+        if(edge.to == v2)
+        {
+            dist[v1]?.set(v2, edge.weight)
+            dist[v2]?.set(v1, edge.weight)
+        }
+        else if(edge.to == N)
+            dist[v1]?.set(N, edge.weight)
+    }
+
+    //v2 -> N
+    graph.get(v2).forEach { edge ->
+        if(edge.to == N)
+            dist[v2]?.set(N, edge.weight)
+    }
+
+    dijkstra(1)
+    dijkstra(v1)
+    dijkstra(v2)
+
+    if((dist[1]?.get(v1) == INF || dist[v1]?.get(v2) == INF || dist[v2]?.get(N) == INF)
+            && (dist[1]?.get(v2) == INF || dist[v2]?.get(v1) == INF || dist[v1]?.get(N) == INF))
+    {
+        bw.write("-1")
+        return
+    }
+
+    var min1 = dist[1]?.get(v1)!! + dist[v1]?.get(v2)!! + dist[v2]?.get(N)!!
+    var min2 = dist[1]?.get(v2)!! + dist[v2]?.get(v1)!! + dist[v1]?.get(N)!!
+
+    bw.write(min(min1, min2).toString())
+}
+
+
+fun dijkstra(start: Int)
+{
+    dist[start]?.set(start, 0)
+
+    var queue = PriorityQueue<Node>({o1, o2 -> o1.dist - o2.dist})
+    queue.offer(Node(start, 0))
+
+    var visited = BooleanArray(N + 1)
 
     while(!queue.isEmpty())
     {
         var now = queue.poll()
 
-        //교차로
-        if(mid_set.contains(now))
-            count[now][0] ++
+        if(visited[now.num])
+            continue
+        visited[now.num] = true
 
-        if(now == end)
-            break
-
-        for(i in 0 until graph.get(now).size)
+        for(next in graph.get(now.num))
         {
-            var to = graph.get(now).get(i)
-
-            inEdge[to]--
-
-            //크다면 교체
-            if(count[now][0] > count[to][0])
+            if(dist[start]?.get(next.to)!! > dist[start]?.get(now.num)!! + next.weight)
             {
-                count[to][0] = count[now][0]
-                count[to][1] = count[now][1]
+                dist[start]?.set(next.to, dist[start]?.get(now.num)!! + next.weight)
+                queue.offer(Node(next.to, dist[start]?.get(next.to)!!))
             }
-            else if(count[now][0] == count[to][0])
-                count[to][1] += count[now][1]
-
-            if(inEdge[to] == 0)
-                queue.offer(to)
         }
     }
-
-    if(count[end][0] == K)
-        bw.write(count[end][1].toString())
-    else
-        bw.write("0")
 }
+
+data class Edge(var from : Int, var to : Int, var weight : Int)
+data class Node(var num : Int, var dist : Int)
 
 fun main() {
     solution()
